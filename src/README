@@ -1,0 +1,29 @@
+
+
+1. Naming conventions for in-place operations vs. copy operations. I 
+   would like to have both sqrt and sqrt! that give a copy of the
+   matrix and takes the sqrt of each value and I'd like to have a
+   method that does the sqrt'ing in place.
+
+2. Handling storage type for matrices. Right now I've defined
+   sub-classes of matrix for different types. This seems a very
+   un-LISPy way to do things. A better way would be to (optionally)
+   pass the type information into the the function that will be doing
+   the make-instance and let it dynamically come up with the
+   appropriate infrastructure to support values of that type. We
+   probably won't matrices that support both fixed-type and
+   variable-type entries. What about a string-matrix, e.g.?
+
+3. Performance. Time and memory usage of operations like
+   discrete-convolve is still pretty atrocious. It's better than it
+   used to be, but that's not saying much. We should be able to
+   convolve a 1600x1200 greyscale image with a 7x7 filter without
+   using a gigabyte of RAM and taking two minutes to do it!
+
+4. BLAS. Is it worth trying to use BLAS for the matrix stuff? How hard
+   would it be to write the FFI stuff for BLAS?
+
+5. vImage. Ditto for vImage. vImage is nice in that it directly uses
+   the AltiVec stuff and should be very fast. I think BLAS, when
+   compiled with the appropriate options also usues AltiVec, so these
+   options might not both be necessary.

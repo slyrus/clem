@@ -1,0 +1,36 @@
+
+This is Cyrus Harmon's matrix package for common-lisp. Documentation
+can be found in doc/index.html.
+
+TODO:
+
+1. Need a better mechanism for creating, populating, copying and
+converting to and from matrices of a given type. How to create
+matrices of the following types:
+
+double-float
+single-float
+unsigned-byte
+signed-byte
+unsigned-word
+signed-word
+bit (or whatever the appropriate one bit type is)
+
+* Need to set/get values from a given matrix type appropriately
+
+* scalar-ops should work between matrices of different types
+
+* Need to be able to convert from one matrix type to another
+
+* random-matrix should work
+
+* need functions to create a matrix of the same type, and of the same
+type and dimensions.
+
+2. shared-initialize
+
+Ok, so being new to CL, I didn't know about shared-initialize (and
+initialize-instance and re-initialize-instance) so I didn't know how
+to get slots initialized via make-instance. Now I now all this so I
+need to remove the hacked up constructor functions I made and replace
+everything with calls to make-instance.

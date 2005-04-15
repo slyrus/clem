@@ -1,0 +1,14 @@
+
+1. Removed aref-vals field
+
+2. Removing matrix-class field from matrix subtypes
+
+3. Added a new allocate-matrix-vals generic and changed matrix
+   shared-initialize to call this function. This protocol should
+   ensure that the matrix storage only gets allocated once. We still
+   need to make sure the typed matrices deal with this change
+   properly. row-vector and col-vector have been changed.
+
+4. removed simple-matrix and unsigned-byte-matrix.cl
+
+
