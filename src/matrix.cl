@@ -44,12 +44,13 @@
 (declaim (inline matrix-vals))
 (defclass matrix ()
   ((m :accessor matrix-vals)
-   (storage-type :allocation :class :accessor storage-type :initarg :storage-type :initform 'double-float)
+   (element-type :allocation :class :accessor element-type :initarg :element-type :initform 'double-float)
    (rows :accessor matrix-rows :initarg :rows :initform 1)
    (cols :accessor matrix-cols :initarg :cols :initform 1)
    (initial-element :accessor initial-element :initarg :initial-element :initform 0d0)
    (adjustable :accessor adjustable :initarg :adjustable :initform nil)
-   (resizeable :accessor resizable :initform nil)))
+   (resizeable :accessor resizable :initform nil)
+   (val-format :accessor val-format :initform "~4,9F")))
 
 (defgeneric allocate-matrix-vals (object &key rows cols adjustable initial-element element-type))
 (defmethod allocate-matrix-vals ((object matrix) &key rows cols adjustable initial-element element-type)
@@ -68,7 +69,7 @@
                         :cols (slot-value object 'cols)
                         :adjustable (slot-value object 'adjustable)                        
                         :initial-element (slot-value object 'initial-element)
-                        :element-type (slot-value object 'storage-type)))
+                        :element-type (slot-value object 'element-type)))
 (defun list-if (x)
   (if x (list x) x))
 
@@ -92,6 +93,11 @@
                         (cons m1 mr))))
     ))
 
+(defgeneric fit (m val))
+(defmethod fit ((m matrix) val)
+  (declare (ignore m))
+  val)
+
 (defgeneric fit-value (val m))
 (defmethod fit-value (val (m matrix))
   (declare (ignore m))
@@ -106,24 +112,15 @@
 (defgeneric cols (m))
 (defmethod cols ((m matrix)) (the fixnum (second (dim m))))
 
-(declaim (inline %val))
-(defun %val (m i j) (aref (matrix-vals m) i j))
-
 (defgeneric val (m i j))
 (defmethod val ((m matrix) i j) (aref (matrix-vals m) i j))
-
-(declaim (inline %set-val))
-(defun %set-val (m i j v)
-  (declare (optimize (speed 3) (safety 0) (space 0)))
-  (declare (fixnum i j))
-  (setf (aref (matrix-vals m) i j) v))
 
 (defgeneric set-val (m i j v &key coerce))
 (declaim (inline set-val))
 (defmethod set-val ((m matrix) i j v &key (coerce t))
   (setf (aref (matrix-vals m) i j)
 	(if coerce
-	    (coerce v (storage-type m))
+	    (coerce v (element-type m))
 	    v)))
 
 (defgeneric set-val-fit (m i j v &key truncate))
@@ -132,31 +129,35 @@
 
 
 (defparameter *print-matrix-newlines* t)
-(defparameter *print-matrix-float-format* "~4,9F")
+(defparameter *print-matrix-float-format* nil)
 
 (defgeneric print-range (m startr endr startc endc))
 (defmethod print-range ((m matrix)
 			(startr fixnum) (endr fixnum)
 			(startc fixnum) (endc fixnum))
-  (format t "#[")
-  (do ((i startr (1+ i)))
-      ((> i endr))
-    (unless (= i 0)
-      (princ "; ")
-      (if *print-matrix-newlines*
-	  (progn
-	    (format t "~&~2,0T"))))
-    (do ((j startc (1+ j)))
-	((> j endc))
-      (format t (if (= j 0)
-		    *print-matrix-float-format*
-		    (util:strcat " " *print-matrix-float-format*)) (val m i j))))
-  (format t "]"))
+  (let ((val-format-spec (if *print-matrix-float-format*
+                             *print-matrix-float-format*
+                             (val-format m))))
+    (format t "#[")
+    (do ((i startr (1+ i)))
+        ((> i endr))
+      (unless (= i startr)
+        (princ "; ")
+        (if *print-matrix-newlines*
+            (progn
+              (format t "~&~2,0T"))))
+      (do ((j startc (1+ j)))
+          ((> j endc))
+        (format t (if (= j startc)
+                      val-format-spec
+                      (util:strcat " " val-format-spec)) (val m i j))))
+    (format t "]~&")))
 
 (defgeneric print-matrix (m))
 (defmethod print-matrix ((m matrix))
   (destructuring-bind (endr endc) (mapcar #'1- (dim m))
-    (print-range m 0 endr 0 endc)))
+    (print-range m 0 endr 0 endc))
+  m)
 
 (defgeneric transpose (m))
 (defmethod transpose ((m matrix))
@@ -267,13 +268,15 @@
   (eval (list 'defmethod
 	      (util:make-intern (util:strcat "scalar-" name "-row"))
 	      `((a matrix) k q)
-	      `(map-row a k #'(lambda (x) (apply ,f (list x q)))))))
+	      `(map-row a k #'(lambda (x) (apply ,f (list x q))))
+              `a)))
 
 (defun def-scalar-col-op (name f)
   (eval (list 'defmethod
 	      (util:make-intern (util:strcat "scalar-" name "-col"))
 	      `((a matrix) k q)
-	      `(map-col a k #'(lambda (x) (apply ,f (list x q)))))))
+	      `(map-col a k #'(lambda (x) (apply ,f (list x q))))
+              `a)))
 
 (defun def-scalar-ops (name f)
   (def-scalar-row-op name f)
@@ -286,7 +289,8 @@
 (defgeneric scalar-mult (m q))
 (defmethod scalar-mult ((m matrix) q)
   (dotimes (i (first (dim m)) m)
-    (scalar-mult-row m i q)))
+    (scalar-mult-row m i q))
+  m)
 
 (defgeneric scalar-mult-copy (m q))
 (defmethod scalar-mult-copy ((a matrix) q)
@@ -296,7 +300,8 @@
 (defgeneric scalar-divide (a q))
 (defmethod scalar-divide ((a matrix) q)
   (dotimes (i (first (dim a)) a)
-    (scalar-divide-row a i q)))
+    (scalar-divide-row a i q))
+  a)
 
 (defgeneric scalar-divide-copy (a q))
 (defmethod scalar-divide-copy ((a matrix) q)
@@ -395,8 +400,8 @@
 	(set-val c j i (val a i j))))
     c))
 
-(defgeneric add-row (m &optional values &key initial-element)
-  (:method ((m matrix) &optional values &key initial-element)
+(defgeneric add-row (m &key values initial-element)
+  (:method ((m matrix) &key values initial-element)
     (if (adjustable m)
 	(progn
 	  (if (null initial-element)
@@ -413,8 +418,8 @@
 		  (set-val m (first d) i (car l))))))
 	(error 'matrix-error :message "Tried to add-row to non-adjustable matrix ~A" m))))
 
-(defgeneric add-col (m &optional values &key initial-element)
-  (:method ((m matrix) &optional values &key initial-element)
+(defgeneric add-col (m &key values initial-element)
+  (:method ((m matrix) &key values initial-element)
     (if (adjustable m)
 	(progn
 	  (if (null initial-element)
@@ -586,11 +591,13 @@
       (declare (dynamic-extent j) (fixnum j))
       (set-val a i j (funcall f (val a i j) i j)))))
 
-(defmethod random-matrix ((rows fixnum) (cols fixnum))
+(defmethod random-matrix ((rows fixnum) (cols fixnum) &key
+                          (matrix-class 'matrix)
+                          (limit 1.0d0))
   (declare (dynamic-extent rows cols)
 	   (fixnum rows cols))
-  (let ((a (make-instance 'matrix :rows rows :cols cols)))
-    (map-set-val a #'(lambda (x) (declare (ignore x)) (random 1.0d0)))
+  (let ((a (make-instance matrix-class :rows rows :cols cols)))
+    (map-set-val a #'(lambda (x) (declare (ignore x)) (random limit)))
     a))
 
 (defmethod min-range ((m matrix) (startr fixnum) (endr fixnum) (startc fixnum) (endc fixnum))
