@@ -14,7 +14,7 @@
 (defsystem :clem
     :name "clem"
     :author "Cyrus Harmon"
-    :version "20040722.1"
+    :version "20050421.1"
     :depends-on (:util)
     :components
     ((:module :src
@@ -25,12 +25,14 @@
 	       
 	       (:file "matrix" :depends-on ("defpackage"))
 	       (:file "typed-matrix" :depends-on ("defpackage" "matrix"))
-	       (:file "defmatrix" :depends-on ("defpackage" "matrix" "typed-matrix"))
+	       (:file "metaclasses" :depends-on ("defpackage" "matrix"))
+	       (:file "defmatrix" :depends-on ("defpackage" "matrix" "typed-matrix" "metaclasses"))
+	       (:file "defmatrix-types" :depends-on ("defpackage" "matrix" "typed-matrix" "metaclasses" "defmatrix"))
 	       (:file "typed-matrix-utils" :depends-on ("defpackage" "matrix" "typed-matrix"))
 	       (:file "row-vector" :depends-on ("defpackage" "matrix"))
 	       (:file "col-vector" :depends-on ("defpackage" "matrix"))
 	       (:file "scalar" :depends-on ("defpackage" "matrix"))
-	       (:file "matrixops" :depends-on ("defpackage" "matrix" "defmatrix" "typed-matrix-utils"))
+	       (:file "matrixops" :depends-on ("defpackage" "matrix" "defmatrix-types" "typed-matrix-utils"))
 	       ))))
 
 (defparameter *this-system* :clem)

@@ -62,8 +62,8 @@
 		    )))
   
 (defmethod shared-initialize :after
-    ((object matrix) slot-names &rest initargs &key &allow-other-keys)
-  (declare (ignore slot-names initargs))
+    ((object matrix) slot-names &rest initargs &key rows cols adjustable initial-element element-type)
+  (declare (ignore slot-names initargs rows cols adjustable initial-element element-type))
   (allocate-matrix-vals object
                         :rows (slot-value object 'rows)
                         :cols (slot-value object 'cols)

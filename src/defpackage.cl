@@ -145,5 +145,6 @@
    #:bit-matrix
    #:array->bit-matrix
    #:random-bit-matrix
+
    ))
 

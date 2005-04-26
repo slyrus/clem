@@ -10,6 +10,7 @@
 	    :components
 	    ((:file "defpackage")
 	     (:file "test-clem")
+	     (:file "test-clem2")
 	     (:file "test-defmatrix")
 	     (:file "bench-matrix")
 	     )
