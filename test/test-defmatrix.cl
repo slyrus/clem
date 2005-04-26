@@ -70,9 +70,11 @@
     ))
 
 (defun run-defmatrix-tests ()
-  (pprint (macroexpand '(defmatrixtype ape-matrix :storage-type '(unsigned-byte 8))))
-  (defmatrixtype ape-matrix :storage-type '(unsigned-byte 8) :minval 23 :maxval 95)
-  
+;;  (pprint (macroexpand '(defmatrixtype ape-matrix () :element-type (unsigned-byte 8))))
+  (defmatrixtype ape-matrix ()
+      :element-type (unsigned-byte 8)
+      :accumulator-type (unsigned-byte 32)
+      :minval 23 :maxval 95)
   (let ((q (make-instance 'ape-matrix :rows 4 :cols 4)))
     (describe q)
     (print (class-of q))

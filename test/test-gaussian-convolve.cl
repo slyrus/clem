@@ -1,4 +1,5 @@
 
+
 (in-package :matrix)
 
 ; (matrix::print-matrix (matrix::scalar-mult (matrix::gaussian-kernel 3 1) 255))
