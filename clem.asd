@@ -20,12 +20,9 @@
     ((:module :src
 	      :components
 	      ((:file "defpackage")
-	       
-	       #+openmcl (:file "fpc-ppc")
-	       
-	       (:file "matrix" :depends-on ("defpackage"))
+	       (:file "metaclasses" :depends-on ("defpackage"))
+	       (:file "matrix" :depends-on ("defpackage" "metaclasses"))
 	       (:file "typed-matrix" :depends-on ("defpackage" "matrix"))
-	       (:file "metaclasses" :depends-on ("defpackage" "matrix"))
 	       (:file "defmatrix" :depends-on ("defpackage" "matrix" "typed-matrix" "metaclasses"))
 	       (:file "defmatrix-types" :depends-on ("defpackage" "matrix" "typed-matrix" "metaclasses" "defmatrix"))
 	       (:file "typed-matrix-utils" :depends-on ("defpackage" "matrix" "typed-matrix"))

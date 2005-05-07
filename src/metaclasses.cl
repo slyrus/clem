@@ -37,13 +37,24 @@
 	  slots))
 
 (defclass standard-matrix-class (standard-class)
-  ((element-type :accessor element-type :initarg :element-type)
-   (specialized-array :accessor specialized-array-p :initarg :specialized-array)))
+  ((element-type :initarg :element-type)
+   (specialized-array :initarg :specialized-array :initform nil)
+   (minval :accessor minval :initarg :minval :initform nil)
+   (maxval :accessor maxval :initarg :maxval :initform nil)))
+
+(defmethod element-type ((smc standard-matrix-class))
+  (car (slot-value smc 'element-type)))
+
+(defmethod specialized-array-p ((smc standard-matrix-class))
+  (car (slot-value smc 'specialized-array)))
 
 ;;;
 ;;; Need validate-superclass for some reason. Read AMOP and fix this note
 ;;;
 (defmethod validate-superclass ((c1 standard-matrix-class) (c2 standard-class))
+  t)
+
+(defmethod validate-superclass ((c1 standard-class) (c2 standard-matrix-class))
   t)
 
 (defun add-root-class (root-class direct-superclasses)
@@ -53,9 +64,23 @@
 		     (car (class-direct-superclasses root-class))
 		     direct-superclasses)))
 
+(Defclass typed-mixin ()
+  ((specialzied-array :allocation :class :accessor specialized-array-p :initform nil)))
+
+(Defmethod set-val-fit ((m typed-mixin) i j v &key (truncate nil))
+  (set-val m i j (if truncate (truncate v) v)))
+
+
+(defmethod map-matrix-fit (f (a typed-mixin))
+  (destructuring-bind (m n) (dim a)
+    (dotimes (i m)
+      (dotimes (j n)
+	(set-val-fit a i j (funcall f a i j)))))
+  a)
+
 (defmethod initialize-instance :around
     ((class standard-matrix-class) &rest all-keys &key direct-superclasses element-type &allow-other-keys)
-  (let ((root-class (find-class 'typed-matrix))
+  (let ((root-class (find-class 'typed-mixin))
 	(mc (find-class 'standard-matrix-class)))
     (if (and root-class (not (equal class root-class)))
 	(if (member-if #'(lambda (super)
@@ -70,7 +95,7 @@
 
 (defmethod reinitialize-instance :around
     ((class standard-matrix-class) &rest all-keys &key direct-superclasses element-type &allow-other-keys)
-  (let ((root-class (find-class 'typed-matrix))
+  (let ((root-class (find-class 'typed-mixin))
 	(mc (find-class 'standard-matrix-class)))
     (if (and root-class (not (equal class root-class)))
 	(if (member-if #'(lambda (super)

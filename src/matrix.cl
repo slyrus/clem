@@ -50,7 +50,9 @@
    (initial-element :accessor initial-element :initarg :initial-element :initform 0d0)
    (adjustable :accessor adjustable :initarg :adjustable :initform nil)
    (resizeable :accessor resizable :initform nil)
-   (val-format :accessor val-format :initform "~4,9F")))
+   (val-format :accessor val-format :initform "~4,9F"))
+  (:metaclass standard-matrix-class)
+  (:element-type 'double-float))
 
 (defgeneric allocate-matrix-vals (object &key rows cols adjustable initial-element element-type))
 (defmethod allocate-matrix-vals ((object matrix) &key rows cols adjustable initial-element element-type)
@@ -58,7 +60,7 @@
 	(make-array (list rows cols)
 		    :adjustable adjustable
 		    :initial-element initial-element
-		    :element-type element-type
+		    :element-type (element-type (class-of object))
 		    )))
   
 (defmethod shared-initialize :after

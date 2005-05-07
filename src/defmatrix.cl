@@ -1,6 +1,6 @@
 ;;;; File: defmatrix.cl
 ;;;; Author: Cyrus Harmon
-;;;; Time-stamp: <2005-04-26 12:47:09 sly>
+;;;; Time-stamp: <2005-05-07 14:57:17 sly>
 ;;;; 
 ;;;; This file contains definitions for typed matrices. Typed
 ;;;; matrices have elements that are of a single type (although
@@ -13,8 +13,8 @@
 
 ;;; forward class definitions to keep things going for the moment
 ;;; these should go away once the MOP stuff is done.
-(defclass integer-matrix () ())
-(defclass float-matrix () ())
+;(defclass integer-matrix () ())
+;(defclass float-matrix () ())
 
 ;;; Also taken from KMR's clsql package
 (declaim (inline delistify))
@@ -64,46 +64,69 @@
        (declare (dynamic-extent ,j) (type fixnum ,j))
        ,@body)))
 
-(defmacro with-mat-scalar-op-range (m n p element-type specialized-array startr endr startc endc (a b c i j) &body body)
-;  `(let ((,a (matrix-vals ,m))
-;	 (,b (matrix-vals ,n))
-;	 (,c (matrix-vals ,p)))
-;     ,(when specialized-array
-;	    `(declare (type (simple-array ,element-type (* *)) ,a ,b ,c)))
 
-  `(with-matrix-vals (,m ,element-type ,a)
-     (with-matrix-vals (,n ,element-type ,b)
-       (with-matrix-vals (,p ,element-type ,c)
-	 (do ((,i ,startr (1+ ,i)))
-	     ((> ,i ,endr))
-	   (declare (dynamic-extent ,i) (type fixnum ,i))
-	   (do ((,j ,startc (1+ ,j)))
-	       ((> ,j ,endc))
-	     (declare (dynamic-extent ,j) (type fixnum ,j))
-	     ,@body))))))
-     
+;;; FIXME
+;;; Change with-matrix-range-do to take matrix-type instead of element-type
+;;; and specialized-array and use the metaclass to get this information.
+;;; Can't just do this at runtime, unfortunately.
+
+(defmacro with-matrix-range-do (matrix-class m n p startr endr startc endc (a b c i j) &body body)
+  (let ((mat-class (if (typep matrix-class 'class)
+		       matrix-class
+		       (find-class matrix-class))))
+    (let ((element-type (element-type mat-class)))
+      `(with-matrix-vals (,m ,element-type ,a)
+	 (with-matrix-vals (,n ,element-type ,b)
+	   (with-matrix-vals (,p ,element-type ,c)
+	     (do ((,i ,startr (1+ ,i)))
+		 ((> ,i ,endr))
+	       (declare (dynamic-extent ,i) (type fixnum ,i))
+	       (do ((,j ,startc (1+ ,j)))
+		   ((> ,j ,endc))
+		 (declare (dynamic-extent ,j) (type fixnum ,j))
+		 ,@body))))))))
+
+
+(defmacro defmatrix-method (method (&rest args) &body body)
+  `(defmethod ,method ,args
+     ,@body))
+
+#| (defmacro defmatrix-method-mat-add (matrix-class)
+  `(defmethod mat-add ((m ,matrix-class) (n ,matrix-class))
+     (and (equal (dim m) (dim n))
+	  (destructuring-bind (mr mc) (dim m)
+	    (let ((p (mat-copy-proto m)))
+	      (with-matrix-range-do ,matrix-class m n p
+		  0 (- mr 1) 0 (- mc 1) (a b c i j)
+		(setf (aref c i j)
+		      (fit p (* 2 (+ (aref a i j) (aref b i j))))))
+	      p)))))
+|#
 
 (defmacro defmatrixtype (type direct-superclasses &key 
 			 (element-type 'double-float)
 			 (accumulator-type 'double-float)
 			 (initial-element 0)
 			 (specialized-array nil)
-			 (integral nil)
 			 minval maxval
 			 (val-format "~4,9F"))
-  (unless direct-superclasses (setf direct-superclasses '(typed-matrix)))
+  (unless direct-superclasses (setf direct-superclasses '(matrix)))
   `(progn
-     
      (defclass ,type ,direct-superclasses
-       ((element-type :allocation :class :accessor element-type :initform ',element-type)
-	(specialized-array :allocation :class :accessor specialized-array-p :initform ',specialized-array)
-	(minval :accessor minval :allocation :class :initform ,minval)
-	(maxval :accessor maxval :allocation :class :initform ,maxval)
-	(initial-element :accessor initial-element :initarg :initial-element :initform ,initial-element)
+       ((initial-element :accessor initial-element :initarg :initial-element :initform ,initial-element)
 	(val-format :accessor val-format :initform ,val-format))
        (:metaclass standard-matrix-class)
-       (:element-type ,(delistify element-type)))
-     
+       (:element-type ,(delistify element-type))
+       (:minval ,minval)
+       (:maxval ,maxval))))
+
+(defmacro defmatrixfuncs (type &key 
+			  (element-type 'double-float)
+			  (accumulator-type 'double-float)
+			  (specialized-array nil)
+			  (integral nil)
+			  minval maxval)
+  `(progn
      (defmethod mref ((m ,type) (row fixnum) (col fixnum))
        (with-typed-matrix-vals (m ,element-type t a)
 	 (aref a row col)))
@@ -160,7 +183,7 @@
       (declare (fixnum i j))
        (setf (aref (matrix-vals m) i j) 
 	     (if coerce
-		 (coerce v (element-type m))
+		 (coerce v (element-type (class-of m)))
 		 v)))
 
      (defmethod fit ((m ,type) v)
@@ -179,7 +202,7 @@
 				   ((> v ,maxval) ,maxval)
 				   (t (if truncate (truncate v) v)))
 			    `(if truncate (truncate v) v))
-		       (element-type m))))
+		       (element-type (class-of m)))))
      
      (defmethod map-set-val ((m ,type) f)
        (destructuring-bind (rows cols) (mapcar #'1- (dim m))
@@ -200,7 +223,7 @@
        (and (equal (dim m) (dim n))
 	    (destructuring-bind (mr mc) (dim m)
 	      (let ((p (mat-copy-proto m)))
-		(with-mat-scalar-op-range m n p ,element-type ,specialized-array 0 (- mr 1) 0 (- mc 1) (a b c i j)
+		(with-matrix-range-do ,type m n p 0 (- mr 1) 0 (- mc 1) (a b c i j)
 		  (setf (aref c i j)
 			(fit p (+ (aref a i j) (aref b i j)))))
 		p))))
@@ -208,7 +231,7 @@
      (defmethod mat-add! ((m ,type) (n ,type))
        (and (equal (dim m) (dim n))
 	    (destructuring-bind (mr mc) (dim m)
-	      (with-mat-scalar-op-range m n m ,element-type ,specialized-array 0 (- mr 1) 0 (- mc 1) (a b c i j)
+	      (with-matrix-range-do ,type m n m 0 (- mr 1) 0 (- mc 1) (a b c i j)
 		(setf (aref c i j)
 		      (fit m (+ (aref a i j) (aref b i j)))))
 	      m)))
@@ -217,9 +240,7 @@
        (and (equal (dim m) (dim n))
 	    (destructuring-bind (mr mc) (dim m)
 	      (let ((p (mat-copy-proto m)))
-		(with-mat-scalar-op-range m n p ,element-type
-		    ,specialized-array
-		    0 (- mr 1) 0 (- mc 1) (a b c i j)
+		(with-matrix-range-do ,type m n p 0 (- mr 1) 0 (- mc 1) (a b c i j)
 		  (setf (aref c i j)
 			(fit p (- (aref a i j) (aref b i j)))))
 		p))))
@@ -227,7 +248,7 @@
      (defmethod mat-subtr! ((m ,type) (n ,type))
        (and (equal (dim m) (dim n))
 	    (destructuring-bind (mr mc) (dim m)
-	      (with-mat-scalar-op-range m n m ,element-type ,specialized-array 0 (- mr 1) 0 (- mc 1) (a b c i j)
+	      (with-matrix-range-do ,type m n m 0 (- mr 1) 0 (- mc 1) (a b c i j)
 		(setf (aref c i j)
 		      (fit m (- (aref a i j) (aref b i j)))))
 	      m)))
@@ -305,7 +326,8 @@
 			  ))))))
 	      z)))))))
 
-     (cond ((member (find-class 'integer-matrix) (sb-mop::class-precedence-list (find-class ',type)))
+     (cond ((and (find-class 'integer-matrix nil)
+		 (member (find-class 'integer-matrix) (sb-mop::class-precedence-list (find-class ',type))))
 	    (defmethod scalar-divide-row ((m ,type)  k q)
 	      (with-typed-matrix-vals (m ,element-type ,specialized-array a)
 		(dotimes (j (cols m))
@@ -316,7 +338,8 @@
 		(dotimes (j (cols m))
 		  (setf (aref a k j) (fit m (truncate (* (aref a k j) q))))))
 	      m))
-	   ((member (find-class 'float-matrix) (sb-mop::class-precedence-list (find-class ',type)))
+	   ((and (find-class 'float-matrix nil)
+		 (member (find-class 'float-matrix) (sb-mop::class-precedence-list (find-class ',type))))
 	    (defmethod scalar-divide-row ((m ,type)  k q)
 	      (with-typed-matrix-vals (m ,element-type ,specialized-array a)
 		(dotimes (j (cols m))
@@ -329,4 +352,5 @@
 	      m)))
      
      ))
+
 

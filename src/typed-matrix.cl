@@ -2,7 +2,8 @@
 (in-package :clem)
 
 (defclass typed-matrix (matrix)
-  ((specialzied-array :allocation :class :accessor specialized-array-p :initform nil)))
+  ((specialzied-array :allocation :class :accessor specialized-array-p :initform nil))
+  (:metaclass standard-matrix-class))
 
 (defmethod set-val-fit ((m typed-matrix) i j v &key (truncate nil))
   (set-val m i j (if truncate (truncate v) v)))
