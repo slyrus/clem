@@ -14,7 +14,7 @@
 (defsystem :clem
     :name "clem"
     :author "Cyrus Harmon"
-    :version "20050421.1"
+    :version "20050508.1"
     :depends-on (:util)
     :components
     ((:module :src
