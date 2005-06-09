@@ -223,6 +223,35 @@
 (defmethod mat-add ((a matrix) (b matrix))
   (mat-scalar-op a b #'+))
 
+(declaim (inline mat-add-inline))
+(defmethod mat-add-inline ((a matrix) (b matrix))
+  (destructuring-bind (m n) (dim a)
+    (let ((c (mat-copy-proto a)))
+      (let ((avals (matrix-vals a))
+            (bvals (matrix-vals b))
+            (cvals (matrix-vals c)))
+        (dotimes (i m c)
+          (declare (type fixnum i))
+          (dotimes (j n)
+            (declare (type fixnum j))
+            (setf (aref cvals i j)
+                  (+ (aref avals i j) (aref bvals i j)))))))))
+
+
+(declaim (inline mat-add!-inline))
+(defmethod mat-add!-inline ((a matrix) (b matrix))
+  (destructuring-bind (m n) (dim a)
+      (let ((avals (matrix-vals a))
+            (bvals (matrix-vals b)))
+        (dotimes (i m a)
+          (declare (type fixnum i))
+          (dotimes (j n)
+            (declare (type fixnum j))
+            (setf (aref avals i j)
+                  (+ (aref avals i j) (aref bvals i j))))))))
+
+       
+
 (defgeneric mat-subtr (a b))
 (defmethod mat-subtr ((a matrix) (b matrix))
   (mat-scalar-op a b #'-))
@@ -259,35 +288,23 @@
     (dotimes (j n)
       (set-val a k j (funcall f (val a k j))))))
 
-(defparameter *scalar-ops*
-  (list (list "mult" #'*)
-	(list "divide" #'/)
-	(list "double-float-divide" #'util:double-float-divide)
-	(list "single-float-divide" #'util:single-float-divide)
-	))
+(macrolet ((frob (name op)
+             `(progn
+                ;;; define the row op
+                (defmethod ,(util:make-intern (util:strcat "scalar-" name "-row"))
+                    ((a matrix) k q)
+                  (map-row a k #'(lambda (x) (apply ,op (list x q))))
+                  a)
+                ;;; define the column op
+                (defmethod ,(util:make-intern (util:strcat "scalar-" name "-col"))
+                    ((a matrix) k q)
+                  (map-col a k #'(lambda (x) (apply ,op (list x q))))
+                  a))))
+  (frob "mult" #'*)
+  (frob "divide" #'/)
+  (frob "double-float-divide" #'/)
+  (frob "single-float-divide" #'/))
 
-(defun def-scalar-row-op (name f)
-  (eval (list 'defmethod
-	      (util:make-intern (util:strcat "scalar-" name "-row"))
-	      `((a matrix) k q)
-	      `(map-row a k #'(lambda (x) (apply ,f (list x q))))
-              `a)))
-
-(defun def-scalar-col-op (name f)
-  (eval (list 'defmethod
-	      (util:make-intern (util:strcat "scalar-" name "-col"))
-	      `((a matrix) k q)
-	      `(map-col a k #'(lambda (x) (apply ,f (list x q))))
-              `a)))
-
-(defun def-scalar-ops (name f)
-  (def-scalar-row-op name f)
-  (def-scalar-col-op name f))
-
-(mapcar #'(lambda (x)
-	    (def-scalar-ops (car x) (cadr x)))
-	*scalar-ops*)
-	    
 (defgeneric scalar-mult (m q))
 (defmethod scalar-mult ((m matrix) q)
   (dotimes (i (first (dim m)) m)
