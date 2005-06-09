@@ -7,7 +7,7 @@
     :accumulator-type t))
 (defmatrixfuncs t-matrix
     :element-type t
-  :accumulator-type t)
+    :accumulator-type t)
 
 (eval-when (:compile-toplevel :load-toplevel)
   (defmatrixtype real-matrix (t-matrix)
@@ -186,84 +186,100 @@
 		:maxval most-positive-double-float
 		:specialized-array t)
 
-;;;; to debug this stuff do something like the following:
+(defparameter *typed-matrix-types*
+  '((double-float-matrix double-float "double-float") 
+    (single-float-matrix single-float "single-float") 
+    (fixnum-matrix fixnum "fixnum") 
+    (signed-byte-matrix (signed-byte 8) "signed-byte") 
+    (signed-word-matrix (signed-byte 16) "signed-word") 
+    (signed-long-matrix (signed-byte 32) "signed-long") 
+    (unsigned-byte-matrix (unsigned-byte 8) "unsigned-byte") 
+    (unsigned-word-matrix (unsigned-byte 16) "unsigned-word") 
+    (unsigned-long-matrix (unsigned-byte 32) "unsigned-long") 
+    (bit-matrix (unsigned-byte 1) "bit")))
 
-#+debug-def-matrix
-(ensure-directories-exist "gensrc")
+(defparameter *typed-matrix-types-hash* (make-hash-table :test 'equal))
+(defparameter *typed-matrix-names-hash* (make-hash-table :test 'equal))
 
-#+debug-def-matrix
-(with-open-file (src "gensrc/single-float-matrix.cl"
-		     :direction :output :if-exists :supersede)
-  (print '(in-package :clem) src)
-  (mapcar #'(lambda (x) (print x src))
-	  (cdr (macroexpand
-		'(defmatrixtype single-float-matrix () :element-type single-float
-		  :accumulator-type single-float
-		  :initial-element 0d0
-		  :minval most-negative-single-float
-		  :maxval most-positive-single-float
-		  :specialized-array t)))))
+(mapc #'(lambda (l)
+	  (destructuring-bind (matrix-type element-type type-name) l
+	    ;;; (print (list matrix-type element-type type-name))
+	    (setf (gethash element-type *typed-matrix-types-hash*) matrix-type)
+	    (setf (gethash element-type *typed-matrix-names-hash*) type-name)))
+      *typed-matrix-types*)
 
-#+debug-def-matrix
-(let ((*print-right-margin* 132))
-  (with-open-file (src "gensrc/unsigned-byte-matrix.cl"
-		       :direction :output :if-exists :supersede)
-    (print '(in-package :clem) src)
-    (mapcar #'(lambda (x) (print x src))
-	    (cdr (macroexpand
-		  '(defmatrixtype unsigned-byte-matrix (integer-matrix) :element-type (unsigned-byte 8)
-		    :accumulator-type (unsigned-byte 32)
-		    :initial-element 0
-		    :minval 0 :maxval 255
-		    :specialized-array t))))))
+(defun get-matrix-type-for-type (type)
+  (gethash type *typed-matrix-types-hash*))
 
-#+debug-def-matrix
-(with-open-file (src "gensrc/float-matrix.cl"
-		     :direction :output :if-exists :supersede)
-  (print '(in-package :clem) src)
-  (mapcar #'(lambda (x) (print x src))
-	  (cdr (macroexpand
-		'(defmatrixtype float-matrix (real-matrix))))))
+(defun get-matrix-name-for-type (type)
+  (gethash type *typed-matrix-names-hash*))
 
-#+debug-def-matrix
-(with-open-file (src "gensrc/real-matrix.cl"
-		     :direction :output :if-exists :supersede)
-  (print '(in-package :clem) src)
-  (mapcar #'(lambda (x) (print x src))
-	  (cdr (macroexpand
-		'(defmatrixtype real-matrix (t-matrix)
-		  :element-type real :accumulator-type real)))))
 
-#+debug-def-matrix
-(with-open-file (src "gensrc/integer-matrix.cl"
-		 :direction :output :if-exists :supersede)
-  (print '(in-package :clem) src)
-  (mapcar #'(lambda (x) (print x src))
-	  (cdr (macroexpand
-		'(defmatrixtype integer-matrix (t-matrix)
-		  :element-type integer :accumulator-type integer
-		  :specialized-array t)))))
+;;; double-float-matrix add and subtr operations
 
-#+debug-def-matrix
-(let ((*print-right-margin* 132))
-  (with-open-file (src "gensrc/t-matrix.cl"
-		   :direction :output :if-exists :supersede)
-    (print '(in-package :clem) src)
-    (mapcar #'(lambda (x) (print x src))
-	    (cdr (macroexpand
-		  '(defmatrixtype t-matrix ()
-		    :element-type t :accumulator-type t))))))
+(macrolet ((frob (type-1 type-2 type-3 &key suffix)
+	     `(progn
+		(def-matrix-add ,type-1 ,type-2 ,type-3 :suffix ,suffix)
+		(def-matrix-add! ,type-1 ,type-2 ,type-3 :suffix ,suffix)
+		(def-matrix-subtr ,type-1 ,type-2 ,type-3 :suffix ,suffix)
+		(def-matrix-subtr! ,type-1 ,type-2 ,type-3 :suffix ,suffix))))
 
-#+debug-def-matrix
-(let ((*print-right-margin* 132))
-  (with-open-file (src "gensrc/double-float-matrix.cl"
-		       :direction :output :if-exists :supersede)
-    (print '(in-package :clem) src)
-    (mapcar #'(lambda (x) (print x src))
-	    (cdr (macroexpand
-		  '(defmatrixtype double-float-matrix (float-matrix) :element-type double-float
-		    :accumulator-type double-float
-		    :initial-element 0d0
-		    :minval most-negative-double-float
-		    :maxval most-positive-double-float
-		    :specialized-array t))))))
+  (frob double-float-matrix double-float-matrix double-float-matrix)
+  (frob double-float-matrix single-float-matrix double-float-matrix)
+  (frob double-float-matrix unsigned-byte-matrix double-float-matrix)
+  (frob double-float-matrix unsigned-word-matrix double-float-matrix)
+  (frob double-float-matrix unsigned-long-matrix double-float-matrix)
+  (frob double-float-matrix signed-byte-matrix double-float-matrix)
+  (frob double-float-matrix signed-word-matrix double-float-matrix)
+  (frob double-float-matrix signed-long-matrix double-float-matrix)
+  (frob double-float-matrix bit-matrix double-float-matrix)
+  (frob double-float-matrix fixnum-matrix double-float-matrix)
+
+  (frob single-float-matrix single-float-matrix single-float-matrix)
+  (frob single-float-matrix unsigned-byte-matrix single-float-matrix)
+  (frob single-float-matrix unsigned-word-matrix single-float-matrix)
+  (frob single-float-matrix unsigned-long-matrix single-float-matrix)
+  (frob single-float-matrix signed-byte-matrix single-float-matrix)
+  (frob single-float-matrix signed-word-matrix single-float-matrix)
+  (frob single-float-matrix signed-long-matrix single-float-matrix)
+  (frob single-float-matrix bit-matrix single-float-matrix)
+  (frob single-float-matrix fixnum-matrix single-float-matrix)
+
+  (frob unsigned-byte-matrix unsigned-byte-matrix unsigned-byte-matrix)
+  (frob unsigned-word-matrix unsigned-word-matrix unsigned-word-matrix)
+  (frob unsigned-long-matrix unsigned-long-matrix unsigned-long-matrix))
+
+(macrolet ((frob (type-1 type-2 type-3 &key suffix)
+	     `(progn
+		(def-matrix-add ,type-1 ,type-2 ,type-3 :suffix ,suffix)
+		(def-matrix-subtr ,type-1 ,type-2 ,type-3 :suffix ,suffix))))
+  (frob single-float-matrix double-float-matrix double-float-matrix)
+  (frob double-float-matrix single-float-matrix double-float-matrix)
+  (frob double-float-matrix unsigned-byte-matrix double-float-matrix)
+  (frob double-float-matrix unsigned-word-matrix double-float-matrix)
+  (frob double-float-matrix unsigned-long-matrix double-float-matrix)
+  (frob double-float-matrix signed-byte-matrix double-float-matrix)
+  (frob double-float-matrix signed-word-matrix double-float-matrix)
+  (frob double-float-matrix signed-long-matrix double-float-matrix)
+  (frob double-float-matrix bit-matrix double-float-matrix)
+  (frob double-float-matrix fixnum-matrix double-float-matrix)
+
+  (frob unsigned-byte-matrix double-float-matrix double-float-matrix)
+  (frob unsigned-byte-matrix single-float-matrix single-float-matrix)
+
+  (frob unsigned-word-matrix double-float-matrix double-float-matrix)
+  (frob unsigned-word-matrix single-float-matrix single-float-matrix)
+
+  (frob unsigned-long-matrix double-float-matrix double-float-matrix)
+  (frob unsigned-long-matrix single-float-matrix single-float-matrix)
+
+  (frob signed-byte-matrix double-float-matrix double-float-matrix)
+  (frob signed-byte-matrix single-float-matrix single-float-matrix)
+
+  (frob signed-word-matrix double-float-matrix double-float-matrix)
+  (frob signed-word-matrix single-float-matrix single-float-matrix)
+
+  (frob signed-long-matrix double-float-matrix double-float-matrix)
+  (frob signed-long-matrix single-float-matrix single-float-matrix))
+
+

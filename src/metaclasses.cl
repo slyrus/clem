@@ -38,12 +38,16 @@
 
 (defclass standard-matrix-class (standard-class)
   ((element-type :initarg :element-type)
+   (accumulator-type :initarg :accumulator-type)
    (specialized-array :initarg :specialized-array :initform nil)
    (minval :accessor minval :initarg :minval :initform nil)
    (maxval :accessor maxval :initarg :maxval :initform nil)))
 
 (defmethod element-type ((smc standard-matrix-class))
   (car (slot-value smc 'element-type)))
+
+(defmethod accumulator-type ((smc standard-matrix-class))
+  (car (slot-value smc 'accumulator-type)))
 
 (defmethod specialized-array-p ((smc standard-matrix-class))
   (car (slot-value smc 'specialized-array)))

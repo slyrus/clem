@@ -310,13 +310,13 @@
   (let ((m (mat-copy a)))
     (scalar-divide m q)))
 
-(defgeneric zero-matrix (j &optional k))
-(defmethod zero-matrix ((j fixnum) &optional (k j))
-  (make-instance 'matrix :rows j :cols k))
+(defgeneric zero-matrix (j k &key matrix-class))
+(defmethod zero-matrix ((j fixnum) (k fixnum) &key (matrix-class 'matrix))
+  (make-instance matrix-class :rows j :cols k))
 
-(defgeneric identity-matrix (k))
-(defmethod identity-matrix ((k fixnum))
-  (let ((a (zero-matrix k)))
+(defgeneric identity-matrix (k &key matrix-class))
+(defmethod identity-matrix ((k fixnum) &key (matrix-class 'matrix))
+  (let ((a (zero-matrix k k :matrix-class matrix-class)))
     (dotimes (i k a)
       (set-val a i i 1d0))))
 
@@ -787,3 +787,15 @@
 (defmethod trim-one ((m matrix) k)
   (destructuring-bind (mr mc) (dim m)
     (subset-matrix m k (- mr k 1) k (- mc k 1))))
+
+(defgeneric m+ (&rest matrices))
+(defmethod m+ (&rest matrices)
+  (reduce #'mat-add matrices))
+
+(defgeneric m- (&rest matrices))
+(defmethod m- (&rest matrices)
+  (reduce #'mat-subtr matrices))
+
+(defgeneric m* (&rest matrices))
+(defmethod m* (&rest matrices)
+  (reduce #'mat-mult matrices))

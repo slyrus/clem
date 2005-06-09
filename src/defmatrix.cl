@@ -1,6 +1,6 @@
 ;;;; File: defmatrix.cl
 ;;;; Author: Cyrus Harmon
-;;;; Time-stamp: <2005-05-07 14:57:17 sly>
+;;;; Time-stamp: <2005-06-08 11:29:54 sly>
 ;;;; 
 ;;;; This file contains definitions for typed matrices. Typed
 ;;;; matrices have elements that are of a single type (although
@@ -80,28 +80,16 @@
 	   (with-matrix-vals (,p ,element-type ,c)
 	     (do ((,i ,startr (1+ ,i)))
 		 ((> ,i ,endr))
-	       (declare (dynamic-extent ,i) (type fixnum ,i))
+	       (declare #-sbcl (dynamic-extent ,i) (type fixnum ,i))
 	       (do ((,j ,startc (1+ ,j)))
 		   ((> ,j ,endc))
-		 (declare (dynamic-extent ,j) (type fixnum ,j))
+		 (declare #-sbcl (dynamic-extent ,j) (type fixnum ,j))
 		 ,@body))))))))
 
 
 (defmacro defmatrix-method (method (&rest args) &body body)
   `(defmethod ,method ,args
      ,@body))
-
-#| (defmacro defmatrix-method-mat-add (matrix-class)
-  `(defmethod mat-add ((m ,matrix-class) (n ,matrix-class))
-     (and (equal (dim m) (dim n))
-	  (destructuring-bind (mr mc) (dim m)
-	    (let ((p (mat-copy-proto m)))
-	      (with-matrix-range-do ,matrix-class m n p
-		  0 (- mr 1) 0 (- mc 1) (a b c i j)
-		(setf (aref c i j)
-		      (fit p (* 2 (+ (aref a i j) (aref b i j))))))
-	      p)))))
-|#
 
 (defmacro defmatrixtype (type direct-superclasses &key 
 			 (element-type 'double-float)
@@ -117,6 +105,7 @@
 	(val-format :accessor val-format :initform ,val-format))
        (:metaclass standard-matrix-class)
        (:element-type ,(delistify element-type))
+       (:accumulator-type ,(delistify accumulator-type))
        (:minval ,minval)
        (:maxval ,maxval))))
 
@@ -218,32 +207,6 @@
 				       (if max (coerce max ',element-type)
 					   (if ,maxval ,maxval 255)))))
 	 a))
-     
-     (defmethod mat-add ((m ,type) (n ,type))
-       (and (equal (dim m) (dim n))
-	    (destructuring-bind (mr mc) (dim m)
-	      (let ((p (mat-copy-proto m)))
-		(with-matrix-range-do ,type m n p 0 (- mr 1) 0 (- mc 1) (a b c i j)
-		  (setf (aref c i j)
-			(fit p (+ (aref a i j) (aref b i j)))))
-		p))))
-     
-     (defmethod mat-add! ((m ,type) (n ,type))
-       (and (equal (dim m) (dim n))
-	    (destructuring-bind (mr mc) (dim m)
-	      (with-matrix-range-do ,type m n m 0 (- mr 1) 0 (- mc 1) (a b c i j)
-		(setf (aref c i j)
-		      (fit m (+ (aref a i j) (aref b i j)))))
-	      m)))
-     
-     (defmethod mat-subtr ((m ,type) (n ,type))
-       (and (equal (dim m) (dim n))
-	    (destructuring-bind (mr mc) (dim m)
-	      (let ((p (mat-copy-proto m)))
-		(with-matrix-range-do ,type m n p 0 (- mr 1) 0 (- mc 1) (a b c i j)
-		  (setf (aref c i j)
-			(fit p (- (aref a i j) (aref b i j)))))
-		p))))
      
      (defmethod mat-subtr! ((m ,type) (n ,type))
        (and (equal (dim m) (dim n))
@@ -353,4 +316,119 @@
      
      ))
 
+
+(defmacro def-matrix-add (type-1 type-2 accumulator-type &key suffix)
+  (let ((element-type-1 (element-type (find-class `,type-1)))
+	(element-type-2 (element-type (find-class `,type-2)))
+	(accumulator-element-type (element-type (find-class `,accumulator-type)))
+	(i (gensym))
+	(j (gensym)))
+    `(progn
+       (defmethod ,(util::make-intern (strcat "mat-add-range" suffix))
+	   ((m ,type-1) (n ,type-2) startr endr startc endc)
+	 (destructuring-bind (mr mc) (dim m)
+	   (let ((p (make-instance ',accumulator-type :rows mr :cols mc)))
+	     (with-matrix-vals (m ,element-type-1 a)
+	       (with-matrix-vals (n ,element-type-2 b)
+		 (with-matrix-vals (p ,accumulator-element-type c)
+		   (do ((,i startr (1+ ,i)))
+		       ((> ,i endr))
+		     (declare (dynamic-extent ,i) (type fixnum ,i))
+		     (do ((,j startc (1+ ,j)))
+			 ((> ,j endc))
+		       (declare (dynamic-extent ,j) (type fixnum ,j))
+		       (setf (aref c ,i ,j)
+			     (+ (aref a ,i ,j) (aref b ,i ,j))))))))
+	     p)))
+       
+       (defmethod ,(util::make-intern (strcat "mat-add" suffix))
+	   ((m ,type-1) (n ,type-2))
+	 (destructuring-bind (mr mc) (dim m)
+	   (,(util::make-intern (strcat "mat-add-range" suffix)) m n 0 (1- mr) 0 (1- mc)))))))
+       
+(defmacro def-matrix-add! (type-1 type-2 accumulator-type &key suffix)
+  (declare (ignore accumulator-type))
+  (let ((element-type-1 (element-type (find-class `,type-1)))
+	(element-type-2 (element-type (find-class `,type-2)))
+	(i (gensym))
+	(j (gensym)))
+    `(progn
+       (defmethod ,(util::make-intern (strcat "mat-add!-range" suffix))
+	   ((m ,type-1) (n ,type-2) startr endr startc endc)
+	 (with-matrix-vals (m ,element-type-1 a)
+	   (with-matrix-vals (n ,element-type-2 b)
+	     (do ((,i startr (1+ ,i)))
+		 ((> ,i endr))
+	       (declare (dynamic-extent ,i) (type fixnum ,i))
+	       (do ((,j startc (1+ ,j)))
+		   ((> ,j endc))
+		 (declare (dynamic-extent ,j) (type fixnum ,j))
+		 (setf (aref a ,i ,j)
+		       (+ (aref a ,i ,j) (aref b ,i ,j))))))
+	   m))
+       
+       (defmethod ,(util::make-intern (strcat "mat-add!" suffix))
+	   ((m ,type-1) (n ,type-2))
+	 (destructuring-bind (mr mc) (dim m)
+	   (,(util::make-intern (strcat "mat-add!-range" suffix)) m n 0 (1- mr) 0 (1- mc))))
+       
+       )))
+
+(defmacro def-matrix-subtr (type-1 type-2 accumulator-type &key suffix)
+  (let ((element-type-1 (element-type (find-class `,type-1)))
+	(element-type-2 (element-type (find-class `,type-2)))
+	(accumulator-element-type (element-type (find-class `,accumulator-type)))
+	(i (gensym))
+	(j (gensym)))
+    `(progn
+       (defmethod ,(util::make-intern (strcat "mat-subtr-range" suffix))
+	   ((m ,type-1) (n ,type-2) startr endr startc endc)
+	 (destructuring-bind (mr mc) (dim m)
+	   (let ((p (make-instance ',accumulator-type :rows mr :cols mc)))
+	     (with-matrix-vals (m ,element-type-1 a)
+	       (with-matrix-vals (n ,element-type-2 b)
+		 (with-matrix-vals (p ,accumulator-element-type c)
+		   (do ((,i startr (1+ ,i)))
+		       ((> ,i endr))
+		     (declare (dynamic-extent ,i) (type fixnum ,i))
+		     (do ((,j startc (1+ ,j)))
+			 ((> ,j endc))
+		       (declare (dynamic-extent ,j) (type fixnum ,j))
+		       (setf (aref c ,i ,j)
+			     (- (aref a ,i ,j) (aref b ,i ,j))))))))
+	     p)))
+       
+       (defmethod ,(util::make-intern (strcat "mat-subtr" suffix))
+	   ((m ,type-1) (n ,type-2))
+	 (destructuring-bind (mr mc) (dim m)
+	   (mat-subtr-range m n 0 (1- mr) 0 (1- mc)))))))
+
+(defmacro def-matrix-subtr! (type-1 type-2 accumulator-type &key suffix)
+  (declare (ignore accumulator-type))
+  (let ((element-type-1 (element-type (find-class `,type-1)))
+	(element-type-2 (element-type (find-class `,type-2)))
+	(i (gensym))
+	(j (gensym)))
+    `(progn
+       (defmethod ,(util::make-intern (strcat "mat-subtr!-range" suffix))
+	   ((m ,type-1) (n ,type-2) startr endr startc endc)
+	 (with-matrix-vals (m ,element-type-1 a)
+	   (with-matrix-vals (n ,element-type-2 b)
+	     (do ((,i startr (1+ ,i)))
+		 ((> ,i endr))
+	       (declare (dynamic-extent ,i) (type fixnum ,i))
+	       (do ((,j startc (1+ ,j)))
+		   ((> ,j endc))
+		 (declare (dynamic-extent ,j) (type fixnum ,j))
+		 (setf (aref a ,i ,j)
+		       (- (aref a ,i ,j) (aref b ,i ,j))))))
+	   m))
+
+       (defmethod ,(util::make-intern (strcat "mat-subtr!" suffix))
+	   ((m ,type-1) (n ,type-2))
+	 (destructuring-bind (mr mc) (dim m)
+	   (mat-subtr!-range m n 0 (1- mr) 0 (1- mc))))
+
+
+       )))
 

@@ -22,7 +22,9 @@
    #:mat-mult
    #:mat-copy-into
    #:mat-add
+   #:mat-add!
    #:mat-subtr
+   #:mat-subtr!
    #:swap-rows
    #:swap-cols
    #:map-col
@@ -145,6 +147,8 @@
    #:bit-matrix
    #:array->bit-matrix
    #:random-bit-matrix
+
+   #:integer-matrix
 
    ))
 
