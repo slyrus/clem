@@ -15,6 +15,8 @@
 (defmethod val ((s scalar) i j) (declare (ignore i) (ignore j)) (scalar-val s))
 (defmethod set-val ((s scalar) i j v &key (coerce t))
   (declare (ignore i) (ignore j))
-  (scalar-set-val s (if coerce (coerce v (storage-type s)) v)))
+  (scalar-set-val s (if coerce (coerce v (element-type (class-of s))) v)))
+
+
 
   
