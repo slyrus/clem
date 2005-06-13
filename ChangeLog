@@ -1,0 +1,78 @@
+2005-06-13  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* test/test-clem2.cl: adding new tests (slowly).
+
+	* src/typed-matrix-utils.cl, src/metaclasses.cl, src/matrix.cl, src/defpackage.cl, src/defmatrix.cl, src/defmatrix-types.cl:
+	val-format is now a metaclass option rather than a class allocated variable
+	... added val-format stuff to metaclass
+	added def-move-element and def-matrix-move
+	added new matrix conversion/move functions
+	... this still needs to be cleaned up!
+	added def-matrix-move and supporting macros
+	export #:identity-matrix and #:copy-to-bit-matrix
+	trying to clean up the copy-to-<matrix-type> stuff
+
+	* src/scalar.cl: use element-type instead of storage-type
+
+	* src/row-vector.cl, src/col-vector.cl:
+	Cleanup row-vector and col-vector
+	... use element-type instead of storage-type
+	... call make-instance instead of xxx-vector functions
+
+2005-06-09  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/matrix.cl:
+	  *  cleaned up the scalar-op stuff to use macros instead of eval
+
+	* test/test-clem2.cl, src/metaclasses.cl, src/matrix.cl, src/defpackage.cl, src/defmatrix.cl, src/defmatrix-types.cl:
+	  * Lots of changes to clem. From here on out, I'll try to do a better
+		job of documenting them.
+	  * new matrix typed arithmetic functions.
+	  * cleaning up the matrix macro system
+	  * more tests
+
+2005-05-12  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* clem.asd: bumped version #.
+
+	* src/defmatrix-types.cl:
+	added eval-when (:compile-toplevel :load-toplevel) around the matrix
+	definitions so that the function definitions can use the classes to DTRT.
+
+2005-05-07  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* clem.asd, src/defmatrix-types.cl, src/defmatrix.cl, src/matrix.cl, src/metaclasses.cl, src/typed-matrix.cl:
+	finally! got things back to a working state.
+	summary of major changes:
+	1. matrix now is a standard-matrix-class
+	2. added accessors for standard-matrix-class element type
+	   and specialized-array-p or whatever
+	3. funky eval-when hacks to get the matrix classes defined before the
+	   functions which use the meta-data at function definition time
+	   to generate the proper declare statements so that all of this
+	   runs quickly.
+
+2005-04-26  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* clem-test.asd, clem.asd, src/defmatrix-types.cl, src/defmatrix.cl, src/defpackage.cl, src/matrix.cl, src/metaclasses.cl:
+	checkpoint so I can use on multiple computers.
+
+	* test/test-clem2.cl, test/test-defmatrix.cl, test/test-gaussian-convolve.cl:
+	fixing tests for new regime.
+
+2005-04-19  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* test/bench-matrix.cl: getting ready to for metaclass stuff.
+
+2005-04-18  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/matrix.cl, src/matrixops.cl, src/typed-matrix.cl:
+	checkpoint now that we cons a lot less than we used to when doing a
+	discrete-convolve. We still have a little ways to go, but it's much
+	better than before.
+
+2005-04-15  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* .cvsignore, README, bootstrap.cl, clem-test.asd, clem.asd, src/CHANGES, src/README, src/col-vector.cl, src/defpackage.cl, src/matrix.cl, src/matrixops.cl, src/matrixutils.cl, src/row-vector.cl, src/scalar.cl, src/typed-matrix-utils.cl, src/typed-matrix.cl, test/bench-matrix.cl, test/defpackage.cl, test/mat-test.cl, test/mattest2.cl, test/mattest3.cl, test/mattest4.cl, test/scratch.cl, test/test-clem.cl, test/test-convolve.cl, test/test-defmatrix.cl, test/test-dilate.cl, test/test-gaussian-convolve-1.cl, test/test-gaussian-convolve.cl, test/test-mean.cl, test/test-mult.cl, test/test-scalar.cl, test/vector-test.cl:
+	renamed the matrix package to ... CLEM ...
+
