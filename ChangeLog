@@ -1,5 +1,18 @@
 2005-06-13  Cyrus Harmon  <cyrus@bobobeach.com>
 
+	* TODO, README, LICENSE:
+	Added LICENSE and TODO. Removed TODO stuff from README.
+
+	* clem.asd: removed util dependency
+
+	* src/metaclasses.cl, src/matrix.cl, src/defpackage.cl, src/defmatrix.cl:
+	removed dependency on util. Had to copy some stuff over here to do it, however. Goes against OAOO but means we don't need util to run clem (except for the tests).
+
+	* src/row-vector.cl, src/col-vector.cl:
+	remove reference to undefined functions and call make-instance. WARNING: this hasn't been tested, but at least it compiles now!
+
+2005-06-13  Cyrus Harmon  <cyrus@bobobeach.com>
+
 	* test/test-clem2.cl: adding new tests (slowly).
 
 	* src/typed-matrix-utils.cl, src/metaclasses.cl, src/matrix.cl, src/defpackage.cl, src/defmatrix.cl, src/defmatrix-types.cl:
