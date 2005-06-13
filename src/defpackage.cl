@@ -8,7 +8,7 @@
       (pushnew :clem-sbcl-pcl cl:*features*)))
 
 (defpackage #:clem
-  (:use #:cl #:asdf #:util #+clem-sbcl-mop #:sb-mop)
+  (:use #:cl #:asdf #+clem-sbcl-mop #:sb-mop)
   (:export
    #:matrix
    #:dim

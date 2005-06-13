@@ -74,9 +74,14 @@
 (defun list-if (x)
   (if x (list x) x))
 
+;;; Miscellaneous class utilities
+    
 #+openmcl
 (defun compute-class-precedence-list (class)
   (ccl:class-precedence-list class))
+
+(defun subclassp (c1 c2)
+  (subtypep (class-name c1) (class-name c2)))
 
 (defgeneric matrix-precedence-list (c)
   (:method ((c class))
@@ -86,6 +91,15 @@
 		  (if (subclassp x mc) (list-if x)))
               mpl)
       )))
+
+(flet ((cca (l1 l2)
+	 (dolist (x l1)
+	   (let ((y (member x l2)))
+	     (if y (return y))))))
+  (defun closest-common-ancestor (itm &rest lis)
+    (if (null lis)
+	itm
+	(cca itm (apply #'closest-common-ancestor lis)))))
 
 (defgeneric closest-common-matrix-class (m1 &rest mr)
   (:method ((m1 matrix) &rest mr)
@@ -158,7 +172,7 @@
           ((> j endc))
         (format t (if (= j startc)
                       val-format-spec
-                      (util:strcat " " val-format-spec)) (val m i j))))
+                      (concatenate 'string " " val-format-spec)) (val m i j))))
     (format t "]~&")))
 
 (defgeneric print-matrix (m))
@@ -207,29 +221,12 @@
 
 (defgeneric mat-copy-into (a c &key truncate constrain))
 (defmethod mat-copy-into ((a matrix) (c matrix) &key truncate constrain)
-  (let ((min (minval (class-of c)))
-        (max (maxval (class-of c)))
-        (ltype (element-type (class-of c)))
-        (avals (matrix-vals a))
-        (cvals (matrix-vals c)))
-    (declare (type (simple-array double-float (* *)) avals cvals))
-    (flet ((maybe-constrain (val)
-             (if constrain
-                 (constrain min val max)
-                 val))
-           (maybe-truncate (val)
-             (if truncate
-                 (truncate val)
-                 val)))
-      (declare (inline maybe-constrain))
-      (destructuring-bind (m n) (dim a)
-        (dotimes (i m)
-          (declare (type fixnum i))
-          (dotimes (j n)
-            (declare (type fixnum j))
-;;;            (setf (aref cvals i j) (coerce (maybe-constrain (maybe-truncate (aref avals i j))) ltype))))))
-;;;            (setf (aref cvals i j) (aref avals i j))))))
-            (move-element a i j c i j)))))
+  (destructuring-bind (m n) (dim a)
+    (dotimes (i m)
+      (declare (type fixnum i))
+      (dotimes (j n)
+        (declare (type fixnum j))
+        (move-element a i j c i j)))
     c))
   
 (defgeneric mat-copy-proto-dim (a m n))
@@ -326,15 +323,21 @@
     (dotimes (j n)
       (set-val a k j (funcall f (val a k j))))))
 
+(eval-when (:compile-toplevel :load-toplevel)
+  (defun interncase (x)
+    (string-upcase x))
+  (defun make-intern (x &optional (package *package*))
+    (intern (interncase x) package)))
+
 (macrolet ((frob (name op)
              `(progn
                 ;;; define the row op
-                (defmethod ,(util:make-intern (util:strcat "scalar-" name "-row"))
+                (defmethod ,(make-intern (concatenate 'string "scalar-" name "-row"))
                     ((a matrix) k q)
                   (map-row a k #'(lambda (x) (apply ,op (list x q))))
                   a)
                 ;;; define the column op
-                (defmethod ,(util:make-intern (util:strcat "scalar-" name "-col"))
+                (defmethod ,(make-intern (concatenate 'string "scalar-" name "-col"))
                     ((a matrix) k q)
                   (map-col a k #'(lambda (x) (apply ,op (list x q))))
                   a))))
@@ -708,8 +711,11 @@
 (defun count-range (startr endr startc endc)
   (* (1+ (- endr startr)) (1+ (- endc startc))))  
 
+(defun double-float-divide (&rest args)
+  (apply #'/ (mapcar #'(lambda (x) (coerce x 'double-float)) args)))
+
 (defmethod mean-range ((m matrix) startr endr startc endc)
-  (util:double-float-divide (sum-range m startr endr startc endc)
+  (double-float-divide (sum-range m startr endr startc endc)
 		(count-range startr endr startc endc)))
 
 
@@ -725,7 +731,7 @@
       (let ((ssr (sum-square-range m startr endr startc endc)))
 	(let ((cr (count-range startr endr startc endc)))
 	  (declare (fixnum cr))
-	  (- (util:double-float-divide ssr cr)
+	  (- (double-float-divide ssr cr)
 	     musq))))))
 
 (defmethod variance ((m matrix))
@@ -740,7 +746,7 @@
 	       #'(lambda (v i j)
 		   (declare (ignore i j))
 		   (incf acc (- (* v v) musq))))
-    (util:double-float-divide acc (1- (count-range startr endr startc endc)))))
+    (double-float-divide acc (1- (count-range startr endr startc endc)))))
 
 (defmethod sample-variance ((m matrix))
   (destructuring-bind (mr mc) (dim m)

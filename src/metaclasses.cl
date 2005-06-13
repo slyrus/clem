@@ -22,6 +22,17 @@
       (car list)
       list))
 
+;;; Taken from util so I don't need to include it here
+(defun insert-before (new old list)
+  (labels ((build-list (old c &optional newlist)
+	     (if c
+		 (if (eq old (car c))
+		     (append (reverse (cdr c)) (cons (car c) (cons new newlist)))
+		     (build-list old (cdr c) (cons (car c) newlist)))
+		 (cons new newlist))))
+    (reverse (build-list old list))))
+
+
 (defun fill-slot-from-ancestor (slot class)
   (let ((ancestor (find-if #'(lambda (anc)
 			       (when (slot-exists-p anc slot)
@@ -97,7 +108,7 @@
   a)
 
 (defmethod initialize-instance :around
-    ((class standard-matrix-class) &rest all-keys &key direct-superclasses element-type &allow-other-keys)
+    ((class standard-matrix-class) &rest all-keys &key direct-superclasses &allow-other-keys)
   (let ((root-class (find-class 'typed-mixin))
 	(mc (find-class 'standard-matrix-class)))
     (if (and root-class (not (equal class root-class)))
@@ -112,7 +123,7 @@
   (fill-slots-from-ancestor '(:element-type :specialized-array) class all-keys))
 
 (defmethod reinitialize-instance :around
-    ((class standard-matrix-class) &rest all-keys &key direct-superclasses element-type &allow-other-keys)
+    ((class standard-matrix-class) &rest all-keys &key direct-superclasses &allow-other-keys)
   (let ((root-class (find-class 'typed-mixin))
 	(mc (find-class 'standard-matrix-class)))
     (if (and root-class (not (equal class root-class)))

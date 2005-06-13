@@ -1,6 +1,6 @@
 ;;;; File: defmatrix.cl
 ;;;; Author: Cyrus Harmon
-;;;; Time-stamp: <2005-06-10 22:39:59 sly>
+;;;; Time-stamp: <2005-06-12 22:59:08 sly>
 ;;;; 
 ;;;; This file contains definitions for typed matrices. Typed
 ;;;; matrices have elements that are of a single type (although
@@ -124,7 +124,7 @@
        (with-typed-matrix-vals (m ,element-type t a)
 	 (setf (aref a row col) v)))
 
-     (defmethod ,(make-intern (strcat "array->" (symbol-name type))) ((a array))
+     (defmethod ,(make-intern (concatenate 'string "array->" (symbol-name type))) ((a array))
        (array->matrix a :matrix-class ',type))
      
      (defmethod sum-range ((m ,type) (startr fixnum) (endr fixnum) (startc fixnum) (endc fixnum))
@@ -166,7 +166,7 @@
 ;	     (declare (type (or (unsigned-byte 32) single-float double-float) musq))
 	     (with-map-range m ,element-type ,specialized-array startr endr startc endc (a i j)
 	       (incf acc (- (* (aref a i j) (aref a i j)) musq)))))
-	 (util:double-float-divide acc (1- (count-range startr endr startc endc)))))
+	 (double-float-divide acc (1- (count-range startr endr startc endc)))))
      
      (defmethod set-val ((m ,type) i j v &key (coerce t))
       (declare (fixnum i j))
@@ -200,7 +200,7 @@
 	   (setf (aref a i j) (funcall f (aref a i j)))))
        m)
      
-     (defmethod ,(make-intern (strcat "random-" (symbol-name type))) (rows cols &key (max nil))
+     (defmethod ,(make-intern (concatenate 'string "random-" (symbol-name type))) (rows cols &key (max nil))
        (let ((a (make-instance ',type :rows rows :cols cols)))
 	 (map-set-val-fit a #'(lambda (x) (declare (ignore x))
 				      (random
@@ -350,7 +350,6 @@
 	(j (gensym)))
     `(progn
        (defmethod matrix-move-range ((m ,type-1) (n ,type-2) startr endr startc endc)
-	 (print 'bogosity)
 	 (with-matrix-vals (m ,element-type-1 a)
 	   (with-matrix-vals (n ,element-type-2 b)
 	     (do ((,i startr (1+ ,i)))
@@ -392,7 +391,7 @@
 	(i (gensym))
 	(j (gensym)))
     `(progn
-       (defmethod ,(util::make-intern (strcat "mat-add-range" suffix))
+       (defmethod ,(make-intern (concatenate 'string "mat-add-range" suffix))
 	   ((m ,type-1) (n ,type-2) startr endr startc endc)
 	 (destructuring-bind (mr mc) (dim m)
 	   (let ((p (make-instance ',accumulator-type :rows mr :cols mc)))
@@ -409,10 +408,10 @@
 			     (+ (aref a ,i ,j) (aref b ,i ,j))))))))
 	     p)))
        
-       (defmethod ,(util::make-intern (strcat "mat-add" suffix))
+       (defmethod ,(make-intern (concatenate 'string "mat-add" suffix))
 	   ((m ,type-1) (n ,type-2))
 	 (destructuring-bind (mr mc) (dim m)
-	   (,(util::make-intern (strcat "mat-add-range" suffix)) m n 0 (1- mr) 0 (1- mc)))))))
+	   (,(make-intern (concatenate 'string "mat-add-range" suffix)) m n 0 (1- mr) 0 (1- mc)))))))
        
 (defmacro def-matrix-add! (type-1 type-2 accumulator-type &key suffix)
   (declare (ignore accumulator-type))
@@ -421,7 +420,7 @@
 	(i (gensym))
 	(j (gensym)))
     `(progn
-       (defmethod ,(util::make-intern (strcat "mat-add!-range" suffix))
+       (defmethod ,(make-intern (concatenate 'string "mat-add!-range" suffix))
 	   ((m ,type-1) (n ,type-2) startr endr startc endc)
 	 (with-matrix-vals (m ,element-type-1 a)
 	   (with-matrix-vals (n ,element-type-2 b)
@@ -435,10 +434,10 @@
 		       (+ (aref a ,i ,j) (aref b ,i ,j))))))
 	   m))
        
-       (defmethod ,(util::make-intern (strcat "mat-add!" suffix))
+       (defmethod ,(make-intern (concatenate 'string "mat-add!" suffix))
 	   ((m ,type-1) (n ,type-2))
 	 (destructuring-bind (mr mc) (dim m)
-	   (,(util::make-intern (strcat "mat-add!-range" suffix)) m n 0 (1- mr) 0 (1- mc))))
+	   (,(make-intern (concatenate 'string "mat-add!-range" suffix)) m n 0 (1- mr) 0 (1- mc))))
        
        )))
 
@@ -449,7 +448,7 @@
 	(i (gensym))
 	(j (gensym)))
     `(progn
-       (defmethod ,(util::make-intern (strcat "mat-subtr-range" suffix))
+       (defmethod ,(make-intern (concatenate 'string "mat-subtr-range" suffix))
 	   ((m ,type-1) (n ,type-2) startr endr startc endc)
 	 (destructuring-bind (mr mc) (dim m)
 	   (let ((p (make-instance ',accumulator-type :rows mr :cols mc)))
@@ -466,7 +465,7 @@
 			     (- (aref a ,i ,j) (aref b ,i ,j))))))))
 	     p)))
        
-       (defmethod ,(util::make-intern (strcat "mat-subtr" suffix))
+       (defmethod ,(make-intern (concatenate 'string "mat-subtr" suffix))
 	   ((m ,type-1) (n ,type-2))
 	 (destructuring-bind (mr mc) (dim m)
 	   (mat-subtr-range m n 0 (1- mr) 0 (1- mc)))))))
@@ -478,7 +477,7 @@
 	(i (gensym))
 	(j (gensym)))
     `(progn
-       (defmethod ,(util::make-intern (strcat "mat-subtr!-range" suffix))
+       (defmethod ,(make-intern (concatenate 'string "mat-subtr!-range" suffix))
 	   ((m ,type-1) (n ,type-2) startr endr startc endc)
 	 (with-matrix-vals (m ,element-type-1 a)
 	   (with-matrix-vals (n ,element-type-2 b)
@@ -492,7 +491,7 @@
 		       (- (aref a ,i ,j) (aref b ,i ,j))))))
 	   m))
 
-       (defmethod ,(util::make-intern (strcat "mat-subtr!" suffix))
+       (defmethod ,(make-intern (concatenate 'string "mat-subtr!" suffix))
 	   ((m ,type-1) (n ,type-2))
 	 (destructuring-bind (mr mc) (dim m)
 	   (mat-subtr!-range m n 0 (1- mr) 0 (1- mc))))
