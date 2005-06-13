@@ -21,7 +21,7 @@
 (defmethod val ((cv col-vector) i j) (declare (ignore j)) (vec-val cv i))
 (defmethod set-val ((cv col-vector) i j v &key (coerce t))
   (declare (ignore j))
-  (vec-set-val cv i (if coerce (coerce v (storage-type cv)) v)))
+  (vec-set-val cv i (if coerce (coerce v (element-type (class-of cv))) v)))
 
 (defmethod array->col-vector ((a array))
   (let ((d (array-dimensions a)))
@@ -37,7 +37,7 @@
 
 (defmethod transpose ((cv col-vector))
   (let ((r (rows cv)))
-    (let ((rv (row-vector r)))
+    (let ((rv (make-instance 'row-vector :cols r)))
       (dotimes (j r rv)
 	(vec-set-val rv j (vec-val cv j))))))
 
