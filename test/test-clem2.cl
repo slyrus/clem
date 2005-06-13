@@ -54,10 +54,23 @@
     (let ((p (clem:mat-add m n)))
       p)))
 
+(defun test/mat-add-inline/unsigned-byte/unsigned-byte (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:unsigned-byte-matrix :cols size :rows size :initial-element 128))
+	(n (make-instance 'clem:unsigned-byte-matrix :cols size :rows size :initial-element 127)))
+    (let ((p (time (clem::mat-add-inline m n))))
+      p)))
+
 (defun test/mat-add!/unsigned-byte/unsigned-byte (&key (size *test-matrix-size*))
   (let ((m (make-instance 'clem:unsigned-byte-matrix :cols size :rows size :initial-element 128))
 	(n (make-instance 'clem:unsigned-byte-matrix :cols size :rows size :initial-element 127)))
     (let ((p (clem:mat-add! m n)))
+      p)))
+
+(defun test/mat-add!-inline/unsigned-byte/unsigned-byte (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:unsigned-byte-matrix :cols size :rows size :initial-element 128))
+	(n (make-instance 'clem:unsigned-byte-matrix :cols size :rows size :initial-element 127)))
+    (declare (inline clem::mat-add!-inline))
+    (let ((p (clem::mat-add!-inline m n)))
       p)))
 
 (defun test/mat-add/unsigned-byte/unsigned-word (&key (size *test-matrix-size*))
@@ -66,10 +79,22 @@
     (let ((p (clem:mat-add m n)))
       p)))
 
+(defun test/mat-add-inline/unsigned-byte/unsigned-word (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:unsigned-byte-matrix :cols size :rows size :initial-element 128))
+	(n (make-instance 'clem:unsigned-word-matrix :cols size :rows size :initial-element 127)))
+    (let ((p (time (clem::mat-add-inline m n))))
+      p)))
+
 (defun test/mat-add!/unsigned-byte/unsigned-word (&key (size *test-matrix-size*))
   (let ((m (make-instance 'clem:unsigned-byte-matrix :cols size :rows size :initial-element 128))
 	(n (make-instance 'clem:unsigned-word-matrix :cols size :rows size :initial-element 127)))
     (let ((p (clem:mat-add! m n)))
+      p)))
+
+(defun test/mat-add!-inline/unsigned-byte/unsigned-word (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:unsigned-byte-matrix :cols size :rows size :initial-element 128))
+	(n (make-instance 'clem:unsigned-word-matrix :cols size :rows size :initial-element 127)))
+    (let ((p (time (clem::mat-add!-inline m n))))
       p)))
 
 (defun test/mat-add/unsigned-byte/unsigned-long (&key (size *test-matrix-size*))
@@ -130,6 +155,24 @@
   (let ((m (make-instance 'clem:double-float-matrix :cols size :rows size :initial-element 1.0d0))
 	(n (make-instance 'clem:double-float-matrix :cols size :rows size :initial-element 1.0d0)))
     (let ((p (time (clem:mat-add m n))))
+      p)))
+
+(defun test/mat-add-inline/double-float/double-float (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:double-float-matrix :cols size :rows size :initial-element 1.0d0))
+	(n (make-instance 'clem:double-float-matrix :cols size :rows size :initial-element 1.0d0)))
+    (let ((p (time (clem::mat-add-inline m n))))
+      p)))
+
+(defun test/mat-add!/double-float/double-float (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:double-float-matrix :cols size :rows size :initial-element 1.0d0))
+	(n (make-instance 'clem:double-float-matrix :cols size :rows size :initial-element 1.0d0)))
+    (let ((p (clem:mat-add! m n)))
+      p)))
+
+(defun test/mat-add!-inline/double-float/double-float (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:double-float-matrix :cols size :rows size :initial-element 1.0d0))
+	(n (make-instance 'clem:double-float-matrix :cols size :rows size :initial-element 1.0d0)))
+    (let ((p (clem::mat-add!-inline m n)))
       p)))
 
 (defun test/mat-add/double-float/single-float (&key (size *test-matrix-size*))
@@ -272,3 +315,30 @@
 	(n (make-instance 'clem:fixnum-matrix :cols size :rows size :initial-element 1)))
     (let ((p (time (clem:mat-add! m n))))
       p)))
+
+
+
+(defun test/mat-add/unsigned-long/unsigned-long (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:unsigned-long-matrix :cols size :rows size :initial-element 128))
+	(n (make-instance 'clem:unsigned-long-matrix :cols size :rows size :initial-element 127)))
+    (let ((p (time (clem:mat-add m n))))
+      p)))
+
+(defun test/mat-add-inline/unsigned-long/unsigned-long (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:unsigned-long-matrix :cols size :rows size :initial-element 128))
+	(n (make-instance 'clem:unsigned-long-matrix :cols size :rows size :initial-element 127)))
+    (let ((p (time (clem::mat-add-inline m n))))
+      p)))
+
+(defun test/mat-add!/unsigned-long/unsigned-long (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:unsigned-long-matrix :cols size :rows size :initial-element 128))
+	(n (make-instance 'clem:unsigned-long-matrix :cols size :rows size :initial-element 127)))
+    (let ((p (time (clem:mat-add! m n))))
+      p)))
+
+(defun test/mat-add!-inline/unsigned-long/unsigned-long (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:unsigned-long-matrix :cols size :rows size :initial-element 128))
+	(n (make-instance 'clem:unsigned-long-matrix :cols size :rows size :initial-element 127)))
+    (let ((p (time (clem::mat-add!-inline m n))))
+      p)))
+
