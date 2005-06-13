@@ -1,17 +1,22 @@
 
 (in-package :clem)
 
-(defun copy-to-matrix-type (m mtype &key (truncate nil))
+(defun copy-to-matrix-type (m mtype &key (constrain nil))
   (let ((b (make-instance mtype :rows (rows m) :cols (cols m))))
-    (mat-copy-into m b :truncate truncate)
+    (matrix-move m b :constrain constrain)
     b))
 
-(defmethod copy-to-unsigned-byte-matrix ((m matrix))
-  (copy-to-matrix-type m 'unsigned-byte-matrix :truncate t))
+(defmethod copy-to-unsigned-byte-matrix ((m matrix) &key (constrain nil))
+  (copy-to-matrix-type m 'unsigned-byte-matrix :constrain constrain))
 
-(defmethod copy-to-double-float-matrix ((m matrix))
-  (copy-to-matrix-type m 'double-float-matrix))
+(defmethod copy-to-double-float-matrix ((m matrix) &key (constrain nil))
+  (copy-to-matrix-type m 'double-float-matrix :constrain constrain))
 
-(defmethod copy-to-fixnum-matrix ((m matrix))
-  (copy-to-matrix-type m 'fixnum-matrix :truncate t))
+(defmethod copy-to-single-float-matrix ((m matrix) &key (constrain nil))
+  (copy-to-matrix-type m 'single-float-matrix :constrain constrain))
 
+(defmethod copy-to-fixnum-matrix ((m matrix) &key (constrain nil))
+  (copy-to-matrix-type m 'fixnum-matrix :constrain constrain))
+
+(defmethod copy-to-bit-matrix ((m matrix) &key (constrain t))
+  (copy-to-matrix-type m 'bit-matrix :constrain constrain))

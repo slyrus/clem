@@ -1,4 +1,4 @@
-
+b
 (in-package :clem)
 
 (eval-when (:compile-toplevel :load-toplevel)
@@ -88,6 +88,7 @@
     :accumulator-type (unsigned-byte 32)
     :minval (- (expt 2 15))
     :maxval (- (expt 2 15) 1)
+    :val-format "~d"
     :specialized-array t))
 (defmatrixfuncs signed-word-matrix
     :element-type (signed-byte 16)
@@ -214,11 +215,12 @@
 (defun get-matrix-name-for-type (type)
   (gethash type *typed-matrix-names-hash*))
 
-
 ;;; double-float-matrix add and subtr operations
 
 (macrolet ((frob (type-1 type-2 type-3 &key suffix)
 	     `(progn
+		(def-move-element ,type-1 ,type-2)
+		(def-matrix-move ,type-1 ,type-2)
 		(def-matrix-add ,type-1 ,type-2 ,type-3 :suffix ,suffix)
 		(def-matrix-add! ,type-1 ,type-2 ,type-3 :suffix ,suffix)
 		(def-matrix-subtr ,type-1 ,type-2 ,type-3 :suffix ,suffix)
@@ -247,12 +249,25 @@
 
   (frob unsigned-byte-matrix unsigned-byte-matrix unsigned-byte-matrix)
   (frob unsigned-word-matrix unsigned-word-matrix unsigned-word-matrix)
-  (frob unsigned-long-matrix unsigned-long-matrix unsigned-long-matrix))
+  (frob unsigned-long-matrix unsigned-long-matrix unsigned-long-matrix)
+
+  (frob unsigned-byte-matrix bit-matrix unsigned-byte-matrix)
+  (frob unsigned-word-matrix bit-matrix unsigned-word-matrix)
+  (frob unsigned-long-matrix bit-matrix unsigned-long-matrix)
+
+  (frob signed-byte-matrix bit-matrix signed-byte-matrix)
+  (frob signed-word-matrix bit-matrix signed-word-matrix)
+  (frob signed-long-matrix bit-matrix signed-long-matrix)
+  
+  (frob signed-long-matrix unsigned-byte-matrix signed-long-matrix)
+  (frob signed-long-matrix unsigned-word-matrix signed-long-matrix))
 
 (macrolet ((frob (type-1 type-2 type-3 &key suffix)
 	     `(progn
 		(def-matrix-add ,type-1 ,type-2 ,type-3 :suffix ,suffix)
-		(def-matrix-subtr ,type-1 ,type-2 ,type-3 :suffix ,suffix))))
+		(def-matrix-subtr ,type-1 ,type-2 ,type-3 :suffix ,suffix)
+		(def-move-element ,type-1 ,type-2)
+		(def-matrix-move ,type-1 ,type-2))))
   (frob single-float-matrix double-float-matrix double-float-matrix)
   (frob double-float-matrix single-float-matrix double-float-matrix)
   (frob double-float-matrix unsigned-byte-matrix double-float-matrix)

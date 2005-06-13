@@ -36,12 +36,16 @@
 		(fill-slot-from-ancestor x class)))
 	  slots))
 
+
+;;; NOTE: don't use accessors here as they will return a list!
+;;;       at least on SBCL
 (defclass standard-matrix-class (standard-class)
   ((element-type :initarg :element-type)
    (accumulator-type :initarg :accumulator-type)
    (specialized-array :initarg :specialized-array :initform nil)
-   (minval :accessor minval :initarg :minval :initform nil)
-   (maxval :accessor maxval :initarg :maxval :initform nil)))
+   (val-format :initarg :val-format :initform "~4,9F")
+   (minval :initarg :minval :initform nil)
+   (maxval :initarg :maxval :initform nil)))
 
 (defmethod element-type ((smc standard-matrix-class))
   (car (slot-value smc 'element-type)))
@@ -51,6 +55,16 @@
 
 (defmethod specialized-array-p ((smc standard-matrix-class))
   (car (slot-value smc 'specialized-array)))
+
+(defmethod val-format ((smc standard-matrix-class))
+  (car (slot-value smc 'val-format)))
+
+(defmethod minval ((smc standard-matrix-class))
+  (car (slot-value smc 'minval)))
+
+(defmethod maxval ((smc standard-matrix-class))
+  (car (slot-value smc 'maxval)))
+
 
 ;;;
 ;;; Need validate-superclass for some reason. Read AMOP and fix this note

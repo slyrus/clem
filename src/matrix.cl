@@ -44,18 +44,17 @@
 (declaim (inline matrix-vals))
 (defclass matrix ()
   ((m :accessor matrix-vals)
-   (element-type :allocation :class :accessor element-type :initarg :element-type :initform 'double-float)
    (rows :accessor matrix-rows :initarg :rows :initform 1)
    (cols :accessor matrix-cols :initarg :cols :initform 1)
    (initial-element :accessor initial-element :initarg :initial-element :initform 0d0)
    (adjustable :accessor adjustable :initarg :adjustable :initform nil)
-   (resizeable :accessor resizable :initform nil)
-   (val-format :accessor val-format :initform "~4,9F"))
+   (resizeable :accessor resizable :initform nil))
   (:metaclass standard-matrix-class)
-  (:element-type 'double-float))
+  (:element-type double-float)
+  (:val-format "~4,9F"))
 
-(defgeneric allocate-matrix-vals (object &key rows cols adjustable initial-element element-type))
-(defmethod allocate-matrix-vals ((object matrix) &key rows cols adjustable initial-element element-type)
+(defgeneric allocate-matrix-vals (object &key rows cols adjustable initial-element))
+(defmethod allocate-matrix-vals ((object matrix) &key rows cols adjustable initial-element)
   (setf (slot-value object 'm)
 	(make-array (list rows cols)
 		    :adjustable adjustable
@@ -64,14 +63,14 @@
 		    )))
   
 (defmethod shared-initialize :after
-    ((object matrix) slot-names &rest initargs &key rows cols adjustable initial-element element-type)
-  (declare (ignore slot-names initargs rows cols adjustable initial-element element-type))
+    ((object matrix) slot-names &rest initargs &key rows cols adjustable initial-element)
+  (declare (ignore slot-names initargs rows cols adjustable initial-element))
   (allocate-matrix-vals object
                         :rows (slot-value object 'rows)
                         :cols (slot-value object 'cols)
                         :adjustable (slot-value object 'adjustable)                        
-                        :initial-element (slot-value object 'initial-element)
-                        :element-type (slot-value object 'element-type)))
+                        :initial-element (slot-value object 'initial-element)))
+
 (defun list-if (x)
   (if x (list x) x))
 
@@ -117,17 +116,24 @@
 (defgeneric val (m i j))
 (defmethod val ((m matrix) i j) (aref (matrix-vals m) i j))
 
+(defgeneric mref (m i j))
+(defmethod mref ((m matrix) i j) (aref (matrix-vals m) i j))
+
+(defgeneric move-element (m i1 j1 n i2 j2))
+(defmethod move-element ((m matrix) i1 j1 (n matrix) i2 j2)
+  (setf (mref n i2 j2) (mref m i1 j1)))
+
 (defgeneric set-val (m i j v &key coerce))
 (declaim (inline set-val))
 (defmethod set-val ((m matrix) i j v &key (coerce t))
   (setf (aref (matrix-vals m) i j)
 	(if coerce
-	    (coerce v (element-type m))
+	    (coerce v (element-type (class-of m)))
 	    v)))
 
 (defgeneric set-val-fit (m i j v &key truncate))
 (defmethod set-val-fit ((m matrix) i j v &key (truncate nil))
-  (set-val m i j (if truncate (truncate v) v)))
+  (setf (mref m i j) (if truncate (truncate v) v)))
 
 
 (defparameter *print-matrix-newlines* t)
@@ -139,7 +145,7 @@
 			(startc fixnum) (endc fixnum))
   (let ((val-format-spec (if *print-matrix-float-format*
                              *print-matrix-float-format*
-                             (val-format m))))
+                             (val-format (class-of m)))))
     (format t "#[")
     (do ((i startr (1+ i)))
         ((> i endr))
@@ -185,16 +191,47 @@
 		(set-val c i j v))))
 	  c))))))
 
-(defgeneric mat-copy-into (a c &key truncate))
-(defmethod mat-copy-into ((a matrix) (c matrix) &key (truncate))
-  (destructuring-bind (m n) (dim a)
-    (dotimes (i m)
-      (dotimes (j n)
-	(if truncate
-	    (set-val-fit c i j (val a i j) :truncate truncate)
-	    (set-val c i j (val a i j)))))
-    c))
+(declaim (inline inferior))
+(defun inferior (a b)
+  (if (< a b) a b))
 
+(declaim (inline superior))
+(defun superior (a b)
+  (if (> a b) a b))
+
+(declaim (inline constrain))
+(defun constrain (min val max)
+  (if (and min max)
+    (inferior (superior min val) max)
+    val))
+
+(defgeneric mat-copy-into (a c &key truncate constrain))
+(defmethod mat-copy-into ((a matrix) (c matrix) &key truncate constrain)
+  (let ((min (minval (class-of c)))
+        (max (maxval (class-of c)))
+        (ltype (element-type (class-of c)))
+        (avals (matrix-vals a))
+        (cvals (matrix-vals c)))
+    (declare (type (simple-array double-float (* *)) avals cvals))
+    (flet ((maybe-constrain (val)
+             (if constrain
+                 (constrain min val max)
+                 val))
+           (maybe-truncate (val)
+             (if truncate
+                 (truncate val)
+                 val)))
+      (declare (inline maybe-constrain))
+      (destructuring-bind (m n) (dim a)
+        (dotimes (i m)
+          (declare (type fixnum i))
+          (dotimes (j n)
+            (declare (type fixnum j))
+;;;            (setf (aref cvals i j) (coerce (maybe-constrain (maybe-truncate (aref avals i j))) ltype))))))
+;;;            (setf (aref cvals i j) (aref avals i j))))))
+            (move-element a i j c i j)))))
+    c))
+  
 (defgeneric mat-copy-proto-dim (a m n))
 (defmethod mat-copy-proto-dim ((a matrix) (m fixnum) (n fixnum))
   (make-instance (class-of a) :rows m :cols n))
@@ -224,7 +261,8 @@
   (mat-scalar-op a b #'+))
 
 (declaim (inline mat-add-inline))
-(defmethod mat-add-inline ((a matrix) (b matrix))
+
+(defun mat-add-inline (a b)
   (destructuring-bind (m n) (dim a)
     (let ((c (mat-copy-proto a)))
       (let ((avals (matrix-vals a))
@@ -239,7 +277,7 @@
 
 
 (declaim (inline mat-add!-inline))
-(defmethod mat-add!-inline ((a matrix) (b matrix))
+(defun mat-add!-inline (a b)
   (destructuring-bind (m n) (dim a)
       (let ((avals (matrix-vals a))
             (bvals (matrix-vals b)))
@@ -333,9 +371,10 @@
 
 (defgeneric identity-matrix (k &key matrix-class))
 (defmethod identity-matrix ((k fixnum) &key (matrix-class 'matrix))
-  (let ((a (zero-matrix k k :matrix-class matrix-class)))
+  (let* ((a (zero-matrix k k :matrix-class matrix-class))
+         (one (coerce 1 (element-type (class-of a)))))
     (dotimes (i k a)
-      (set-val a i i 1d0))))
+      (set-val a i i one))))
 
 (defgeneric concat-matrix-cols (a b &key matrix-type))
 (defmethod concat-matrix-cols ((a matrix) (b matrix) &key matrix-type)

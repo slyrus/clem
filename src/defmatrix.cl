@@ -1,6 +1,6 @@
 ;;;; File: defmatrix.cl
 ;;;; Author: Cyrus Harmon
-;;;; Time-stamp: <2005-06-08 11:29:54 sly>
+;;;; Time-stamp: <2005-06-10 22:39:59 sly>
 ;;;; 
 ;;;; This file contains definitions for typed matrices. Typed
 ;;;; matrices have elements that are of a single type (although
@@ -101,13 +101,13 @@
   (unless direct-superclasses (setf direct-superclasses '(matrix)))
   `(progn
      (defclass ,type ,direct-superclasses
-       ((initial-element :accessor initial-element :initarg :initial-element :initform ,initial-element)
-	(val-format :accessor val-format :initform ,val-format))
+       ((initial-element :accessor initial-element :initarg :initial-element :initform ,initial-element))
        (:metaclass standard-matrix-class)
        (:element-type ,(delistify element-type))
        (:accumulator-type ,(delistify accumulator-type))
-       (:minval ,minval)
-       (:maxval ,maxval))))
+       (:val-format ,(delistify val-format))
+       (:minval ,(if (symbolp minval) (symbol-value minval) minval))
+       (:maxval ,(if (symbolp maxval) (symbol-value minval) maxval)))))
 
 (defmacro defmatrixfuncs (type &key 
 			  (element-type 'double-float)
@@ -316,6 +316,74 @@
      
      ))
 
+
+(defmacro def-move-element (type-1 type-2)
+  (let ((element-type-1 (element-type (find-class `,type-1)))
+	(element-type-2 (element-type (find-class `,type-2))))
+    `(progn
+       (defmethod move-element
+	   ((m ,type-1) i1 j1 (n ,type-2) i2 j2)
+	 (with-matrix-vals (m ,element-type-1 a)
+	   (with-matrix-vals (n ,element-type-2 b)
+	     (setf (aref b i2 j2)
+		   ,(if (eql element-type-1 element-type-2)
+			`(aref a i1 j1)
+			`(coerce (aref a i1 j1) ',element-type-2)))))))))
+
+(defmacro maybe-coerce (val type-1 type-2)
+  (if (eql type-1 type-2)
+      val
+      `(coerce ,val ',type-2)))
+
+(defmacro maybe-truncate (val type-1 type-2)
+  (if (and (subtypep type-2 'integer)
+	   (subtypep type-1 'float))
+      `(nth-value 0 (truncate ,val))
+      `(maybe-coerce ,val ,type-1 ,type-2)))
+	   
+(defmacro def-matrix-move (type-1 type-2)
+  (let ((element-type-1 (element-type (find-class `,type-1)))
+	(element-type-2 (element-type (find-class `,type-2)))
+	(min (minval (find-class `,type-2)))
+	(max (maxval (find-class `,type-2)))
+	(i (gensym))
+	(j (gensym)))
+    `(progn
+       (defmethod matrix-move-range ((m ,type-1) (n ,type-2) startr endr startc endc)
+	 (print 'bogosity)
+	 (with-matrix-vals (m ,element-type-1 a)
+	   (with-matrix-vals (n ,element-type-2 b)
+	     (do ((,i startr (1+ ,i)))
+		 ((> ,i endr))
+	       (declare (dynamic-extent ,i) (type fixnum ,i))
+	       (do ((,j startc (1+ ,j)))
+		   ((> ,j endc))
+		 (declare (dynamic-extent ,j) (type fixnum ,j))
+		 (setf (aref b ,i ,j)
+		       (maybe-truncate
+			(aref a ,i ,j)
+			,element-type-1 ,element-type-2))))))
+	 n)
+       (defmethod matrix-move-range-constrain ((m ,type-1) (n ,type-2) startr endr startc endc)
+	 (with-matrix-vals (m ,element-type-1 a)
+	   (with-matrix-vals (n ,element-type-2 b)
+	     (do ((,i startr (1+ ,i)))
+		 ((> ,i endr))
+	       (declare (dynamic-extent ,i) (type fixnum ,i))
+	       (do ((,j startc (1+ ,j)))
+		   ((> ,j endc))
+		 (declare (dynamic-extent ,j) (type fixnum ,j))
+		 (setf (aref b ,i ,j) ,(if (eql element-type-1 element-type-2)
+					   `(constrain ,min (aref a ,i ,j) ,max)
+					   `(coerce (constrain ,min (aref a ,i ,j) ,max)
+						    ',element-type-2)))))))
+	 n)
+       (defmethod matrix-move ((m ,type-1) (n ,type-2) &key constrain)
+	 (destructuring-bind (mr mc) (dim m)
+	   (cond (constrain
+		  (matrix-move-range-constrain m n 0 (1- mr) 0 (1- mc)))
+		 (t
+		  (matrix-move-range m n 0 (1- mr) 0 (1- mc)))))))))
 
 (defmacro def-matrix-add (type-1 type-2 accumulator-type &key suffix)
   (let ((element-type-1 (element-type (find-class `,type-1)))

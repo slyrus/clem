@@ -46,6 +46,7 @@
 
    #:random-matrix
    #:zero-matrix
+   #:identity-matrix
 
    #:mat-square
    #:mat-square!
@@ -70,6 +71,7 @@
    #:copy-to-unsigned-byte-matrix
    #:copy-to-double-float-matrix
    #:copy-to-fixnum-matrix
+   #:copy-to-bit-matrix
 
 
    ;;; matrix operations
