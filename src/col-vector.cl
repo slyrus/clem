@@ -31,7 +31,7 @@
 	     (dotimes (i rows) (vec-set-val m i (aref a i 0)))
 	     m))
 	  ((= (length d) 1)
-	   (let ((m (col-vector (first d))))
+	   (let ((m (make-instance 'col-vector :rows (first d))))
 	     (dotimes (i (first d)) (vec-set-val m i (aref a i)))
 	     m)))))
 
@@ -61,12 +61,14 @@
     (set-val m i c (val v i 0))))
 
 (defmethod get-row-as-col-vector ((m matrix) r)
-  (col-vector (second (dim m))
-	      (get-row-list m r)))
-
+  (let ((cv (make-instance 'col-vector :rows (second (dim m)))))
+    (dotimes (i (second (dim m)))
+      (vec-set-val cv i (val m r i)))))
+		 
 (defmethod get-col-vector ((m matrix) r)
-  (col-vector (first (dim m))
-	      (get-col-list m r)))
+  (let ((cv (make-instance 'col-vector :rows (first (dim m)))))
+    (dotimes (i (first (dim m)))
+      (vec-set-val cv i (val m i r)))))
 
 (defmethod zero-col-vector((j fixnum))
   (zero-matrix j 1))
