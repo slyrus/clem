@@ -18,7 +18,8 @@
 ;;; I need *my-pacakge* so the intern statement below doesn't intern
 ;;; the symbol into CL-USER and I put it up here to remind myself of
 ;;; this fact in case I switch packages
-(defparameter *my-package* :clem-test)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defparameter *my-package* :clem-test))
 
 ;;; macro to define typed accessor functions
 (defmacro make-accessors (element-type
@@ -62,18 +63,18 @@
      (values #'mref-single-float #'(setf mref-single-float)))
 
     ((simple-array (unsigned-byte 8) (* *))
-     (values #'mref-unsigned-byte #'(setf mref-unsigned-byte)))
+     (values #'mref-ub8 #'(setf mref-ub8)))
     ((simple-array (unsigned-byte 16) (* *))
-     (values #'mref-unsigned-word #'(setf mref-unsigned-word)))
+     (values #'mref-ub16 #'(setf mref-ub16)))
     ((simple-array (unsigned-byte 32) (* *))
-     (values #'mref-unsigned-long #'(setf mref-unsigned-long)))
+     (values #'mref-ub32 #'(setf mref-ub32)))
 
     ((simple-array (signed-byte 8) (* *))
-     (values #'mref-signed-byte #'(setf mref-signed-byte)))
+     (values #'mref-sb8 #'(setf mref-sb8)))
     ((simple-array (signed-byte 16) (* *))
-     (values #'mref-signed-word #'(setf mref-signed-word)))
+     (values #'mref-sb16 #'(setf mref-sb16)))
     ((simple-array (signed-byte 32) (* *))
-     (values #'mref-signed-long #'(setf mref-signed-long)))
+     (values #'mref-sb32 #'(setf mref-sb32)))
 
     ((simple-array fixnum (* *))
      (values #'mref-fixnum #'(setf mref-fixnum)))
@@ -97,23 +98,14 @@
 
 ;;; the old school way - works no consing - unsigned bytes
 (defun array-test-2 (a)
-  (let ((getter #'mref-unsigned-byte)
-	(setter #'(setf mref-unsigned-byte)))
+  (let ((getter #'mref-ub8)
+	(setter #'(setf mref-ub8)))
     (destructuring-bind (r c) (array-dimensions a)
       (dotimes (i r)
 	(dotimes (j c)
 	  (funcall setter (* (funcall getter a i j) 2) a i j))))
     a))
 
-;;; the new school way - conses like a moh
-;            CLEM-TEST::J)
-; ==>
-;   (SB-C::%FUNCALL FUNCTION #:G18 #:G19 #:G20 #:G21)
-; 
-; note: doing float to pointer coercion (cost 13)
-STYLE-WARNING: redefining ARRAY-TEST-3 in DEFUN
-; 
-; compilation unit finishetder
 (defun array-test-3 (a)
 ;;  (declare (optimize (speed 3) (space 0)))
   (multiple-value-bind (getter setter) (get-accessors a)
