@@ -1,4 +1,4 @@
-b
+
 (in-package :clem)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
