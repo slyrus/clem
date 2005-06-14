@@ -454,3 +454,23 @@
     (let ((p (time (clem::mat-scale! m 256))))
       p)))
 
+
+;;; hprod test
+(defun test/mat-hprod/double-float/double-float (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:double-float-matrix :cols size :rows size :initial-element 1.25d0))
+	(n (make-instance 'clem:double-float-matrix :cols size :rows size :initial-element 1.25d0)))
+    (let ((p (time (clem::mat-hprod m n))))
+      p)))
+
+(defun test/mat-hprod/double-float/single-float (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:double-float-matrix :cols size :rows size :initial-element 1.25d0))
+	(n (make-instance 'clem:single-float-matrix :cols size :rows size :initial-element 1.25s0)))
+    (let ((p (time (clem::mat-hprod m n))))
+      p)))
+
+(defun test/mat-hprod/double-float/unsigned-byte (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:double-float-matrix :cols size :rows size :initial-element 1.25d0))
+	(n (make-instance 'clem:unsigned-byte-matrix :cols size :rows size :initial-element 2)))
+    (let ((p (time (clem::mat-hprod m n))))
+      p)))
+

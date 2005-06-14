@@ -59,3 +59,5 @@ bit (or whatever the appropriate one bit type is)
     initialized via make-instance. Now I now all this so I need to
     remove the hacked up constructor functions I made and replace
     everything with calls to make-instance.
+
+14. rename unsinged-{byte,word,long} to ub{8,16,32}, etc...

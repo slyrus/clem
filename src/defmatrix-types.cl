@@ -298,20 +298,3 @@
   (frob signed-long-matrix single-float-matrix single-float-matrix))
 
 
-
-
-(macrolet ((frob (type-1 type-3 &key suffix)
-	     `(progn
-		(def-matrix-scale ,type-1 ,type-3 :suffix ,suffix)
-		(def-matrix-scale! ,type-1 :suffix ,suffix))))
-  (frob double-float-matrix double-float-matrix)
-  (frob single-float-matrix single-float-matrix)
-  (frob unsigned-byte-matrix unsigned-byte-matrix)
-  (frob unsigned-word-matrix unsigned-word-matrix)
-  (frob unsigned-long-matrix unsigned-long-matrix)
-  (frob signed-byte-matrix signed-byte-matrix)
-  (frob signed-word-matrix signed-word-matrix)
-  (frob signed-long-matrix signed-long-matrix)
-  (frob bit-matrix bit-matrix)
-  (frob fixnum-matrix fixnum-matrix))
-

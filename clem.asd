@@ -24,6 +24,8 @@
 	       (:file "typed-matrix" :depends-on ("defpackage" "matrix"))
 	       (:file "defmatrix" :depends-on ("defpackage" "matrix" "typed-matrix" "metaclasses"))
 	       (:file "defmatrix-types" :depends-on ("defpackage" "matrix" "typed-matrix" "metaclasses" "defmatrix"))
+	       (:file "defmatrix-scale" :depends-on ("defmatrix-types"))
+	       (:file "defmatrix-hprod" :depends-on ("defmatrix-types"))
 	       (:file "typed-matrix-utils" :depends-on ("defpackage" "matrix" "typed-matrix"))
 	       (:file "row-vector" :depends-on ("defpackage" "matrix"))
 	       (:file "col-vector" :depends-on ("defpackage" "matrix"))
