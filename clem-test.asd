@@ -9,10 +9,11 @@
   ((:module :test
 	    :components
 	    ((:file "defpackage")
-	     (:file "test-clem")
-	     (:file "test-clem2")
-	     (:file "test-defmatrix")
-	     (:file "bench-matrix")
+	     (:file "test-clem" :depends-on ("defpackage"))
+	     (:file "test-clem2" :depends-on ("defpackage"))
+	     (:file "test-clem3" :depends-on ("defpackage"))
+	     (:file "test-defmatrix" :depends-on ("defpackage"))
+	     (:file "bench-matrix" :depends-on ("defpackage"))
 	     )
 	    :serial t
 	    )))

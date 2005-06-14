@@ -342,3 +342,115 @@
     (let ((p (time (clem::mat-add!-inline m n))))
       p)))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; mat-scale
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun test/mat-scale/double-float (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:double-float-matrix :cols size :rows size :initial-element 1.0d0)))
+    (let ((p (time (clem::mat-scale m 2.0d0))))
+      p)))
+
+(defun test/mat-scale/single-float (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:single-float-matrix :cols size :rows size :initial-element 1.0s0)))
+    (let ((p (time (clem::mat-scale m 2.0s0))))
+      p)))
+
+(defun test/mat-scale/unsigned-byte (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:unsigned-byte-matrix :cols size :rows size :initial-element 1)))
+    (let ((p (time (clem::mat-scale m 2))))
+      p)))
+
+(defun test/mat-scale/unsigned-word (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:unsigned-word-matrix :cols size :rows size :initial-element 255)))
+    (let ((p (time (clem::mat-scale m 255))))
+      p)))
+
+(defun test/mat-scale/unsigned-long (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:unsigned-long-matrix :cols size :rows size :initial-element 256)))
+    (let ((p (time (clem::mat-scale m 256))))
+      p)))
+
+
+(defun test/mat-scale/signed-byte (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:signed-byte-matrix :cols size :rows size :initial-element 1)))
+    (let ((p (time (clem::mat-scale m 2))))
+      p)))
+
+(defun test/mat-scale/signed-word (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:signed-word-matrix :cols size :rows size :initial-element 127)))
+    (let ((p (time (clem::mat-scale m 127))))
+      p)))
+
+(defun test/mat-scale/signed-long (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:signed-long-matrix :cols size :rows size :initial-element 256)))
+    (let ((p (time (clem::mat-scale m 256))))
+      p)))
+
+(defun test/mat-scale/bit (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:bit-matrix :cols size :rows size :initial-element 1)))
+    (let ((p (time (clem::mat-scale m 0))))
+      p)))
+
+(defun test/mat-scale/fixnum (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:fixnum-matrix :cols size :rows size :initial-element 256)))
+    (let ((p (time (clem::mat-scale m 256))))
+      p)))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; mat-scale!
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun test/mat-scale!/double-float (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:double-float-matrix :cols size :rows size :initial-element 1.0d0)))
+    (let ((p (time (clem::mat-scale! m 2.0d0))))
+      p)))
+
+(defun test/mat-scale!/single-float (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:single-float-matrix :cols size :rows size :initial-element 1.0s0)))
+    (let ((p (time (clem::mat-scale! m 2.0s0))))
+      p)))
+
+(defun test/mat-scale!/unsigned-byte (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:unsigned-byte-matrix :cols size :rows size :initial-element 1)))
+    (let ((p (time (clem::mat-scale! m 2))))
+      p)))
+
+(defun test/mat-scale!/unsigned-word (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:unsigned-word-matrix :cols size :rows size :initial-element 255)))
+    (let ((p (time (clem::mat-scale! m 255))))
+      p)))
+
+(defun test/mat-scale!/unsigned-long (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:unsigned-long-matrix :cols size :rows size :initial-element 256)))
+    (let ((p (time (clem::mat-scale! m 256))))
+      p)))
+
+
+(defun test/mat-scale!/signed-byte (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:signed-byte-matrix :cols size :rows size :initial-element 1)))
+    (let ((p (time (clem::mat-scale! m 2))))
+      p)))
+
+(defun test/mat-scale!/signed-word (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:signed-word-matrix :cols size :rows size :initial-element 127)))
+    (let ((p (time (clem::mat-scale! m -127))))
+      p)))
+
+(defun test/mat-scale!/signed-long (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:signed-long-matrix :cols size :rows size :initial-element 256)))
+    (let ((p (time (clem::mat-scale! m 256))))
+      p)))
+
+(defun test/mat-scale!/bit (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:bit-matrix :cols size :rows size :initial-element 1)))
+    (let ((p (time (clem::mat-scale! m 0))))
+      p)))
+
+(defun test/mat-scale!/fixnum (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:fixnum-matrix :cols size :rows size :initial-element 256)))
+    (let ((p (time (clem::mat-scale! m 256))))
+      p)))
+
