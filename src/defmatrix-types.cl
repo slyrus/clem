@@ -1,7 +1,7 @@
 b
 (in-package :clem)
 
-(eval-when (:compile-toplevel :load-toplevel)
+(eval-when (:compile-toplevel :load-toplevel :execute)
   (defmatrixtype t-matrix ()
     :element-type t
     :accumulator-type t))
@@ -9,7 +9,7 @@ b
     :element-type t
     :accumulator-type t)
 
-(eval-when (:compile-toplevel :load-toplevel)
+(eval-when (:compile-toplevel :load-toplevel :execute)
   (defmatrixtype real-matrix (t-matrix)
     :element-type t
     :accumulator-type t))
@@ -17,14 +17,14 @@ b
   :element-type t
   :accumulator-type t)
 
-(eval-when (:compile-toplevel :load-toplevel)
+(eval-when (:compile-toplevel :load-toplevel :execute)
   (defmatrixtype float-matrix (real-matrix)
     :element-type t
     :accumulator-type t
     :val-format "~4,9F"))
 (defmatrixfuncs float-matrix :element-type t :accumulator-type t)
 
-(eval-when (:compile-toplevel :load-toplevel)
+(eval-when (:compile-toplevel :load-toplevel :execute)
   (defmatrixtype integer-matrix (real-matrix)
     :element-type t
     :accumulator-type t
@@ -36,7 +36,7 @@ b
   :integral t
   :specialized-array t)
 
-(eval-when (:compile-toplevel :load-toplevel)
+(eval-when (:compile-toplevel :load-toplevel :execute)
   (defmatrixtype bit-matrix (integer-matrix) :element-type (unsigned-byte 1)
 		 :accumulator-type (signed-byte 32)
 		 :minval 0
@@ -51,22 +51,22 @@ b
     :integral t
     :specialized-array t)
 
-(eval-when (:compile-toplevel :load-toplevel)
+(eval-when (:compile-toplevel :load-toplevel :execute)
   (defmatrixtype signed-byte-matrix (integer-matrix) :element-type (signed-byte 8)
-		 :accumulator-type (unsigned-byte 32)
+		 :accumulator-type (signed-byte 32)
 		 :minval (- (expt 2 7))
 		 :maxval (- (expt 2 7) 1)
 		 :val-format "~d"
 		 :specialized-array t))
 (defmatrixfuncs signed-byte-matrix
     :element-type (signed-byte 8)
-    :accumulator-type (unsigned-byte 32)
+    :accumulator-type (signed-byte 32)
     :minval (- (expt 2 7))
     :maxval (- (expt 2 7) 1)
     :integral t
     :specialized-array t)
 
-(eval-when (:compile-toplevel :load-toplevel)
+(eval-when (:compile-toplevel :load-toplevel :execute)
   (defmatrixtype unsigned-byte-matrix (integer-matrix)
     :element-type (unsigned-byte 8)
     :accumulator-type (unsigned-byte 32)
@@ -82,23 +82,23 @@ b
     :integral t
     :specialized-array t)
 
-(eval-when (:compile-toplevel :load-toplevel)
+(eval-when (:compile-toplevel :load-toplevel :execute)
   (defmatrixtype signed-word-matrix (integer-matrix)
     :element-type (signed-byte 16)
-    :accumulator-type (unsigned-byte 32)
+    :accumulator-type (signed-byte 32)
     :minval (- (expt 2 15))
     :maxval (- (expt 2 15) 1)
     :val-format "~d"
     :specialized-array t))
 (defmatrixfuncs signed-word-matrix
     :element-type (signed-byte 16)
-    :accumulator-type (unsigned-byte 32)
+    :accumulator-type (signed-byte 32)
     :minval (- (expt 2 15))
     :maxval (- (expt 2 15) 1)
     :integral t
     :specialized-array t)
 
-(eval-when (:compile-toplevel :load-toplevel)
+(eval-when (:compile-toplevel :load-toplevel :execute)
   (defmatrixtype unsigned-word-matrix (integer-matrix)
     :element-type (unsigned-byte 16)
     :accumulator-type (unsigned-byte 32)
@@ -114,7 +114,7 @@ b
     :integral t
     :specialized-array t)
 
-(eval-when (:compile-toplevel :load-toplevel)
+(eval-when (:compile-toplevel :load-toplevel :execute)
   (defmatrixtype signed-long-matrix (integer-matrix)
     :element-type (signed-byte 32)
     :accumulator-type (signed-byte 32)
@@ -130,7 +130,7 @@ b
     :integral t
     :specialized-array t)
 
-(eval-when (:compile-toplevel :load-toplevel)
+(eval-when (:compile-toplevel :load-toplevel :execute)
   (defmatrixtype unsigned-long-matrix (integer-matrix)
     :element-type (unsigned-byte 32)
     :accumulator-type (unsigned-byte 32)
@@ -146,7 +146,7 @@ b
     :integral t
     :specialized-array t)
 
-(eval-when (:compile-toplevel :load-toplevel)
+(eval-when (:compile-toplevel :load-toplevel :execute)
   (defmatrixtype fixnum-matrix (integer-matrix) :element-type fixnum
 		 :accumulator-type (unsigned-byte 32)
 		 :minval most-negative-fixnum
@@ -161,7 +161,7 @@ b
     :integral t
     :specialized-array t)
 
-(eval-when (:compile-toplevel :load-toplevel)
+(eval-when (:compile-toplevel :load-toplevel :execute)
   (defmatrixtype single-float-matrix (float-matrix) :element-type single-float
 		 :accumulator-type single-float
 		 :initial-element 0f0
@@ -174,7 +174,7 @@ b
 		:maxval most-positive-single-float
 		:specialized-array t)
 
-(eval-when (:compile-toplevel :load-toplevel)
+(eval-when (:compile-toplevel :load-toplevel :execute)
   (defmatrixtype double-float-matrix (float-matrix) :element-type double-float
 		 :accumulator-type double-float
 		 :initial-element 0d0
@@ -297,4 +297,21 @@ b
   (frob signed-long-matrix double-float-matrix double-float-matrix)
   (frob signed-long-matrix single-float-matrix single-float-matrix))
 
+
+
+
+(macrolet ((frob (type-1 type-3 &key suffix)
+	     `(progn
+		(def-matrix-scale ,type-1 ,type-3 :suffix ,suffix)
+		(def-matrix-scale! ,type-1 :suffix ,suffix))))
+  (frob double-float-matrix double-float-matrix)
+  (frob single-float-matrix single-float-matrix)
+  (frob unsigned-byte-matrix unsigned-byte-matrix)
+  (frob unsigned-word-matrix unsigned-word-matrix)
+  (frob unsigned-long-matrix unsigned-long-matrix)
+  (frob signed-byte-matrix signed-byte-matrix)
+  (frob signed-word-matrix signed-word-matrix)
+  (frob signed-long-matrix signed-long-matrix)
+  (frob bit-matrix bit-matrix)
+  (frob fixnum-matrix fixnum-matrix))
 

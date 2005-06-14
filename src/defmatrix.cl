@@ -497,5 +497,61 @@
 	   (mat-subtr!-range m n 0 (1- mr) 0 (1- mc))))
 
 
+
        )))
 
+(defmacro def-matrix-scale (type-1 accumulator-type &key suffix)
+  (let ((element-type-1 (element-type (find-class `,type-1)))
+	(accumulator-element-type (element-type (find-class `,accumulator-type)))
+	(i (gensym))
+	(j (gensym)))
+    `(progn
+       (defmethod ,(make-intern (concatenate 'string "mat-scale-range" suffix))
+	   ((m ,type-1) q startr endr startc endc)
+	 (declare (type ,element-type-1 q))
+	 (destructuring-bind (mr mc) (dim m)
+	   (let ((p (make-instance ',accumulator-type :rows mr :cols mc)))
+	     (with-matrix-vals (m ,element-type-1 a)
+	       (with-matrix-vals (p ,accumulator-element-type c)
+		 (do ((,i startr (1+ ,i)))
+		     ((> ,i endr))
+		   (declare (dynamic-extent ,i) (type fixnum ,i))
+		   (do ((,j startc (1+ ,j)))
+		       ((> ,j endc))
+		     (declare (dynamic-extent ,j) (type fixnum ,j))
+		     (setf (aref c ,i ,j)
+			   (* (aref a ,i ,j) q))))))
+	     p)))
+       
+       (defmethod ,(make-intern (concatenate 'string "mat-scale" suffix))
+	   ((m ,type-1) q)
+	 (destructuring-bind (mr mc) (dim m)
+	   (,(make-intern (concatenate 'string "mat-scale-range" suffix)) m q 0 (1- mr) 0 (1- mc)))))
+
+    ))
+
+(defmacro def-matrix-scale! (type-1 &key suffix)
+  (let ((element-type-1 (element-type (find-class `,type-1)))
+	(i (gensym))
+	(j (gensym)))
+    `(progn
+       (defmethod ,(make-intern (concatenate 'string "mat-scale-range!" suffix))
+	   ((m ,type-1) q startr endr startc endc)
+	 (declare (type ,element-type-1 q))
+	 (with-matrix-vals (m ,element-type-1 a)
+	   (do ((,i startr (1+ ,i)))
+	       ((> ,i endr))
+	     (declare (dynamic-extent ,i) (type fixnum ,i))
+	     (do ((,j startc (1+ ,j)))
+		 ((> ,j endc))
+	       (declare (dynamic-extent ,j) (type fixnum ,j))
+	       (setf (aref a ,i ,j)
+		     (* (aref a ,i ,j) q)))))
+	 m)
+       
+       (defmethod ,(make-intern (concatenate 'string "mat-scale!" suffix))
+	   ((m ,type-1) q)
+	 (destructuring-bind (mr mc) (dim m)
+	   (,(make-intern (concatenate 'string "mat-scale-range!" suffix)) m q 0 (1- mr) 0 (1- mc)))))
+
+    ))
