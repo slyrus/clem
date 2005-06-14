@@ -2,23 +2,15 @@
 (defpackage #:clem-test-system (:use #:asdf #:cl))
 (in-package #:clem-test-system)
 
-(defsystem :clem-test
-  :version "20040626.1"
-  :depends-on (util clem)
-  :components
-  ((:module :test
-	    :components
-	    ((:file "defpackage")
-	     (:file "test-clem" :depends-on ("defpackage"))
-	     (:file "test-clem2" :depends-on ("defpackage"))
-	     (:file "test-clem3" :depends-on ("defpackage"))
-	     (:file "test-defmatrix" :depends-on ("defpackage"))
-	     (:file "bench-matrix" :depends-on ("defpackage"))
-	     )
-	    :serial t
-	    )))
-
-(defparameter *this-system* :clem-test)
+;;;;
+;;;; The following section customizes asdf to work with filenames
+;;;; with a .cl extension and to put fasl files in a separate
+;;;; directory.
+;;;;
+;;;; To enable this behvior, use asdf component type
+;;;;  :clem-test-cl-source-file
+;;;;
+(defclass clem-test-cl-source-file (cl-source-file) ())
 
 (defparameter *fasl-directory*
   (make-pathname :directory '(:relative
@@ -26,9 +18,56 @@
 			      #+openmcl "openmcl-fasl"
 			      #-(or sbcl openmcl) "fasl")))
 
-(defmethod source-file-type ((c cl-source-file) (s (eql (find-system *this-system*))))
-  "cl")
+(defmethod source-file-type ((c clem-test-cl-source-file) (s module)) "cl")
 
-(defmethod asdf::output-fasl-files ((operation compile-op) (c cl-source-file)
-				    (s (eql (find-system *this-system*))))
+(defmethod asdf::output-fasl-files ((operation compile-op) (c clem-test-cl-source-file)
+				    (s module))
   (list (merge-pathnames *fasl-directory* (compile-file-pathname (component-pathname c)))))
+
+(defmethod asdf::output-files :around ((operation compile-op) (c clem-test-cl-source-file))
+  (let ((m (compute-applicable-methods #'asdf::output-fasl-files (list operation c (component-system c)))))
+    (if m
+	(asdf::output-fasl-files operation c (component-system c))
+	(call-next-method operation c))))
+
+;;;; 2005-06-14
+;;;; hackery for putting stuff in the asdf registry
+;;;; there has to be a better way to do this. I don't know
+;;;; it.
+;;;;
+(defvar *registry-directories*
+  (list (make-pathname :directory "/usr/local/share/lisp")
+        (make-pathname :directory "/bobo/share/lisp")
+	(merge-pathnames
+	 (make-pathname :directory (list :relative :up))
+	 (make-pathname :directory (pathname-directory *load-truename*)))))
+
+(defun add-registry-path (path)
+  (dolist (dir *registry-directories*)
+    (let ((p (merge-pathnames
+              (make-pathname :directory (cons :relative (if (not (listp path)) (list path) path)))
+              dir)))
+      (when (probe-file p)
+        (pushnew p asdf:*central-registry* :test 'equal)
+        (return-from add-registry-path p)))))
+
+(mapcar #'(lambda (x) (add-registry-path x))
+	'("util"))
+;;;;
+
+
+
+(defsystem :clem-test
+  :version "20050614.1"
+  :depends-on (util clem)
+  :components
+  ((:module :test
+	    :components
+	    ((:clem-test-cl-source-file "defpackage")
+	     (:clem-test-cl-source-file "test-clem" :depends-on ("defpackage"))
+	     (:clem-test-cl-source-file "test-clem2" :depends-on ("defpackage"))
+	     (:clem-test-cl-source-file "test-clem3" :depends-on ("defpackage"))
+	     (:clem-test-cl-source-file "test-defmatrix" :depends-on ("defpackage"))
+	     (:clem-test-cl-source-file "bench-matrix" :depends-on ("defpackage"))
+	     ))))
+
