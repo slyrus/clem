@@ -2,6 +2,12 @@
 
 (in-package :clem-test)
 
+;;; I need *my-pacakge* so the intern statement below doesn't intern
+;;; the symbol into CL-USER and I put it up here to remind myself of
+;;; this fact in case I switch packages
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defparameter *my-package* :clem-test))
+
 (defparameter *test-matrix-size* 256)
 
 ;;; basic make-instance tests
@@ -455,7 +461,9 @@
       p)))
 
 
-;;; hprod test
+;;;; hprod test
+
+;;; double-floats
 (defun test/mat-hprod/double-float/double-float (&key (size *test-matrix-size*))
   (let ((m (make-instance 'clem:double-float-matrix :cols size :rows size :initial-element 1.25d0))
 	(n (make-instance 'clem:double-float-matrix :cols size :rows size :initial-element 1.25d0)))
@@ -474,3 +482,66 @@
     (let ((p (time (clem::mat-hprod m n))))
       p)))
 
+(defun test/mat-hprod/double-float/bit (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:double-float-matrix :cols size :rows size :initial-element 1.25d0))
+	(n (make-instance 'clem:bit-matrix :cols size :rows size :initial-element 0)))
+    (let ((p (time (clem::mat-hprod m n))))
+      p)))
+
+
+
+;;; single-floats
+(defun test/mat-hprod/single-float/single-float (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:single-float-matrix :cols size :rows size :initial-element 1.25s0))
+	(n (make-instance 'clem:single-float-matrix :cols size :rows size :initial-element 1.25s0)))
+    (let ((p (time (clem::mat-hprod m n))))
+      p)))
+
+(defun test/mat-hprod/single-float/ub8 (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:single-float-matrix :cols size :rows size :initial-element 1.25s0))
+	(n (make-instance 'clem:ub8-matrix :cols size :rows size :initial-element 2)))
+    (let ((p (time (clem::mat-hprod m n))))
+      p)))
+
+(defun test/mat-hprod/single-float/bit (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:single-float-matrix :cols size :rows size :initial-element 1.25s0))
+	(n (make-instance 'clem:bit-matrix :cols size :rows size :initial-element 0)))
+    (let ((p (time (clem::mat-hprod m n))))
+      p)))
+
+
+;;; ub8's
+(defun test/mat-hprod/ub8/ub8 (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:ub8-matrix :cols size :rows size :initial-element 12))
+	(n (make-instance 'clem:ub8-matrix :cols size :rows size :initial-element 2)))
+    (let ((p (time (clem::mat-hprod m n))))
+      p)))
+
+(defun test/mat-hprod/ub8/bit (&key (size *test-matrix-size*))
+  (let ((m (make-instance 'clem:ub8-matrix :cols size :rows size :initial-element 12))
+	(n (make-instance 'clem:bit-matrix :cols size :rows size :initial-element 1)))
+    (let ((p (time (clem::mat-hprod m n))))
+      p)))
+
+
+(macrolet ((frob (type-1 val-1 type-2 val-2)
+	     (let ((funcname (intern
+			      (string-upcase
+			       (concatenate 'string "test/mat-hprod/"
+					    (symbol-name type-1)
+					    "/"
+					    (symbol-name type-2)))
+			      *my-package*))
+		   (m1 (intern (string-upcase (concatenate 'string (symbol-name type-1) "-matrix"))))
+		   (m2 (intern (string-upcase (concatenate 'string (symbol-name type-2) "-matrix")))))
+	       `(defun ,funcname (&key (size *test-matrix-size*))
+		  (let ((m (make-instance ',m2
+					  :cols size :rows size
+					  :initial-element ,val-1))
+			(n (make-instance ',m1
+					  :cols size :rows size
+					  :initial-element ,val-2)))
+		    (let ((p (time (clem::mat-hprod m n))))
+		      p))))))
+  (frob double-float 1.25d0 double-float 1.25d0))
+	   
