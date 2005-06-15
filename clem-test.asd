@@ -12,29 +12,21 @@
 ;;;;
 (defclass clem-test-cl-source-file (cl-source-file) ())
 
+(defmethod source-file-type ((c clem-test-cl-source-file) (s module)) "cl")
+
 (defparameter *fasl-directory*
-  (make-pathname :directory '(:relative
-			      #+sbcl "sbcl-fasl"
+  (make-pathname :directory '(:relative #+sbcl "sbcl-fasl"
 			      #+openmcl "openmcl-fasl"
 			      #-(or sbcl openmcl) "fasl")))
 
-(defmethod source-file-type ((c clem-test-cl-source-file) (s module)) "cl")
-
-(defmethod asdf::output-fasl-files ((operation compile-op) (c clem-test-cl-source-file)
-				    (s module))
+(defmethod asdf::output-files :around ((operation compile-op) (c clem-test-cl-source-file))
   (list (merge-pathnames *fasl-directory* (compile-file-pathname (component-pathname c)))))
 
-(defmethod asdf::output-files :around ((operation compile-op) (c clem-test-cl-source-file))
-  (let ((m (compute-applicable-methods #'asdf::output-fasl-files (list operation c (component-system c)))))
-    (if m
-	(asdf::output-fasl-files operation c (component-system c))
-	(call-next-method operation c))))
 
 ;;;; 2005-06-14
 ;;;; hackery for putting stuff in the asdf registry
 ;;;; there has to be a better way to do this. I don't know
 ;;;; it.
-;;;;
 (defvar *registry-directories*
   (list (make-pathname :directory "/usr/local/share/lisp")
         (make-pathname :directory "/bobo/share/lisp")

@@ -12,23 +12,16 @@
 ;;;;
 (defclass clem-cl-source-file (cl-source-file) ())
 
+(defmethod source-file-type ((c clem-cl-source-file) (s module)) "cl")
+
 (defparameter *fasl-directory*
-  (make-pathname :directory '(:relative
-			      #+sbcl "sbcl-fasl"
+  (make-pathname :directory '(:relative #+sbcl "sbcl-fasl"
 			      #+openmcl "openmcl-fasl"
 			      #-(or sbcl openmcl) "fasl")))
 
-(defmethod source-file-type ((c clem-cl-source-file) (s module)) "cl")
-
-(defmethod asdf::output-fasl-files ((operation compile-op) (c clem-cl-source-file)
-				    (s module))
-  (list (merge-pathnames *fasl-directory* (compile-file-pathname (component-pathname c)))))
-
-(defmethod asdf::output-files :around ((operation compile-op) (c clem-cl-source-file))
-  (let ((m (compute-applicable-methods #'asdf::output-fasl-files (list operation c (component-system c)))))
-    (if m
-	(asdf::output-fasl-files operation c (component-system c))
-	(call-next-method operation c))))
+(defmethod asdf::output-files ((operation compile-op) (c clem-cl-source-file))
+  (list (merge-pathnames *fasl-directory*
+			 (compile-file-pathname (component-pathname c)))))
 
 (defsystem :clem
   :name "clem"
