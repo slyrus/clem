@@ -20,7 +20,7 @@
   (print (sample-variance x))
   (print (sqrt (sample-variance x))))
 
-;(let ((x (copy-to-unsigned-byte-matrix (normalize (random-matrix 32 32)))))
+;(let ((x (copy-to-ub8-matrix (normalize (random-matrix 32 32)))))
 ;  (print-matrix x)
 ;  (print (matrix::mean x))
 ;  (print-matrix (subset-matrix x 2 4 2 4))

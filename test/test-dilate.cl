@@ -1,7 +1,7 @@
 
 (in-package :matrix)
 
-(let ((x (copy-to-unsigned-byte-matrix (normalize (random-matrix 10 10))))
+(let ((x (copy-to-ub8-matrix (normalize (random-matrix 10 10))))
       (h (array->matrix #2A((0 0 0 0 0)(0 0 0 0 0)(0 0 0 0 0)(0 0 0 0 0)(0 0 0 0 0))))
 ;      (h (array->matrix #2A((0 0 0)(0 0 0)(0 0 0))))
       )

@@ -68,7 +68,7 @@
    #:min-val
 
    ;;; temporary (maybe) matrix conversion utility functions
-   #:copy-to-unsigned-byte-matrix
+   #:copy-to-ub8-matrix
    #:copy-to-double-float-matrix
    #:copy-to-fixnum-matrix
    #:copy-to-bit-matrix
@@ -98,7 +98,7 @@
    #:trim-one
    
    ;;; matrix constructor functions
-   #:unsigned-byte-matrix
+   #:ub8-matrix
 
    ;;; typed-matrix stuff
    #:typed-matrix
@@ -106,29 +106,29 @@
 
    #:defmatrixtype
 
-   #:signed-byte-matrix
-   #:array->signed-byte-matrix
-   #:random-signed-byte-matrix
+   #:sb8-matrix
+   #:array->sb8-matrix
+   #:random-sb8-matrix
 
-   #:unsigned-byte-matrix
-   #:array->unsigned-byte-matrix
-   #:random-unsigned-byte-matrix
+   #:ub8-matrix
+   #:array->ub8-matrix
+   #:random-ub8-matrix
 
-   #:signed-word-matrix
-   #:array->signed-word-matrix
-   #:random-signed-word-matrix
+   #:sb16-matrix
+   #:array->sb16-matrix
+   #:random-sb16-matrix
 
-   #:unsigned-word-matrix
-   #:array->unsigned-word-matrix
-   #:random-unsigned-word-matrix
+   #:ub16-matrix
+   #:array->ub16-matrix
+   #:random-ub16-matrix
 
-   #:signed-long-matrix
-   #:array->signed-long-matrix
-   #:random-signed-long-matrix
+   #:sb32-matrix
+   #:array->sb32-matrix
+   #:random-sb32-matrix
 
-   #:unsigned-long-matrix
-   #:array->unsigned-long-matrix
-   #:random-unsigned-long-matrix
+   #:ub32-matrix
+   #:array->ub32-matrix
+   #:random-ub32-matrix
 
    #:fixnum-matrix
    #:array->fixnum-matrix

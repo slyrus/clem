@@ -7,8 +7,8 @@
   (asdf:operate 'asdf:load-op 'clem-test)
   )
 
-(let ((m1 (make-instance 'clem:unsigned-byte-matrix :rows 8 :cols 10 :initial-element 2))
-      (m2 (make-instance 'clem:unsigned-byte-matrix :rows 10 :cols 7 :initial-element 3)))
+(let ((m1 (make-instance 'clem:ub8-matrix :rows 8 :cols 10 :initial-element 2))
+      (m2 (make-instance 'clem:ub8-matrix :rows 10 :cols 7 :initial-element 3)))
   (describe m1)
   (describe (clem::horzcat m1 m2))
   (describe (clem::vertcat m1 m2))

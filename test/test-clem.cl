@@ -60,7 +60,7 @@
   t)
 
 (defun matrix-test-7 ()
-  (let ((m (array->signed-byte-matrix #2A((1 2 3)(4 5 6)(7 2 8)))))
+  (let ((m (array->sb8-matrix #2A((1 2 3)(4 5 6)(7 2 8)))))
     (print-matrix m)
     (print-matrix (mat-mult m m))
     (let ((inv (invert-matrix m)))

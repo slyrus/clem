@@ -6,8 +6,8 @@
     (matrix-move m b :constrain constrain)
     b))
 
-(defmethod copy-to-unsigned-byte-matrix ((m matrix) &key (constrain nil))
-  (copy-to-matrix-type m 'unsigned-byte-matrix :constrain constrain))
+(defmethod copy-to-ub8-matrix ((m matrix) &key (constrain nil))
+  (copy-to-matrix-type m 'ub8-matrix :constrain constrain))
 
 (defmethod copy-to-double-float-matrix ((m matrix) &key (constrain nil))
   (copy-to-matrix-type m 'double-float-matrix :constrain constrain))

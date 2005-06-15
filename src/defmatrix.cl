@@ -155,11 +155,8 @@
      
      (defmethod sample-variance-range ((m ,type) (startr fixnum) (endr fixnum) (startc fixnum) (endc fixnum))
        (let ((acc (coerce 0 ',accumulator-type)))
-;	 (declare (type (or (unsigned-byte 32) single-float double-float) acc))
 	 (let ((mu (mean-range m startr endr startc endc)))
-;	   (declare (type (or (unsigned-byte 32) single-float double-float) mu))
 	   (let ((musq (* mu mu)))
-;	     (declare (type (or (unsigned-byte 32) single-float double-float) musq))
 	     (with-map-range m ,element-type startr endr startc endc (a i j)
 	       (incf acc (- (* (aref a i j) (aref a i j)) musq)))))
 	 (double-float-divide acc (1- (count-range startr endr startc endc)))))

@@ -52,13 +52,13 @@
     :specialized-array t)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (defmatrixtype signed-byte-matrix (integer-matrix) :element-type (signed-byte 8)
+  (defmatrixtype sb8-matrix (integer-matrix) :element-type (signed-byte 8)
 		 :accumulator-type (signed-byte 32)
 		 :minval (- (expt 2 7))
 		 :maxval (- (expt 2 7) 1)
 		 :val-format "~d"
 		 :specialized-array t))
-(defmatrixfuncs signed-byte-matrix
+(defmatrixfuncs sb8-matrix
     :element-type (signed-byte 8)
     :accumulator-type (signed-byte 32)
     :minval (- (expt 2 7))
@@ -67,14 +67,14 @@
     :specialized-array t)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (defmatrixtype unsigned-byte-matrix (integer-matrix)
+  (defmatrixtype ub8-matrix (integer-matrix)
     :element-type (unsigned-byte 8)
     :accumulator-type (unsigned-byte 32)
     :minval 0
     :maxval (- (expt 2 8) 1)
     :val-format "~d"
     :specialized-array t))
-(defmatrixfuncs unsigned-byte-matrix
+(defmatrixfuncs ub8-matrix
     :element-type (unsigned-byte 8)
     :accumulator-type (unsigned-byte 32)
     :minval 0
@@ -83,14 +83,14 @@
     :specialized-array t)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (defmatrixtype signed-word-matrix (integer-matrix)
+  (defmatrixtype sb16-matrix (integer-matrix)
     :element-type (signed-byte 16)
     :accumulator-type (signed-byte 32)
     :minval (- (expt 2 15))
     :maxval (- (expt 2 15) 1)
     :val-format "~d"
     :specialized-array t))
-(defmatrixfuncs signed-word-matrix
+(defmatrixfuncs sb16-matrix
     :element-type (signed-byte 16)
     :accumulator-type (signed-byte 32)
     :minval (- (expt 2 15))
@@ -99,14 +99,14 @@
     :specialized-array t)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (defmatrixtype unsigned-word-matrix (integer-matrix)
+  (defmatrixtype ub16-matrix (integer-matrix)
     :element-type (unsigned-byte 16)
     :accumulator-type (unsigned-byte 32)
     :minval 0
     :maxval (- (expt 2 16) 1)
     :val-format "~d"
     :specialized-array t))
-(defmatrixfuncs unsigned-word-matrix
+(defmatrixfuncs ub16-matrix
     :element-type (unsigned-byte 16)
     :accumulator-type (unsigned-byte 32)
     :minval 0
@@ -115,14 +115,14 @@
     :specialized-array t)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (defmatrixtype signed-long-matrix (integer-matrix)
+  (defmatrixtype sb32-matrix (integer-matrix)
     :element-type (signed-byte 32)
     :accumulator-type (signed-byte 32)
     :minval (- (expt 2 31))
     :maxval (- (expt 2 31) 1)
     :val-format "~d"
     :specialized-array t))
-(defmatrixfuncs signed-long-matrix
+(defmatrixfuncs sb32-matrix
     :element-type (signed-byte 32)
     :accumulator-type (signed-byte 32)
     :minval (- (expt 2 31))
@@ -131,14 +131,14 @@
     :specialized-array t)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (defmatrixtype unsigned-long-matrix (integer-matrix)
+  (defmatrixtype ub32-matrix (integer-matrix)
     :element-type (unsigned-byte 32)
     :accumulator-type (unsigned-byte 32)
     :minval 0
     :maxval (- (expt 2 32) 1)
     :val-format "~d"
     :specialized-array t))
-(defmatrixfuncs unsigned-long-matrix
+(defmatrixfuncs ub32-matrix
     :element-type (unsigned-byte 32)
     :accumulator-type (unsigned-byte 32)
     :minval 0
@@ -191,12 +191,12 @@
   '((double-float-matrix double-float "double-float") 
     (single-float-matrix single-float "single-float") 
     (fixnum-matrix fixnum "fixnum") 
-    (signed-byte-matrix (signed-byte 8) "signed-byte") 
-    (signed-word-matrix (signed-byte 16) "signed-word") 
-    (signed-long-matrix (signed-byte 32) "signed-long") 
-    (unsigned-byte-matrix (unsigned-byte 8) "unsigned-byte") 
-    (unsigned-word-matrix (unsigned-byte 16) "unsigned-word") 
-    (unsigned-long-matrix (unsigned-byte 32) "unsigned-long") 
+    (sb8-matrix (signed-byte 8) "sb8") 
+    (sb16-matrix (signed-byte 16) "sb16") 
+    (sb32-matrix (signed-byte 32) "sb32") 
+    (ub8-matrix (unsigned-byte 8) "ub8") 
+    (ub16-matrix (unsigned-byte 16) "ub16") 
+    (ub32-matrix (unsigned-byte 32) "ub32") 
     (bit-matrix (unsigned-byte 1) "bit")))
 
 (defparameter *typed-matrix-types-hash* (make-hash-table :test 'equal))

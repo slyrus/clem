@@ -1,7 +1,7 @@
 
 (in-package :matrix)
 
-(let ((x (copy-to-unsigned-byte-matrix (normalize (random-matrix 3 3))))
+(let ((x (copy-to-ub8-matrix (normalize (random-matrix 3 3))))
       (h (matrix::gaussian-kernel 2 1)))
   (print-matrix x)
 ;  (print-matrix h)

@@ -231,7 +231,7 @@
     (separable-discrete-convolve m h :truncate truncate)))
 
 (defun gaussian-blur-word (m &key (k 2) (sigma 1) (truncate t))
-  (let ((h (copy-to-unsigned-byte-matrix
+  (let ((h (copy-to-ub8-matrix
 	    (scalar-mult
 	     (gaussian-kernel k sigma) 255))))
     (print-range h 0 2 0 2)

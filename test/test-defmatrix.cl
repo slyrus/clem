@@ -87,7 +87,7 @@
     (print-matrix q)
     )
 
-  (let ((q (make-instance 'signed-byte-matrix :rows 4 :cols 4)))
+  (let ((q (make-instance 'sb8-matrix :rows 4 :cols 4)))
     (map-matrix-fit #'(lambda (a i j)
 			(if (oddp (+ i j)) -255 255)
 			)
