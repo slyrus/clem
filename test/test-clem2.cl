@@ -487,11 +487,11 @@
   (frob double-float 1.25d0 ub32 #x000f0000)
   (frob double-float 1.25d0 bit 0)
 
-  (frob single-float 1.25d0 single-float 2.81818s0)
-  (frob single-float 1.25d0 ub8 12)
-  (frob single-float 1.25d0 ub16 256)
-  (frob single-float 1.25d0 ub32 #x000f0000)
-  (frob single-float 1.25d0 bit 0)
+  (frob single-float 1.25s0 single-float 2.81818s0)
+  (frob single-float 1.25s0 ub8 12)
+  (frob single-float 1.25s0 ub16 256)
+  (frob single-float 1.25s0 ub32 #x000f0000)
+  (frob single-float 1.25s0 bit 0)
   
   (frob ub8 2 ub8 2)
   (frob ub8 2 bit 0))
