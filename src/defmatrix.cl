@@ -29,8 +29,6 @@
      ,(when specialized-array
 	    `(declare 
 	      (type (simple-array ,element-type (* *)) ,a)))
-     ,(when specialized-array
-	    `(print 'moosey))
      ,@body))
 
 (defmacro with-untyped-matrix-vals ((m element-type specialized-array a) &body body)
@@ -41,7 +39,6 @@
 (defmacro with-matrix-vals ((m element-type a) &body body)
   `(if (equal ',element-type (element-type (class-of ,m)))
        (with-typed-matrix-vals (,m ,element-type t ,a)
-	 (print 'shit)
 	 ,@body)
        (with-untyped-matrix-vals (,m ,element-type nil ,a)
 	 ,@body)))
