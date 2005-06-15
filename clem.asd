@@ -26,23 +26,26 @@
 (defsystem :clem
   :name "clem"
   :author "Cyrus Harmon"
-  :version "20050614.1"
+  :version "20050615.1"
   :components
-  ((:module :src
-	    :components
-	    ((:clem-cl-source-file "defpackage")
-	     (:clem-cl-source-file "metaclasses" :depends-on ("defpackage"))
-	     (:clem-cl-source-file "matrix" :depends-on ("defpackage" "metaclasses"))
-	     (:clem-cl-source-file "typed-matrix" :depends-on ("defpackage" "matrix"))
-	     (:clem-cl-source-file "defmatrix" :depends-on ("defpackage" "matrix" "typed-matrix" "metaclasses"))
-	     (:clem-cl-source-file "defmatrix-types" :depends-on ("defpackage" "matrix" "typed-matrix" "metaclasses" "defmatrix"))
-	     (:clem-cl-source-file "defmatrix-move-add-subtr" :depends-on ("defmatrix-types"))
-	     (:clem-cl-source-file "defmatrix-scale" :depends-on ("defmatrix-types"))
-	     (:clem-cl-source-file "defmatrix-hprod" :depends-on ("defmatrix-types"))
-	     (:clem-cl-source-file "typed-matrix-utils" :depends-on ("defpackage" "matrix" "typed-matrix"))
-	     (:clem-cl-source-file "row-vector" :depends-on ("defpackage" "matrix"))
-	     (:clem-cl-source-file "col-vector" :depends-on ("defpackage" "matrix"))
-	     (:clem-cl-source-file "scalar" :depends-on ("defpackage" "matrix"))
-	     (:clem-cl-source-file "matrixops" :depends-on ("defpackage" "matrix" "defmatrix-types" "typed-matrix-utils"))
-	     ))))
-
+  ((:module
+    :src
+    :components
+    ((:clem-cl-source-file "defpackage")
+     (:clem-cl-source-file "metaclasses" :depends-on ("defpackage"))
+     (:clem-cl-source-file "matrix" :depends-on ("defpackage" "metaclasses"))
+     (:clem-cl-source-file "typed-matrix" :depends-on ("defpackage" "matrix"))
+     (:clem-cl-source-file "defmatrix" :depends-on ("typed-matrix"))
+     (:clem-cl-source-file "defmatrix-types" :depends-on ("defmatrix"))
+     (:clem-cl-source-file "typed-matrix-utils" :depends-on ("typed-matrix"))
+     (:clem-cl-source-file "row-vector" :depends-on ("matrix"))
+     (:clem-cl-source-file "col-vector" :depends-on ("matrix"))
+     (:clem-cl-source-file "scalar" :depends-on ("matrix"))
+     (:clem-cl-source-file "matrixops" :depends-on ("typed-matrix-utils"))
+     (:module
+      :typed-ops
+      :components
+      ((:clem-cl-source-file "defmatrix-move-add-subtr")
+       (:clem-cl-source-file "defmatrix-scale")
+       (:clem-cl-source-file "defmatrix-hprod"))
+      :depends-on ("defmatrix-types"))))))

@@ -1,3 +1,115 @@
+2005-06-15  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* clem.asd, clem-test.asd: more asdf cleanup
+
+	* test/test-mean.cl, test/test-gaussian-convolve.cl, test/test-dilate.cl, test/test-defmatrix.cl, test/test-clem2.cl, test/test-clem.cl, test/mattest4.cl, test/mattest3.cl, test/bench-matrix.cl, src/typed-matrix-utils.cl, src/matrixops.cl, src/defpackage.cl, src/defmatrix.cl, src/defmatrix-types.cl, src/defmatrix-scale.cl, src/defmatrix-move-add-subtr.cl, src/defmatrix-hprod.cl, bootstrap.cl:
+	* The big unsigned-byte -> ub8 and friends rename.
+	  ... Now use ub32-matrix instead of unsigned-long matrix.
+	      Some folks might hate the numbers, but word and long were
+	      just too vague and all of those unsigned ints are in fact
+	      bytes to lisp anyway!
+
+2005-06-14  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* test/test-clem3.cl: making function names agree
+	removing erroneous compiler output that popped in here somehow
+
+	* src/defmatrix-types.cl, src/defmatrix-move-add-subtr.cl:
+	moved some method definition frobs into their own file so we don't
+	have to compile everything so often
+
+	* clem.asd, clem-test.asd:
+	cleaned up asdf file logic a bit. Now there's a piece of code that
+	  needs to go in each .asd file, but we don't get screwy behavior
+	  based on partial overriding of asdf methods. Now each system gets
+	  its own subclass of cl-source-file type and components are specified
+	  as :clem-cl-source-file, for instance, instead of :file. Files
+	  usually have .cl as the suffix, but this is easily changeable on a
+	  per-system basis and fasls go in a separate directory.
+
+	* test/test-clem3.cl, test/test-clem2.cl, src/defmatrix.cl, src/defmatrix-types.cl, src/defmatrix-scale.cl, src/defmatrix-hprod.cl, clem.asd, TODO:
+	Added defmatrix-hprod and defmatrix-scale for matrix scale and hadamard product
+	removed unused specialized-type parameter from with-map-range
+	removed unused with-map-range-vals
+	added some ignore declarations
+	removed gensyms for loop variables when there was no macro body
+	moved matrix-scale definitions into their own file
+	added more tests
+
+	* src/defmatrix-types.cl:
+	finally found the extraneous b and removed it!
+
+2005-06-14  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* test/test-clem3.cl: making function names agree
+	removing erroneous compiler output that popped in here somehow
+
+	* src/defmatrix-types.cl, src/defmatrix-move-add-subtr.cl:
+	moved some method definition frobs into their own file so we don't
+	have to compile everything so often
+
+	* clem.asd, clem-test.asd:
+	cleaned up asdf file logic a bit. Now there's a piece of code that
+	  needs to go in each .asd file, but we don't get screwy behavior
+	  based on partial overriding of asdf methods. Now each system gets
+	  its own subclass of cl-source-file type and components are specified
+	  as :clem-cl-source-file, for instance, instead of :file. Files
+	  usually have .cl as the suffix, but this is easily changeable on a
+	  per-system basis and fasls go in a separate directory.
+
+	* test/test-clem3.cl, test/test-clem2.cl, src/defmatrix.cl, src/defmatrix-types.cl, src/defmatrix-scale.cl, src/defmatrix-hprod.cl, clem.asd, TODO:
+	Added defmatrix-hprod and defmatrix-scale for matrix scale and hadamard product
+	removed unused specialized-type parameter from with-map-range
+	removed unused with-map-range-vals
+	added some ignore declarations
+	removed gensyms for loop variables when there was no macro body
+	moved matrix-scale definitions into their own file
+	added more tests
+
+	* src/defmatrix-types.cl:
+	finally found the extraneous b and removed it!
+
+2005-06-14  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* test/test-clem3.cl, test/test-clem2.cl, src/defmatrix.cl, src/defmatrix-types.cl, src/defmatrix-scale.cl, src/defmatrix-hprod.cl, clem.asd, TODO:
+	Added defmatrix-hprod and defmatrix-scale for matrix scale and hadamard product
+	removed unused specialized-type parameter from with-map-range
+	removed unused with-map-range-vals
+	added some ignore declarations
+	removed gensyms for loop variables when there was no macro body
+	moved matrix-scale definitions into their own file
+	added more tests
+
+	* src/defmatrix-types.cl:
+	finally found the extraneous b and removed it!
+
+	* test/test-clem3.cl, test/test-clem2.cl, clem-test.asd:
+	Added tests for mat-scale and mat-scale!
+	Added test-clem3 for messing around
+	Added dependencies on defpackage in the asdf file
+
+	* src/defmatrix.cl, src/defmatrix-types.cl:
+	added :execute to eval-when forms
+	fixed accumulator type of signed-bytes and signed-words
+	  ... (unsigned-byte 32) -> (signed-byte 32)
+	added def-matrix-scale
+	added forms to call def-matrix-scale for the basic types
+
+2005-06-13  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* ChangeLog: more ChangeLog stuff.
+
+	* TODO, README, LICENSE:
+	Added LICENSE and TODO. Removed TODO stuff from README.
+
+	* clem.asd: removed util dependency
+
+	* src/metaclasses.cl, src/matrix.cl, src/defpackage.cl, src/defmatrix.cl:
+	removed dependency on util. Had to copy some stuff over here to do it, however. Goes against OAOO but means we don't need util to run clem (except for the tests).
+
+	* src/row-vector.cl, src/col-vector.cl:
+	remove reference to undefined functions and call make-instance. WARNING: this hasn't been tested, but at least it compiles now!
+
 2005-06-13  Cyrus Harmon  <cyrus@bobobeach.com>
 
 	* TODO, README, LICENSE:

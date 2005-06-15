@@ -67,5 +67,43 @@
   (frob double-float-matrix sb32-matrix double-float-matrix)
   (frob double-float-matrix fixnum-matrix double-float-matrix)
   (frob double-float-matrix bit-matrix double-float-matrix)
+
+  (frob single-float-matrix single-float-matrix single-float-matrix)
+  (frob single-float-matrix ub8-matrix single-float-matrix)
+  (frob single-float-matrix ub16-matrix single-float-matrix)
+  (frob single-float-matrix ub32-matrix single-float-matrix)
+  (frob single-float-matrix sb8-matrix single-float-matrix)
+  (frob single-float-matrix sb16-matrix single-float-matrix)
+  (frob single-float-matrix sb32-matrix single-float-matrix)
+  (frob single-float-matrix fixnum-matrix single-float-matrix)
+  (frob single-float-matrix bit-matrix single-float-matrix)
   
-  (frob ub8-matrix ub8-matrix ub8-matrix))
+  (frob ub8-matrix ub8-matrix ub8-matrix)
+  (frob ub8-matrix bit-matrix ub8-matrix)
+
+  (frob ub16-matrix ub16-matrix ub16-matrix)
+  (frob ub16-matrix ub8-matrix ub16-matrix)
+  (frob ub16-matrix bit-matrix ub16-matrix)
+
+  (frob ub32-matrix ub32-matrix ub32-matrix)
+  (frob ub32-matrix ub16-matrix ub32-matrix)
+  (frob ub32-matrix ub8-matrix ub32-matrix)
+  (frob ub32-matrix bit-matrix ub32-matrix)
+
+  (frob sb8-matrix sb8-matrix sb8-matrix)
+  (frob sb8-matrix bit-matrix sb8-matrix)
+
+  (frob sb16-matrix sb16-matrix sb16-matrix)
+  (frob sb16-matrix sb8-matrix sb16-matrix)
+  (frob sb16-matrix bit-matrix sb16-matrix)
+
+  (frob sb32-matrix sb32-matrix sb32-matrix)
+  (frob sb32-matrix sb16-matrix sb32-matrix)
+  (frob sb32-matrix sb8-matrix sb32-matrix)
+  (frob sb32-matrix bit-matrix sb32-matrix)
+
+  (frob fixnum-matrix fixnum-matrix fixnum-matrix)
+  (frob fixnum-matrix bit-matrix fixnum-matrix)
+
+  (frob bit-matrix bit-matrix bit-matrix))
+

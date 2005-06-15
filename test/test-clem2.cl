@@ -461,87 +461,37 @@
       p)))
 
 
-;;;; hprod test
 
-;;; double-floats
-(defun test/mat-hprod/double-float/double-float (&key (size *test-matrix-size*))
-  (let ((m (make-instance 'clem:double-float-matrix :cols size :rows size :initial-element 1.25d0))
-	(n (make-instance 'clem:double-float-matrix :cols size :rows size :initial-element 1.25d0)))
-    (let ((p (time (clem::mat-hprod m n))))
-      p)))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defun symbolicate (&rest args)
+    (intern (string-upcase (apply #'concatenate 'string args)))))
 
-(defun test/mat-hprod/double-float/single-float (&key (size *test-matrix-size*))
-  (let ((m (make-instance 'clem:double-float-matrix :cols size :rows size :initial-element 1.25d0))
-	(n (make-instance 'clem:single-float-matrix :cols size :rows size :initial-element 1.25s0)))
-    (let ((p (time (clem::mat-hprod m n))))
-      p)))
+(macrolet
+    ((frob (type-1 val-1 type-2 val-2)
+       (let ((funcname (symbolicate "test/mat-hprod/" (symbol-name type-1)
+				    "/" (symbol-name type-2)))
+	     (m1 (symbolicate (symbol-name type-1) "-matrix"))
+	     (m2 (symbolicate (symbol-name type-2) "-matrix")))
+	 `(defun ,funcname (&key (size *test-matrix-size*))
+	    (let ((m (make-instance ',m1 :cols size :rows size
+				    :initial-element ,val-1))
+		  (n (make-instance ',m2 :cols size :rows size
+				    :initial-element ,val-2)))
+	      (let ((p (time (clem::mat-hprod m n))))
+		p))))))
 
-(defun test/mat-hprod/double-float/ub8 (&key (size *test-matrix-size*))
-  (let ((m (make-instance 'clem:double-float-matrix :cols size :rows size :initial-element 1.25d0))
-	(n (make-instance 'clem:ub8-matrix :cols size :rows size :initial-element 2)))
-    (let ((p (time (clem::mat-hprod m n))))
-      p)))
+  (frob double-float 1.25d0 double-float pi)
+  (frob double-float 1.25d0 single-float 2.81818s0)
+  (frob double-float 1.25d0 ub8 12)
+  (frob double-float 1.25d0 ub16 256)
+  (frob double-float 1.25d0 ub32 #x000f0000)
+  (frob double-float 1.25d0 bit 0)
 
-(defun test/mat-hprod/double-float/bit (&key (size *test-matrix-size*))
-  (let ((m (make-instance 'clem:double-float-matrix :cols size :rows size :initial-element 1.25d0))
-	(n (make-instance 'clem:bit-matrix :cols size :rows size :initial-element 0)))
-    (let ((p (time (clem::mat-hprod m n))))
-      p)))
-
-
-
-;;; single-floats
-(defun test/mat-hprod/single-float/single-float (&key (size *test-matrix-size*))
-  (let ((m (make-instance 'clem:single-float-matrix :cols size :rows size :initial-element 1.25s0))
-	(n (make-instance 'clem:single-float-matrix :cols size :rows size :initial-element 1.25s0)))
-    (let ((p (time (clem::mat-hprod m n))))
-      p)))
-
-(defun test/mat-hprod/single-float/ub8 (&key (size *test-matrix-size*))
-  (let ((m (make-instance 'clem:single-float-matrix :cols size :rows size :initial-element 1.25s0))
-	(n (make-instance 'clem:ub8-matrix :cols size :rows size :initial-element 2)))
-    (let ((p (time (clem::mat-hprod m n))))
-      p)))
-
-(defun test/mat-hprod/single-float/bit (&key (size *test-matrix-size*))
-  (let ((m (make-instance 'clem:single-float-matrix :cols size :rows size :initial-element 1.25s0))
-	(n (make-instance 'clem:bit-matrix :cols size :rows size :initial-element 0)))
-    (let ((p (time (clem::mat-hprod m n))))
-      p)))
-
-
-;;; ub8's
-(defun test/mat-hprod/ub8/ub8 (&key (size *test-matrix-size*))
-  (let ((m (make-instance 'clem:ub8-matrix :cols size :rows size :initial-element 12))
-	(n (make-instance 'clem:ub8-matrix :cols size :rows size :initial-element 2)))
-    (let ((p (time (clem::mat-hprod m n))))
-      p)))
-
-(defun test/mat-hprod/ub8/bit (&key (size *test-matrix-size*))
-  (let ((m (make-instance 'clem:ub8-matrix :cols size :rows size :initial-element 12))
-	(n (make-instance 'clem:bit-matrix :cols size :rows size :initial-element 1)))
-    (let ((p (time (clem::mat-hprod m n))))
-      p)))
-
-
-(macrolet ((frob (type-1 val-1 type-2 val-2)
-	     (let ((funcname (intern
-			      (string-upcase
-			       (concatenate 'string "test/mat-hprod/"
-					    (symbol-name type-1)
-					    "/"
-					    (symbol-name type-2)))
-			      *my-package*))
-		   (m1 (intern (string-upcase (concatenate 'string (symbol-name type-1) "-matrix"))))
-		   (m2 (intern (string-upcase (concatenate 'string (symbol-name type-2) "-matrix")))))
-	       `(defun ,funcname (&key (size *test-matrix-size*))
-		  (let ((m (make-instance ',m2
-					  :cols size :rows size
-					  :initial-element ,val-1))
-			(n (make-instance ',m1
-					  :cols size :rows size
-					  :initial-element ,val-2)))
-		    (let ((p (time (clem::mat-hprod m n))))
-		      p))))))
-  (frob double-float 1.25d0 double-float 1.25d0))
-	   
+  (frob single-float 1.25d0 single-float 2.81818s0)
+  (frob single-float 1.25d0 ub8 12)
+  (frob single-float 1.25d0 ub16 256)
+  (frob single-float 1.25d0 ub32 #x000f0000)
+  (frob single-float 1.25d0 bit 0)
+  
+  (frob ub8 2 ub8 2)
+  (frob ub8 2 bit 0))
