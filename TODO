@@ -60,4 +60,9 @@ bit (or whatever the appropriate one bit type is)
     remove the hacked up constructor functions I made and replace
     everything with calls to make-instance.
 
-14. rename unsinged-{byte,word,long} to ub{8,16,32}, etc...
+14. DONE. rename unsinged-{byte,word,long} to ub{8,16,32}, etc...
+
+15. mat-copy-proto needs to die a horrible death. replace these
+    instances with more type-aware, or at least optionally more
+    type-aware matrix creation functions.
+
