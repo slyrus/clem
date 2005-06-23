@@ -817,9 +817,9 @@
 	(set-val a i j (funcall f a i j)))))
   a)
 
-(defmethod map-matrix-copy ((a matrix) f)
+(defmethod map-matrix-copy ((a matrix) f &key (matrix-class (class-of a)))
   (destructuring-bind (m n) (dim a)
-    (let* ((b (mat-copy-proto a)))
+    (let* ((b (make-instance matrix-class :rows m :cols n)))
       (dotimes (i m)
 	(dotimes (j n)
 	  (set-val b i j (funcall f a i j))))

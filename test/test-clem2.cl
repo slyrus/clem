@@ -2,12 +2,6 @@
 
 (in-package :clem-test)
 
-;;; I need *my-pacakge* so the intern statement below doesn't intern
-;;; the symbol into CL-USER and I put it up here to remind myself of
-;;; this fact in case I switch packages
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defparameter *my-package* :clem-test))
-
 (defparameter *test-matrix-size* 256)
 
 ;;; basic make-instance tests
@@ -459,39 +453,3 @@
   (let ((m (make-instance 'clem:fixnum-matrix :cols size :rows size :initial-element 256)))
     (let ((p (time (clem::mat-scale! m 256))))
       p)))
-
-
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defun symbolicate (&rest args)
-    (intern (string-upcase (apply #'concatenate 'string args)))))
-
-(macrolet
-    ((frob (type-1 val-1 type-2 val-2)
-       (let ((funcname (symbolicate "test/mat-hprod/" (symbol-name type-1)
-				    "/" (symbol-name type-2)))
-	     (m1 (symbolicate (symbol-name type-1) "-matrix"))
-	     (m2 (symbolicate (symbol-name type-2) "-matrix")))
-	 `(defun ,funcname (&key (size *test-matrix-size*))
-	    (let ((m (make-instance ',m1 :cols size :rows size
-				    :initial-element ,val-1))
-		  (n (make-instance ',m2 :cols size :rows size
-				    :initial-element ,val-2)))
-	      (let ((p (time (clem::mat-hprod m n))))
-		p))))))
-
-  (frob double-float 1.25d0 double-float pi)
-  (frob double-float 1.25d0 single-float 2.81818s0)
-  (frob double-float 1.25d0 ub8 12)
-  (frob double-float 1.25d0 ub16 256)
-  (frob double-float 1.25d0 ub32 #x000f0000)
-  (frob double-float 1.25d0 bit 0)
-
-  (frob single-float 1.25s0 single-float 2.81818s0)
-  (frob single-float 1.25s0 ub8 12)
-  (frob single-float 1.25s0 ub16 256)
-  (frob single-float 1.25s0 ub32 #x000f0000)
-  (frob single-float 1.25s0 bit 0)
-  
-  (frob ub8 2 ub8 2)
-  (frob ub8 2 bit 0))

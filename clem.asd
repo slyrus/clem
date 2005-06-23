@@ -47,5 +47,6 @@
       :components
       ((:clem-cl-source-file "defmatrix-move-add-subtr")
        (:clem-cl-source-file "defmatrix-scale")
-       (:clem-cl-source-file "defmatrix-hprod"))
+       (:clem-cl-source-file "defmatrix-hprod")
+       (:clem-cl-source-file "defmatrix-mult"))
       :depends-on ("defmatrix-types"))))))

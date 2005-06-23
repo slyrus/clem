@@ -266,7 +266,7 @@
     (mat-sqrt! xd)
     xd))
 
-(defun variance-window (a &key (k 2) (truncate nil))
+(defun variance-window (a &key (k 2))
   (destructuring-bind (m n) (dim a)
     (let ((zm (1- m))
 	  (zn (1- n)))
@@ -275,7 +275,8 @@
 					    (max 0 (- i k))
 					    (min zm (+ i k))
 					    (max 0 (- j k))
-					    (min zn (+ j k))))))))
+					    (min zn (+ j k))))
+		       :matrix-class 'double-float-matrix))))
 
 (defun sample-variance-window (a &key (k 1) (truncate nil))
   (destructuring-bind (m n) (dim a)
