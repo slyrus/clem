@@ -25,8 +25,9 @@
 
 (defsystem :clem
   :name "clem"
-  :author "Cyrus Harmon"
-  :version "20050615.1"
+  :author "Cyrus Harmon <ch-lisp@bobobeach.com>"
+  :version "0.1.0-20050630"
+  :licence "BSD"
   :components
   ((:module
     :src
@@ -49,5 +50,18 @@
        (:clem-cl-source-file "defmatrix-move-add-subtr")
        (:clem-cl-source-file "defmatrix-scale")
        (:clem-cl-source-file "defmatrix-hprod")
-       (:clem-cl-source-file "defmatrix-mult"))
-      :depends-on ("defmatrix-types"))))))
+       (:clem-cl-source-file "defmatrix-mult")
+       (:clem-cl-source-file "defmatrix-mult-block"))
+      :depends-on ("defmatrix-types"))))
+   (:static-file "Makefile")
+   (:static-file "clem-test" :pathname #p"clem-test.asd")
+   (:module
+    :test
+    :components
+    ((:static-file "defpackage" :pathname #p"defpackage.cl")
+     (:static-file "test-clem" :pathname #p"test-clem.cl")
+     (:static-file "test-clem2" :pathname #p"test-clem2.cl")
+     (:static-file "test-clem3" :pathname #p"test-clem3.cl")
+     (:static-file "test-defmatrix" :pathname #p"test-defmatrix.cl")
+     (:static-file "bench-matrix" :pathname #p"bench-matrix.cl")
+     (:static-file "test-hprod"  :pathname #p"test-hprod.cl")))))
