@@ -44,12 +44,12 @@
         (return-from add-registry-path p)))))
 
 (mapcar #'(lambda (x) (add-registry-path x))
-	'("chutil"))
+	'("ch-util"))
 ;;;;
 
 (defsystem :clem-test
   :version "20050614.1"
-  :depends-on (chutil clem)
+  :depends-on (ch-util clem)
   :components
   ((:module :test
 	    :components

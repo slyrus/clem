@@ -94,15 +94,15 @@
 
 
 (defun run-tests ()
-  (let ((run (chutil:make-test-run)))
-    (chutil:run-test #'matrix-test-1 "matrix-test-1" run)
-    (chutil:run-test #'matrix-test-2 "matrix-test-2" run)
-    (chutil:run-test #'matrix-test-3 "matrix-test-3" run)
-    (chutil:run-test #'matrix-test-4 "matrix-test-4" run)
-    (chutil:run-test #'matrix-test-5 "matrix-test-5" run)
-    (chutil:run-test #'matrix-test-6 "matrix-test-6" run)
-    (chutil:run-test #'matrix-test-7 "matrix-test-7" run)
-    (format t "~&~A of ~A tests passed" (chutil:test-run-passed run) (chutil:test-run-tests run))
+  (let ((run (ch-util:make-test-run)))
+    (ch-util:run-test #'matrix-test-1 "matrix-test-1" run)
+    (ch-util:run-test #'matrix-test-2 "matrix-test-2" run)
+    (ch-util:run-test #'matrix-test-3 "matrix-test-3" run)
+    (ch-util:run-test #'matrix-test-4 "matrix-test-4" run)
+    (ch-util:run-test #'matrix-test-5 "matrix-test-5" run)
+    (ch-util:run-test #'matrix-test-6 "matrix-test-6" run)
+    (ch-util:run-test #'matrix-test-7 "matrix-test-7" run)
+    (format t "~&~A of ~A tests passed" (ch-util:test-run-passed run) (ch-uti:test-run-tests run))
     ))
 
 

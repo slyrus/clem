@@ -127,6 +127,28 @@
 	  (setf (aref c i j) acc)
 	  (setf acc 0d0))))))
 
+(defun %mat-mult-3-df (a b c
+		       mstartr mendr mstartc mendc
+		       nstartr nendr nstartc nendc)
+  (declare (type fixnum mstartr mendr mstartc mendc
+		 nstartr nendr nstartc nendc)
+	   (type (simple-array double-float (* *)) a b c)
+	   (optimize (speed 3) (safety 0) (space 0)))
+  (when (eql (- mendc mstartc) (- nendr nstartr))
+    (let ((atemp 0d0))
+      (declare (type double-float atemp))
+      (do ((i mstartr (1+ i)))
+	  ((> i mendr))
+	(declare (type fixnum i))
+	(do ((k mstartc (1+ k)))
+	    ((> k mendc))
+	  (declare (type fixnum k))
+	  (setf atemp (aref a i k))
+	  (do ((j nstartc (1+ j)))
+	      ((> j nendc))
+	    (declare (type fixnum j))
+	    (incf (aref c i j) (the double-float (* atemp (aref b k j))))))))))
+
 (defun %mat-mult-3-df-row-major (a b c
 		      mstartr mendr mstartc mendc
 		      nstartr nendr nstartc nendc)
@@ -151,28 +173,6 @@
 	    (declare (type fixnum j))
 	    (incf (row-major-aref c ci) (the double-float (* (aref b k j) atemp)))
 	    (incf ci)))))))
-
-(defun %mat-mult-3-df (a b c
-		       mstartr mendr mstartc mendc
-		       nstartr nendr nstartc nendc)
-  (declare (type fixnum mstartr mendr mstartc mendc
-		 nstartr nendr nstartc nendc)
-	   (type (simple-array double-float (* *)) a b c)
-	   (optimize (speed 3) (safety 0) (space 0)))
-  (when (eql (- mendc mstartc) (- nendr nstartr))
-    (let ((atemp 0d0))
-      (declare (type double-float atemp))
-      (do ((i mstartr (1+ i)))
-	  ((> i mendr))
-	(declare (type fixnum i))
-	(do ((k mstartc (1+ k)))
-	    ((> k mendc))
-	  (declare (type fixnum k))
-	  (setf atemp (aref a i k))
-	  (do ((j nstartc (1+ j)))
-	      ((> j nendc))
-	    (declare (type fixnum j))
-	    (incf (aref c i j) (the double-float (* atemp (aref b k j))))))))))
 
 (defparameter *max-block-size* 32)
 (declaim (type fixnum *max-block-size*))

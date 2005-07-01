@@ -20,6 +20,7 @@
    #:print-matrix
    #:transpose
    #:mat-mult
+   #:mat-hprod
    #:mat-copy-into
    #:mat-add
    #:mat-add!
@@ -97,9 +98,6 @@
    #:array->matrix
    #:trim-one
    
-   ;;; matrix constructor functions
-   #:ub8-matrix
-
    ;;; typed-matrix stuff
    #:typed-matrix
    #:map-matrix-fit

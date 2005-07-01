@@ -53,15 +53,5 @@
        (:clem-cl-source-file "defmatrix-mult")
        (:clem-cl-source-file "defmatrix-mult-block"))
       :depends-on ("defmatrix-types"))))
-   (:static-file "Makefile")
-   (:static-file "clem-test" :pathname #p"clem-test.asd")
-   (:module
-    :test
-    :components
-    ((:static-file "defpackage" :pathname #p"defpackage.cl")
-     (:static-file "test-clem" :pathname #p"test-clem.cl")
-     (:static-file "test-clem2" :pathname #p"test-clem2.cl")
-     (:static-file "test-clem3" :pathname #p"test-clem3.cl")
-     (:static-file "test-defmatrix" :pathname #p"test-defmatrix.cl")
-     (:static-file "bench-matrix" :pathname #p"bench-matrix.cl")
-     (:static-file "test-hprod"  :pathname #p"test-hprod.cl")))))
+   (:static-file "Makefile")))
+
