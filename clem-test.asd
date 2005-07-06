@@ -23,30 +23,6 @@
   (list (merge-pathnames *fasl-directory* (compile-file-pathname (component-pathname c)))))
 
 
-;;;; 2005-06-14
-;;;; hackery for putting stuff in the asdf registry
-;;;; there has to be a better way to do this. I don't know
-;;;; it.
-(defvar *registry-directories*
-  (list (make-pathname :directory "/usr/local/share/lisp")
-        (make-pathname :directory "/bobo/share/lisp")
-	(merge-pathnames
-	 (make-pathname :directory (list :relative :up))
-	 (make-pathname :directory (pathname-directory *load-truename*)))))
-
-(defun add-registry-path (path)
-  (dolist (dir *registry-directories*)
-    (let ((p (merge-pathnames
-              (make-pathname :directory (cons :relative (if (not (listp path)) (list path) path)))
-              dir)))
-      (when (probe-file p)
-        (pushnew p asdf:*central-registry* :test 'equal)
-        (return-from add-registry-path p)))))
-
-(mapcar #'(lambda (x) (add-registry-path x))
-	'("ch-util"))
-;;;;
-
 (defsystem :clem-test
   :version "20050614.1"
   :depends-on (ch-util clem)

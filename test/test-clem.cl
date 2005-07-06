@@ -102,7 +102,7 @@
     (ch-util:run-test #'matrix-test-5 "matrix-test-5" run)
     (ch-util:run-test #'matrix-test-6 "matrix-test-6" run)
     (ch-util:run-test #'matrix-test-7 "matrix-test-7" run)
-    (format t "~&~A of ~A tests passed" (ch-util:test-run-passed run) (ch-uti:test-run-tests run))
+    (format t "~&~A of ~A tests passed" (ch-util:test-run-passed run) (ch-util:test-run-tests run))
     ))
 
 
