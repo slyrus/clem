@@ -122,10 +122,10 @@
 (defmethod dim ((m matrix)) (array-dimensions (matrix-vals m)))
 
 (defgeneric rows (m))
-(defmethod rows ((m matrix)) (the fixnum (first (dim m))))
+(defmethod rows ((m matrix)) (the fixnum (array-dimension (matrix-vals m) 0)))
 
 (defgeneric cols (m))
-(defmethod cols ((m matrix)) (the fixnum (second (dim m))))
+(defmethod cols ((m matrix)) (the fixnum (array-dimension (matrix-vals m) 1)))
 
 (defgeneric val (m i j))
 (defmethod val ((m matrix) i j) (aref (matrix-vals m) i j))
