@@ -58,7 +58,7 @@
   (setf (slot-value object 'm)
 	(make-array (list rows cols)
 		    :adjustable adjustable
-		    :initial-element initial-element
+		    :initial-element (coerce initial-element (element-type (class-of object)))
 		    :element-type (element-type (class-of object))
 		    )))
   
@@ -831,12 +831,13 @@
     (cond ((= (length d) 2)
 	   (destructuring-bind (ar ac) d
 	     (cond
-	      ((and (= ar 1) (= ac 1))
+#|	      ((and (= ar 1) (= ac 1))
 	       (setf m (scalar (aref a 0 0))))
 	      ((= ac 1)
 	       (setf m (array->col-vector a)))
 	      ((= ar 1)
 	       (setf m (array->row-vector a)))
+|#
 	      (t 
 	       (setf m (make-instance matrix-class :rows ar :cols ac))
 	       (let ((k 0))
