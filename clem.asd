@@ -51,7 +51,8 @@
        (:clem-cl-source-file "defmatrix-scale")
        (:clem-cl-source-file "defmatrix-hprod")
        (:clem-cl-source-file "defmatrix-mult")
-       (:clem-cl-source-file "defmatrix-mult-block"))
+       (:clem-cl-source-file "defmatrix-mult-block")
+       (:clem-cl-source-file "defmatrix-transform"))
       :depends-on ("defmatrix-types"))))
    (:static-file "Makefile")))
 
