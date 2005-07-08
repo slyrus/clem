@@ -415,6 +415,8 @@
 	c))
      (t nil))))
 
+;;; this should be optimized via a type-specific method
+;;; for each matrix class
 (defgeneric get-first-non-zero-row-in-col (a j &optional start))
 (defmethod get-first-non-zero-row-in-col ((a matrix) j &optional (start 0))
   (let ((n (first (dim a))))
@@ -425,6 +427,8 @@
 	     nil
 	   i)))))
 
+;;; this should be optimized via a type-specific method
+;;; for each matrix class
 (defgeneric invert-matrix (a))
 (defmethod invert-matrix ((a matrix))
   (let* ((n (second (dim a)))
