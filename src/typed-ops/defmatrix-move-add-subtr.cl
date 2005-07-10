@@ -216,7 +216,14 @@
   (frob sb16-matrix single-float-matrix single-float-matrix)
 
   (frob sb32-matrix double-float-matrix double-float-matrix)
-  (frob sb32-matrix single-float-matrix single-float-matrix))
+  (frob sb32-matrix single-float-matrix single-float-matrix)
+
+  (frob fixnum-matrix double-float-matrix double-float-matrix)
+  (frob fixnum-matrix single-float-matrix single-float-matrix)
+
+  (frob bit-matrix double-float-matrix double-float-matrix)
+  (frob bit-matrix single-float-matrix single-float-matrix))
+
 
 (macrolet
     ((frob-sum-range (matrix-type accumulator-type)
