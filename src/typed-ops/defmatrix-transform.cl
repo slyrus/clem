@@ -14,12 +14,11 @@
     (let ((zero (coerce 0 `,transform-element-type))
 	  (one (coerce 1 `,transform-element-type)))
       `(progn
-	 (defmethod transform-matrix ((m ,type-1) (n ,type-2) (xfrm ,transform-type)
+	 (defmethod %transform-matrix ((m ,type-1) (n ,type-2) (xfrm ,transform-type)
 				      &key (background ,zero))
 	   (let ((mr (rows m)) (mc (cols m))
 		 (nr (rows n)) (nc (cols n)))
 	     (declare (type fixnum mr mc nr nc)
-		      (ignore nr nc)
 		      (optimize (speed 3) (safety 0)))
 	     (let  ((inv-xfrm (clem::invert-matrix xfrm))
 		    (coord1 (make-instance ',transform-type :rows 3 :cols 1))
@@ -32,9 +31,9 @@
 			  (type (simple-array ,element-type-2 (* *)) b)
 			  (type (simple-array ,transform-element-type (* *)) c d))
 		 (setf (aref c 2 0) ,one)
-		 (dotimes (i mr)
+		 (dotimes (i nr)
 		   (declare (type fixnum i))
-		   (dotimes (j mc)
+		   (dotimes (j nc)
 		     (declare (type fixnum j))
 		     (setf (aref d 0 0) ,zero
 			   (aref d 1 0) ,zero
