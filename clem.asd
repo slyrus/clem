@@ -43,6 +43,7 @@
      (:clem-cl-source-file "col-vector" :depends-on ("matrix"))
      (:clem-cl-source-file "scalar" :depends-on ("matrix"))
      (:clem-cl-source-file "matrixops" :depends-on ("typed-matrix-utils"))
+     (:clem-cl-source-file "transform" :depends-on ("matrix" "defmatrix-types"))
      (:module
       :typed-ops
       :components
