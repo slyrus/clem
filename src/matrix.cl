@@ -133,6 +133,20 @@
 (defgeneric mref (m i j))
 (defmethod mref ((m matrix) i j) (aref (matrix-vals m) i j))
 
+;;; rvref treats the matrix as a row-vector (that is a
+;;; 1 x n matrix). we should throw an error if this is not the case.
+;;; TODO: add rvref methods for row-vector, column-vector, and scalar
+;;; classes, erroring as appropriate.
+(defgeneric rvref (rv i))
+(defmethod rvref ((rv matrix) i) (aref (matrix-vals rv) 1 i))
+
+;;; cvref treats the matrix as a row-vector (that is an
+;;; n x 1 matrix). we should throw an error if this is not the case.
+;;; TODO: add cvref methods for row-vector, column-vector, and scalar
+;;; classes, erroring as appropriate.
+(defgeneric cvref (cv i))
+(defmethod cvref ((cv matrix) i) (aref (matrix-vals cv) i 1))
+
 (defgeneric move-element (m i1 j1 n i2 j2))
 (defmethod move-element ((m matrix) i1 j1 (n matrix) i2 j2)
   (setf (mref n i2 j2) (mref m i1 j1)))
