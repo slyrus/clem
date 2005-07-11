@@ -1,6 +1,6 @@
 ;;;; File: defmatrix.cl
 ;;;; Author: Cyrus Harmon
-;;;; Time-stamp: <2005-06-15 10:10:32 sly>
+;;;; Time-stamp: <2005-07-09 14:26:10 sly>
 ;;;; 
 ;;;; This file contains definitions for typed matrices. Typed
 ;;;; matrices have elements that are of a single type (although
@@ -73,11 +73,6 @@
 		   ((> ,j ,endc))
 		 (declare #-sbcl (dynamic-extent ,j) (type fixnum ,j))
 		 ,@body))))))))
-
-
-(defmacro defmatrix-method (method (&rest args) &body body)
-  `(defmethod ,method ,args
-     ,@body))
 
 
 ;;; for the moment we're ignoring the specialized-array flag in
