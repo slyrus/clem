@@ -2,7 +2,7 @@
 ;;; File: transform.cl
 ;;; Description: affine transformations for the clem matrix package
 ;;; Author: Cyrus Harmon
-;;; Time-stamp: "2005-07-10 22:20:53 sly"
+;;; Time-stamp: "2005-07-11 15:50:53 sly"
 ;;;
 
 (in-package :clem)
@@ -18,13 +18,17 @@
 ;;; moment I pass it in and it is the same size as the input matrix. I
 ;;; should probably compute the required size of the thing and make a
 ;;; new matrix as apporpriate.
-(defmethod transform-matrix (m n xfrm &key u v y x (background nil background-supplied-p) (update-transform t))
+(defmethod transform-matrix (m n xfrm
+                             &key u v y x
+                             (interpolation :nearest-neighbor interpolation-supplied-p)
+                             (background nil background-supplied-p)
+                             (update-transform t))
   (when update-transform
     (update-affine-transformation-matrix xfrm))
   (let ((xfrm-shift (mat-copy xfrm)))
     (when (and u v)
       (let ((pre-shift1 (make-affine-transformation
-			:y (car u) :x (car v)))
+			 :y (car u) :x (car v)))
 	    (pre-shift2 (make-affine-transformation
 			 :y-scale (log (/ (- (cdr u) (car u)) (rows m)))
 			 :x-scale (log (/ (- (cdr v) (car v)) (cols m))))))
@@ -37,7 +41,9 @@
 			  :x-scale (log (/ (cols n) (- (cdr x) (car x)))))))
 	(setf xfrm-shift (mat-mult post-shift (mat-mult post-shift2 xfrm-shift)))))
     (apply #'%transform-matrix m n xfrm-shift
-	   (when background-supplied-p (list :background background)))))
+           (append
+            (when background-supplied-p (list :background background))
+            (when interpolation-supplied-p (list :interpolation interpolation))))))
 
 (defclass affine-transformation (double-float-matrix)
   ((y :accessor y :initarg :y :initform 0d0)
