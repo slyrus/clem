@@ -26,13 +26,15 @@
 	       (let ((a (clem::matrix-vals m))
 		     (b (clem::matrix-vals n))
 		     (c (clem::matrix-vals coord1))
-		     (d (clem::matrix-vals coord2)))
+		     (d (clem::matrix-vals coord2))
+		     (g (clem::matrix-vals inv-xfrm)))
 		 (declare (type (simple-array ,element-type-1 (* *)) a)
 			  (type (simple-array ,element-type-2 (* *)) b)
-			  (type (simple-array ,transform-element-type (* *)) c d))
+			  (type (simple-array ,transform-element-type (* *)) c d g))
 		 (setf (aref c 2 0) ,one)
 		 (dotimes (i nr)
-		   (declare (type fixnum i))
+		   (declare (type fixnum i)
+			    (optimize (speed 3) (safety 0)))
 		   (dotimes (j nc)
 		     (declare (type fixnum j))
 		     (setf (aref d 0 0) ,zero
@@ -40,7 +42,18 @@
 			   (aref d 2 0) ,zero)
 		     (setf (aref c 0 0) (coerce i ',transform-element-type)
 			   (aref c 1 0) (coerce j ',transform-element-type))
-		     (clem::mat-mult3 inv-xfrm coord1 coord2)
+		     ;;; the slow(er) way to do this is:
+		     ;;; (clem::mat-mult3 inv-xfrm coord1 coord2)
+		     ;;; but since we don't need the full matrix multiply,
+		     ;;; based on what we know is in the affine
+		     ;;; transformation matrix, we can get away with
+		     ;;; fewer operations (Foley et al., 1996, p. 213)
+		     (setf (aref d 0 0) (+ (* (aref c 0 0) (aref g 0 0))
+					   (* (aref c 1 0) (aref g 0 1))
+					   (aref g 0 2))
+			   (aref d 1 0) (+ (* (aref c 0 0) (aref g 1 0))
+					   (* (aref c 1 0) (aref g 1 1))
+					   (aref g 1 2)))
 		     (let ((oldx (the fixnum (round (aref d 0 0))))
 			   (oldy (the fixnum (round (aref d 1 0)))))
 		       (declare (type fixnum oldx oldy))
