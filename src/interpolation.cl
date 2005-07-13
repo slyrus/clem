@@ -2,7 +2,7 @@
 ;;; File: interpolation.cl
 ;;; Description: interpolation for the clem matrix package
 ;;; Author: Cyrus Harmon
-;;; Time-stamp: "2005-07-12 16:26:47 sly"
+;;; Time-stamp: "2005-07-12 23:20:29 sly"
 ;;;
 
 (in-package :clem)
@@ -16,26 +16,33 @@
       (* ,a ,b (- (+ ,g00 ,g11)
                 (+ ,g10 ,g01)))))
 
-(declaim (inline quadratic-kernel))
-(defun quadratic-kernel (s)
-  (declare (type double-float s)
-           (optimize (speed 3) (safety 0)))
-  (cond ((<= -0.5d0 s 0.5d0)
-         (+ (* -2d0 (* s s)) 1d0))
-        ((<= -1.5d0 s 1.5d0)
-         (+ (* s s) (- (/ (* 5.0d0 (abs s)) 2.0d0)) 1.5d0))
-        (t 0.0d0)))
+(defmacro quadratic-kernel (s type)
+  (let ((minus-half (coerce -0.5 `,type))
+        (half (coerce 0.5 `,type))
+        (minus-one-point-five  (coerce -1.5 `,type))
+        (one-point-five (coerce 1.5 `,type))
+        (five (coerce 5 `,type))
+        (minus-two (coerce -2 `,type))
+        (two (coerce 2 `,type))
+        (one (coerce 1 `,type))
+        (zero (coerce 0 `,type)))
+    `(cond ((<= ,minus-half ,s ,half)
+            (+ (* ,minus-two (* ,s ,s)) ,one))
+           ((<= ,minus-one-point-five ,s ,one-point-five)
+            (+ (* ,s ,s) (- (/ (* ,five (abs ,s)) ,two)) ,one-point-five))
+           (t ,zero))))
 
 (defmacro quadratic-interpolate
     (g00 g01 g02
      g10 g11 g12 
-     g20 g21 g22 a b)
-  `(let ((a0 (quadratic-kernel (- -1, a)))
-         (a1 (quadratic-kernel (- ,a)))
-         (a2 (quadratic-kernel (- 1 ,a)))
-         (b0 (quadratic-kernel (- -1 ,b)))
-         (b1 (quadratic-kernel (- ,b)))
-         (b2 (quadratic-kernel (- 1 ,b))))
+     g20 g21 g22 a b
+     type)
+  `(let ((a0 (quadratic-kernel (- -1, a) ,type))
+         (a1 (quadratic-kernel (- ,a) ,type))
+         (a2 (quadratic-kernel (- 1 ,a) ,type))
+         (b0 (quadratic-kernel (- -1 ,b) ,type))
+         (b1 (quadratic-kernel (- ,b) ,type))
+         (b2 (quadratic-kernel (- 1 ,b) ,type)))
      (+ (* a0 (+ (* b0 ,g00)
                  (* b1 ,g01)
                  (* b2 ,g02)))
