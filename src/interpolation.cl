@@ -2,7 +2,6 @@
 ;;; File: interpolation.cl
 ;;; Description: interpolation for the clem matrix package
 ;;; Author: Cyrus Harmon
-;;; Time-stamp: "2005-07-13 00:32:37 sly"
 ;;;
 
 (in-package :clem)
