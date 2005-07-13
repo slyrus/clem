@@ -2,7 +2,6 @@
 ;;; File: transform.cl
 ;;; Description: affine transformations for the clem matrix package
 ;;; Author: Cyrus Harmon
-;;; Time-stamp: "2005-07-11 15:50:53 sly"
 ;;;
 
 (in-package :clem)
