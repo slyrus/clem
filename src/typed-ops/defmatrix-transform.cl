@@ -24,7 +24,9 @@
 		      (optimize (speed 3) (safety 0)))
 	     (let  ((inv-xfrm (clem::invert-matrix xfrm))
 		    (coord1 (make-instance ',transform-type :rows 3 :cols 1))
-		    (coord2 (make-instance ',transform-type :rows 3 :cols 1)))
+		    (coord2 (make-instance ',transform-type :rows 3 :cols 1))
+                    (mrf (coerce mr ',transform-element-type))
+                    (mcf (coerce mr ',transform-element-type)))
 	       (let ((a (clem::matrix-vals m))
 		     (b (clem::matrix-vals n))
 		     (c (clem::matrix-vals coord1))
@@ -61,6 +63,51 @@
                      ;;; we should also offer a way to do bilinear,
                      ;;; bicubic, etc... interpolation
                      (case interpolation
+                       ((:quadratic)
+                        (if (and
+                             (<= 0d0 (aref d 0 0) mrf)
+                             (<= 0d0 (aref d 1 0) mcf))
+                            (multiple-value-bind (l ry)
+                                (round (the (,transform-element-type
+                                                ,(coerce 0d0 `,transform-element-type)
+                                                ,(coerce most-positive-fixnum `,transform-element-type))
+                                            (aref d 0 0)))
+                              (declare (type fixnum l)
+                                       (type ,transform-element-type ry))
+                              (multiple-value-bind (k rx)
+                                  (round (the (,transform-element-type
+                                                  ,(coerce 0d0 `,transform-element-type)
+                                                  ,(coerce most-positive-fixnum `,transform-element-type))
+                                              (aref d 1 0)))
+                                (declare (type fixnum k)
+                                         (type ,transform-element-type rx))
+                                (cond
+                                  ((and (< -1 l mr)
+                                        (< -1 k mc))
+                                   (let ((l0 (max (1- l) 0))
+                                         (l2 (min (1+ l) (1- mr)))
+                                         (k0 (max (1- k) 0))
+                                         (k2 (min (1+ k) (1- mc))))
+                                     (declare (type fixnum l0 l2 k0 k2))
+                                     (setf (aref b i j)
+                                           (maybe-truncate
+                                            (quadratic-interpolate
+                                             (aref a l0 k0)
+                                             (aref a l0 k)
+                                             (aref a l0 k2)
+                                             (aref a l k0)
+                                             (aref a l k)
+                                             (aref a l k2)
+                                             (aref a l2 k0)
+                                             (aref a l2 k)
+                                             (aref a l2 k2)
+                                             ry rx)
+                                            ,transform-element-type
+                                            ,element-type-2
+                                            ))))
+                                  (t
+                                   (setf (aref b i j) background)))))
+                            (setf (aref b i j) background)))
                        ((:bilinear :bi-linear)
                         (if (and
                              (< ,(coerce most-negative-fixnum `,transform-element-type)
@@ -83,7 +130,6 @@
                                            (aref d 1 0)))
                                 (declare (type fixnum k)
                                          (type ,transform-element-type rx))
-                            ;;; add a case for the border here!
                                 (cond
                                   ((and (< -1 l mr)
                                         (< -1 k mc))
@@ -92,16 +138,12 @@
                                      (declare (type fixnum l1 k1))
                                      (setf (aref b i j)
                                            (maybe-truncate
-                                            (+ (aref a l k)
-                                               (* ry (- (aref a l1 k)
-                                                        (aref a l k)))
-                                               (* rx (- (aref a l k1)
-                                                        (aref a l k)))
-                                               (* rx ry
-                                                  (- (+ (aref a l k)
-                                                        (aref a l1 k1))
-                                                     (+ (aref a l1 k)
-                                                        (aref a l k1)))))
+                                            (bilinear-interpolate
+                                             (aref a l k)
+                                             (aref a l k1)
+                                             (aref a l1 k)
+                                             (aref a l1 k1)
+                                             ry rx)
                                             ,transform-element-type
                                             ,element-type-2
                                             ))))
@@ -131,4 +173,3 @@
   (frob sb32-matrix sb32-matrix double-float-matrix)
   (frob fixnum-matrix fixnum-matrix double-float-matrix)
   (frob bit-matrix bit-matrix double-float-matrix))
-
