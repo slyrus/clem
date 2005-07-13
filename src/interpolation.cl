@@ -2,7 +2,7 @@
 ;;; File: interpolation.cl
 ;;; Description: interpolation for the clem matrix package
 ;;; Author: Cyrus Harmon
-;;; Time-stamp: "2005-07-12 23:20:29 sly"
+;;; Time-stamp: "2005-07-13 00:32:37 sly"
 ;;;
 
 (in-package :clem)
@@ -10,11 +10,12 @@
 
 (defmacro bilinear-interpolate
     (g00 g01 g10 g11 a b)
-  `(+ ,g00
-      (* ,a (- ,g10 ,g00))
-      (* ,b (- ,g01 ,g00))
-      (* ,a ,b (- (+ ,g00 ,g11)
-                (+ ,g10 ,g01)))))
+  (ch-util::once-only (g00 g01 g10 g11 a b)
+    `(+ ,g00
+        (* ,a (- ,g10 ,g00))
+        (* ,b (- ,g01 ,g00))
+        (* ,a ,b (- (+ ,g00 ,g11)
+                    (+ ,g10 ,g01))))))
 
 (defmacro quadratic-kernel (s type)
   (let ((minus-half (coerce -0.5 `,type))
