@@ -68,6 +68,8 @@
    #:max-val
    #:min-val
 
+   #:mat-copy-proto
+
    ;;; temporary (maybe) matrix conversion utility functions
    #:copy-to-ub8-matrix
    #:copy-to-double-float-matrix
@@ -149,6 +151,15 @@
    #:random-bit-matrix
 
    #:integer-matrix
+
+   ;;; affine transformation stuff
+   #:affine-transformation
+   #:make-affine-transformation
+   #:transform-matrix
+
+   ;;; typed matrix operations
+   #:matrix-move
+   ;;; more to come...
 
    ))
 
