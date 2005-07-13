@@ -101,7 +101,8 @@
                                              (aref a l2 k0)
                                              (aref a l2 k)
                                              (aref a l2 k2)
-                                             ry rx)
+                                             ry rx
+                                             ,transform-element-type)
                                             ,transform-element-type
                                             ,element-type-2
                                             ))))
