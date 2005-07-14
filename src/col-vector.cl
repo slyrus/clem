@@ -3,13 +3,13 @@
 
 (defclass col-vector (matrix) ())
 
-(defmethod allocate-matrix-vals ((object col-vector) &key rows cols adjustable initial-element element-type)
+(defmethod allocate-matrix-vals ((object col-vector) &key rows cols adjustable initial-element)
   (declare (ignore cols))
   (setf (slot-value object 'm)
 	(make-array (list rows)
 		    :adjustable adjustable
 		    :initial-element initial-element
-		    :element-type element-type)))
+		    :element-type (element-type (class-of object)))))
 
 (defmethod vec-dim ((cv col-vector)) (array-dimensions (matrix-vals cv)))
 (defmethod vec-val ((cv col-vector) i) (aref (matrix-vals cv) i))

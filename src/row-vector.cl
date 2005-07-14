@@ -7,13 +7,13 @@
 
 (defclass row-vector (matrix) ())
 
-(defmethod allocate-matrix-vals ((object row-vector) &key rows cols adjustable initial-element element-type)
+(defmethod allocate-matrix-vals ((object row-vector) &key rows cols adjustable initial-element)
   (declare (ignore rows))
   (setf (slot-value object 'm)
 	(make-array (list cols)
 		    :adjustable adjustable
 		    :initial-element initial-element
-		    :element-type element-type)))
+		    :element-type (element-type (class-of object)))))
 
 (defmethod array->row-vector ((a array))
   (let ((d (array-dimensions a)))
