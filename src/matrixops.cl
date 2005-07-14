@@ -1,7 +1,6 @@
 ;;;
 ;;; file: matrixops.cl
 ;;; author: cyrus harmon
-;;; time-stamp: Fri Apr 23 13:44:30 EDT 2004
 ;;;
 
 ;;;
@@ -240,6 +239,11 @@
 (defun gaussian-blur-orig (m &key (k 2) (sigma 1) (truncate nil))
   (let* ((h (gaussian-kernel k sigma)))
     (discrete-convolve m h :truncate truncate)))
+
+;;; DEBUGGING -- REMOVE ME!
+(defun gaussian-blur2 (m &key (k 2) (sigma 1) (truncate nil))
+  (let* ((h (gaussian-kernel k sigma)))
+    (discrete-convolve2 m h :truncate truncate)))
 
 (defparameter *x-derivative-conv-matrix*
   (transpose (array->fixnum-matrix #2A((1 0 -1)(1 0 -1)(1 0 -1)))))
