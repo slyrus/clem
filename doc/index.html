@@ -55,6 +55,35 @@
     
     <h3> Matrix Conversion </h3>
 
+    <h2> Implementation Notes </h2>
+
+    <h3> Type-specific matrix functions </h3>
+    
+    <p>
+      The general strategy has been to 1) make things work and then
+      make them work quickly.  To this end, I have been writing
+      functions for matrix operations in a general manner first and
+      then recoding type-specific versions to make certain operations
+      go faster.  This is done via liberal use of macros to generate
+      type-specific functions and methods for matrix operations that
+      go much faster than the general versions.
+    </p>
+
+    <p>
+      The convention is that a generic function such as sum-range will
+      have a generic version that works with all matrices and type
+      specific versions thaqt work with specific matrices. g In order
+      to support these functions there may be internal methods,
+      prefixed with a %, that implement certain type-specific
+      functionality.  Macros that generate the code used for the
+      type-specific methods will be prefixed with a %%.  In theory,
+      the %%-macros can be called from other code that need to
+      generate in-place code where the overhead of the method-call to
+      the %-method would be too expensive. This convention is not yet
+      widely enforced and certainly untested. Hopefully this situation
+      will improve.
+    </p>
+
     <hr>
     <address><a href="mailto:ch-lisp@bobobeach.com">Cyrus Harmon</a></address>
 <!-- Created: Thu May  6 13:10:31 PDT 2004 -->
