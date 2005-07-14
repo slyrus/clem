@@ -26,8 +26,9 @@
 (defsystem :clem
   :name "clem"
   :author "Cyrus Harmon <ch-lisp@bobobeach.com>"
-  :version "0.1.1-20050701"
+  :version "0.1.1-20050714"
   :licence "BSD"
+  :depends-on (ch-util)
   :components
   ((:module
     :src
@@ -50,6 +51,7 @@
       :components
       ((:clem-cl-source-file "defmatrix-mref")
        (:clem-cl-source-file "defmatrix-move-add-subtr")
+       (:clem-cl-source-file "defmatrix-sum")
        (:clem-cl-source-file "defmatrix-scale")
        (:clem-cl-source-file "defmatrix-hprod")
        (:clem-cl-source-file "defmatrix-mult")
