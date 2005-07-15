@@ -193,21 +193,28 @@
     a))
 
 
+(defun gaussian-kernel-1d (k sigma)
+  (let* ((d (1+ (* 2 k)))
+	 (a (make-instance 'double-float-matrix :rows d :cols 1))
+	 (q (* 2 sigma sigma))
+	 (z (/ (* pi q))))
+    (dotimes (i d)
+      (set-val a i 0
+               (* (exp (- (/ (+ (* (- i k) (- i k))
+                                (* (- i k) (- i k)))
+                             q)))
+                  z)))
+    (scalar-divide a (sum-range a 0 (- d 1) 0 0))
+    a))
+
+
 ;;; NOTE!!! These subset-matrix calls are a bad thing.
 ;;; Copying these matrices is a big nono. Let's figure out a better
 ;;; way to do this...
-(defun separable-discrete-convolve (m h &key (truncate nil))
-  (let ((rowstart (floor (/ (1- (rows h)) 2)))
-	(rowend (floor (/ (rows h) 2)))
-	(colstart (floor (/ (1- (cols h)) 2)))
-	(colend (floor (/ (cols h) 2))))
-    (let ((h1 (subset-matrix h rowstart rowend 0 (1- (cols h))))
-	  (h2 (subset-matrix h 0 (1- (rows h)) colstart colend)))
-      (scalar-divide h1 (sum h1))
-      (scalar-divide h2 (sum h2))
-      (let* ((m1 (discrete-convolve m h1 :truncate truncate))
-	     (m2 (discrete-convolve m1 h2 :truncate truncate)))
-	m2))))
+(defmethod separable-discrete-convolve (m h1 h2 &key (truncate nil) (norm-v nil))
+  (let* ((m1 (discrete-convolve m h1 :truncate truncate :norm-v norm-v))
+         (m2 (discrete-convolve m1 h2 :truncate truncate :norm-v norm-v)))
+    m2))
 
 (defun separable-discrete-convolve-word (m h &key (truncate nil))
   (let ((rowstart (floor (/ (1- (rows h)) 2)))
@@ -226,8 +233,9 @@
 	m2))))
 
 (defun gaussian-blur (m &key (k 2) (sigma 1) (truncate nil))
-  (let ((h (gaussian-kernel k sigma)))
-    (separable-discrete-convolve m h :truncate truncate)))
+  (let* ((hr (gaussian-kernel-1d k sigma))
+         (hc (transpose hr)))
+    (separable-discrete-convolve m hr hc :truncate truncate)))
 
 (defun gaussian-blur-word (m &key (k 2) (sigma 1) (truncate t))
   (let ((h (copy-to-ub8-matrix
@@ -243,7 +251,7 @@
 ;;; DEBUGGING -- REMOVE ME!
 (defun gaussian-blur2 (m &key (k 2) (sigma 1) (truncate nil))
   (let* ((h (gaussian-kernel k sigma)))
-    (discrete-convolve2 m h :truncate truncate)))
+    (discrete-convolve m h :truncate truncate)))
 
 (defparameter *x-derivative-conv-matrix*
   (transpose (array->fixnum-matrix #2A((1 0 -1)(1 0 -1)(1 0 -1)))))
