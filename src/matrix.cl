@@ -712,6 +712,22 @@
   (destructuring-bind (mr mc) (dim m)
     (sum-range m 0 (- mr 1) 0 (- mc 1))))
 
+(defmethod sum-cols ((m matrix) &key (matrix-class (class-of m)))
+  (let ((mr (rows m)) (mc (cols m)))
+    (let ((n (make-instance matrix-class :rows 1 :cols mc)))
+      (dotimes (i mr)
+        (dotimes (j mc)
+          (incf (mref n 0 j) (mref m i j))))
+      n)))
+
+(defmethod sum-rows ((m matrix) &key (matrix-class (class-of m)))
+  (let ((mr (rows m)) (mc (cols m)))
+    (let ((n (make-instance matrix-class :rows mr :cols 1)))
+      (dotimes (i mr)
+        (dotimes (j mc)
+          (incf (mref n i 0) (mref m i j))))
+      n)))
+
 (defmethod sum-square-range ((m matrix) (startr fixnum) (endr fixnum) (startc fixnum) (endc fixnum))
   (declare (dynamic-extent startr endr startc endc)
 	   (fixnum startr endr startc endc))
