@@ -892,11 +892,21 @@
 
 (defgeneric m- (&rest matrices))
 (defmethod m- (&rest matrices)
-  (reduce #'mat-subtr matrices))
+  (if (cdr matrices)
+      (reduce #'mat-subtr matrices)
+      (mat-scale (car matrices) -1)))
 
 (defgeneric m* (&rest matrices))
 (defmethod m* (&rest matrices)
-  (reduce #'mat-mult matrices))
+  (reduce #'(lambda (x y)
+              (if (typep y 'matrix)
+                  (mat-mult x y)
+                  (mat-scale x y)))
+          matrices))
+
+(defgeneric m.* (&rest matrices))
+(defmethod m.* (&rest matrices)
+  (reduce #'mat-hprod matrices))
 
 (defparameter *matrix-print-row-limit* 8)
 (defparameter *matrix-print-col-limit* 8)
