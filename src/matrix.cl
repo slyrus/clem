@@ -92,21 +92,11 @@
               mpl)
       )))
 
-(flet ((cca (l1 l2)
-	 (dolist (x l1)
-	   (let ((y (member x l2)))
-	     (if y (return y))))))
-  (defun closest-common-ancestor (itm &rest lis)
-    (if (null lis)
-	itm
-	(cca itm (apply #'closest-common-ancestor lis)))))
-
 (defgeneric closest-common-matrix-class (m1 &rest mr)
   (:method ((m1 matrix) &rest mr)
-    (car (apply #'closest-common-ancestor
+    (car (apply #'ch-util::closest-common-ancestor
                 (mapcar #'(lambda (x) (matrix-precedence-list (class-of x)))
-                        (cons m1 mr))))
-    ))
+                        (cons m1 mr))))))
 
 (defgeneric fit (m val))
 (defmethod fit ((m matrix) val)
@@ -886,27 +876,34 @@
   (destructuring-bind (mr mc) (dim m)
     (subset-matrix m k (- mr k 1) k (- mc k 1))))
 
-(defgeneric m+ (&rest matrices))
-(defmethod m+ (&rest matrices)
+
+;;;;
+;;;; convenience arithmetic functions
+
+(defgeneric matrix+ (&rest matrices))
+(defmethod matrix+ (&rest matrices)
   (reduce #'mat-add matrices))
 
-(defgeneric m- (&rest matrices))
-(defmethod m- (&rest matrices)
+(defgeneric matrix- (&rest matrices))
+(defmethod matrix- (&rest matrices)
   (if (cdr matrices)
       (reduce #'mat-subtr matrices)
       (mat-scale (car matrices) -1)))
 
-(defgeneric m* (&rest matrices))
-(defmethod m* (&rest matrices)
+(defgeneric matrix* (&rest matrices))
+(defmethod matrix* (&rest matrices)
   (reduce #'(lambda (x y)
               (if (typep y 'matrix)
                   (mat-mult x y)
                   (mat-scale x y)))
           matrices))
 
-(defgeneric m.* (&rest matrices))
-(defmethod m.* (&rest matrices)
+(defgeneric matrix.* (&rest matrices))
+(defmethod matrix.* (&rest matrices)
   (reduce #'mat-hprod matrices))
+
+;;;;
+;;;; print-object and friends
 
 (defparameter *matrix-print-row-limit* 8)
 (defparameter *matrix-print-col-limit* 8)
