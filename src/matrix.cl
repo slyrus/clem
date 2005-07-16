@@ -94,7 +94,7 @@
 
 (defgeneric closest-common-matrix-class (m1 &rest mr)
   (:method ((m1 matrix) &rest mr)
-    (car (apply #'ch-util::closest-common-ancestor
+    (car (apply #'ch-util:closest-common-ancestor
                 (mapcar #'(lambda (x) (matrix-precedence-list (class-of x)))
                         (cons m1 mr))))))
 
