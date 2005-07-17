@@ -5,7 +5,7 @@
   (let ((element-type-1 (element-type (find-class `,type-1)))
 	(accumulator-element-type (element-type (find-class `,accumulator-type))))
     `(progn
-       (defmethod ,(make-intern (concatenate 'string "mat-scale-range" suffix))
+       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-scale-range" suffix))
 	   ((m ,type-1) q startr endr startc endc)
          (let ((qconv (coerce q ',element-type-1)))
            (declare (type ,element-type-1 qconv))
@@ -22,15 +22,15 @@
                        (setf (aref c i j) (* (aref a i j) qconv))))))
                p))))
        
-       (defmethod ,(make-intern (concatenate 'string "mat-scale" suffix))
+       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-scale" suffix))
 	   ((m ,type-1) q)
 	 (destructuring-bind (mr mc) (dim m)
-	   (,(make-intern (concatenate 'string "mat-scale-range" suffix)) m q 0 (1- mr) 0 (1- mc)))))))
+	   (,(ch-util:make-intern (concatenate 'string "mat-scale-range" suffix)) m q 0 (1- mr) 0 (1- mc)))))))
 
 (defmacro def-matrix-scale! (type-1 &key suffix)
   (let ((element-type-1 (element-type (find-class `,type-1))))
     `(progn
-       (defmethod ,(make-intern (concatenate 'string "mat-scale-range!" suffix))
+       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-scale-range!" suffix))
 	   ((m ,type-1) q startr endr startc endc)
          (let ((qconv (coerce q ',element-type-1)))
            (declare (type ,element-type-1 qconv))
@@ -44,10 +44,10 @@
                  (setf (aref a i j) (* (aref a i j) qconv))))))
          m)
        
-       (defmethod ,(make-intern (concatenate 'string "mat-scale!" suffix))
+       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-scale!" suffix))
 	   ((m ,type-1) q)
 	 (destructuring-bind (mr mc) (dim m)
-	   (,(make-intern (concatenate 'string "mat-scale-range!" suffix)) m q 0 (1- mr) 0 (1- mc)))))))
+	   (,(ch-util:make-intern (concatenate 'string "mat-scale-range!" suffix)) m q 0 (1- mr) 0 (1- mc)))))))
 
 (macrolet ((frob (type-1 type-3 &key suffix)
 	     `(progn

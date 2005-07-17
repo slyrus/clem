@@ -831,7 +831,7 @@
 (defmethod mat-sqrt! ((u matrix))
   (map-set-val u #'(lambda (x) (sqrt x))))
 
-(defgeneric normalize (u &key normin normax truncate))
+(defgeneric normalize (u &key))
 (defmethod normalize ((u matrix) &key (normin) (normax) (truncate nil))
   (let ((min (min-val u))
 	(max (max-val u))

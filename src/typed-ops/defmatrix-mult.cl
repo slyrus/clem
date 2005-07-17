@@ -13,7 +13,7 @@
 	(accumulator-element-type (element-type (find-class `,accumulator-type))))
     `(progn
 
-       (defmethod ,(make-intern (concatenate 'string "mat-mult3" suffix))
+       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-mult3" suffix))
 	   ((m ,type-1) (n ,type-1) (p ,type-1))
 	 (declare (optimize (speed 3) (safety 0)))
 	 (let ((a (clem::matrix-vals m))
@@ -41,7 +41,7 @@
 		     (incf (aref c i j) (the ,accumulator-element-type (* atemp (aref b k j))))))))))
 	 p)
        
-       (defmethod ,(make-intern (concatenate 'string "mat-mult" suffix))
+       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-mult" suffix))
 	   ((m ,type-1) (n ,type-2))
 	 (declare (optimize (speed 3) (safety 0)))
 	 (let ((mr (rows m))
