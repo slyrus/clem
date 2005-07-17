@@ -1,6 +1,5 @@
 ;;;; File: defmatrix.cl
 ;;;; Author: Cyrus Harmon
-;;;; Time-stamp: <2005-07-09 14:26:10 sly>
 ;;;; 
 ;;;; This file contains definitions for typed matrices. Typed
 ;;;; matrices have elements that are of a single type (although
@@ -114,7 +113,7 @@
        (with-typed-matrix-vals (m ,element-type t a)
 	 (setf (aref a row col) v)))
 
-     (defmethod ,(make-intern (concatenate 'string "array->" (symbol-name type))) ((a array))
+     (defmethod ,(ch-util:make-intern (concatenate 'string "array->" (symbol-name type))) ((a array))
        (array->matrix a :matrix-class ',type))
      
      (defmethod min-range ((m ,type) (startr fixnum) (endr fixnum) (startc fixnum) (endc fixnum))
@@ -173,7 +172,7 @@
 	   (setf (aref a i j) (funcall f (aref a i j)))))
        m)
      
-     (defmethod ,(make-intern (concatenate 'string "random-" (symbol-name type))) (rows cols &key (max nil))
+     (defmethod ,(ch-util:make-intern (concatenate 'string "random-" (symbol-name type))) (rows cols &key (max nil))
        (let ((a (make-instance ',type :rows rows :cols cols)))
 	 (map-set-val-fit a #'(lambda (x) (declare (ignore x))
 				      (random
