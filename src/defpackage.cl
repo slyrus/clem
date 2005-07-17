@@ -161,5 +161,10 @@
    #:matrix-move
    ;;; more to come...
 
+   #:m+
+   #:m-
+   #:m*
+   #:m.*
+
    ))
 
