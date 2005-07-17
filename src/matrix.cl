@@ -149,7 +149,6 @@
 	    (coerce v (element-type (class-of m)))
 	    v)))
 
-(defgeneric set-val-fit (m i j v &key truncate))
 (defmethod set-val-fit ((m matrix) i j v &key (truncate nil))
   (setf (mref m i j) (if truncate (truncate v) v)))
 
@@ -224,6 +223,7 @@
     (inferior (superior min val) max)
     val))
 
+;;; FIXME - figure out what to do about truncate
 (defgeneric mat-copy-into (a c &key truncate constrain))
 (defmethod mat-copy-into ((a matrix) (c matrix) &key truncate constrain)
   (destructuring-bind (m n) (dim a)
@@ -328,21 +328,19 @@
     (dotimes (j n)
       (set-val a k j (funcall f (val a k j))))))
 
-(eval-when (:compile-toplevel :load-toplevel)
-  (defun interncase (x)
-    (string-upcase x))
-  (defun make-intern (x &optional (package *package*))
-    (intern (interncase x) package)))
-
 (macrolet ((frob (name op)
              `(progn
                 ;;; define the row op
-                (defmethod ,(make-intern (concatenate 'string "scalar-" name "-row"))
+                (defgeneric ,(ch-util:make-intern (concatenate 'string "scalar-" name "-row"))
+                    (a k q))
+                (defmethod ,(ch-util:make-intern (concatenate 'string "scalar-" name "-row"))
                     ((a matrix) k q)
                   (map-row a k #'(lambda (x) (apply ,op (list x q))))
                   a)
                 ;;; define the column op
-                (defmethod ,(make-intern (concatenate 'string "scalar-" name "-col"))
+                (defgeneric ,(ch-util:make-intern (concatenate 'string "scalar-" name "-col"))
+                    (a k q))
+                (defmethod ,(ch-util:make-intern (concatenate 'string "scalar-" name "-col"))
                     ((a matrix) k q)
                   (map-col a k #'(lambda (x) (apply ,op (list x q))))
                   a))))
@@ -549,6 +547,7 @@
             ))
         z))))
 
+(defgeneric pad-matrix (m))
 (defmethod pad-matrix ((m matrix))
   (cond
     ((> (rows m) (cols m))
@@ -570,6 +569,7 @@
                                :rows (floor (/ delta 2))
                                :cols (cols m)))))))
 
+(defgeneric set-row (m r values))
 (defmethod set-row ((m matrix) r values)
   (do
       ((l values (cdr l))
@@ -577,6 +577,7 @@
       ((not l))
     (set-val m r i (car l))))
 
+(defgeneric set-col (m c values))
 (defmethod set-col ((m matrix) c values)
   (do
       ((l values (cdr l))
@@ -584,6 +585,7 @@
       ((not l))
     (set-val m i c (car l))))
 
+(defgeneric get-row-list (m r &optional start))
 (defmethod get-row-list ((m matrix) r &optional (start 0))
   (cond
    ((< start (second (dim m)))
@@ -591,6 +593,7 @@
 	  (get-row-list m r (+ 1 start))))
    (t nil)))
 
+(defgeneric get-col-list (m c &optional start))
 (defmethod get-col-list ((m matrix) c &optional (start 0))
   (cond
    ((< start (first (dim m)))
@@ -598,6 +601,7 @@
 	  (get-col-list m c (+ 1 start))))
    (t nil)))
 
+(defgeneric map-set-val (a f))
 (defmethod map-set-val ((a matrix) f)
   (destructuring-bind (m n) (dim a)
     (declare (dynamic-extent m n) (fixnum m n))
@@ -608,6 +612,7 @@
 	(set-val a i j (funcall f (val a i j))))))
   a)
 
+(defgeneric map-set-val-fit (a f &key truncate))
 (defmethod map-set-val-fit ((a matrix) f &key (truncate t))
   (destructuring-bind (m n) (dim a)
     (declare (dynamic-extent m n) (fixnum m n))
@@ -618,6 +623,7 @@
 	(set-val-fit a i j (funcall f (val a i j)) :truncate truncate))))
   a)
 
+(defgeneric map-set-val-copy (a f))
 (defmethod map-set-val-copy ((a matrix) f)
   (destructuring-bind (ar ac) (dim a)
     (declare (dynamic-extent ar ac) (fixnum ar ac))
@@ -629,6 +635,7 @@
 	  (set-val b i j (funcall f (val a i j)))))
       b)))
 
+(defgeneric map-range (a startr endr startc endc f))
 (defmethod map-range ((a matrix)
                       (startr fixnum)
                       (endr fixnum)
@@ -661,6 +668,7 @@
       (declare (dynamic-extent j) (fixnum j))
       (set-val a i j (funcall f (val a i j) i j)))))
 
+(defgeneric random-matrix (rows cols &key matrix-class limit))
 (defmethod random-matrix ((rows fixnum) (cols fixnum) &key
                           (matrix-class 'matrix)
                           (limit 1.0d0))
@@ -670,6 +678,7 @@
     (map-set-val a #'(lambda (x) (declare (ignore x)) (random limit)))
     a))
 
+(defgeneric min-range (m startr endr startc endc))
 (defmethod min-range ((m matrix) (startr fixnum) (endr fixnum) (startc fixnum) (endc fixnum))
   (declare (dynamic-extent startr endr startc endc)
 	   (fixnum startr endr startc endc))
@@ -680,6 +689,7 @@
 		   (setf retval (min retval v))))
     retval))
 
+(defgeneric max-range (m startr endr startc endc))
 (defmethod max-range ((m matrix) (startr fixnum) (endr fixnum) (startc fixnum) (endc fixnum))
   (let ((retval (val m startr startc)))
     (map-range m startr endr startc endc
@@ -688,7 +698,7 @@
 		   (setf retval (max retval v))))
     retval))
 
-
+(defgeneric sum-range (m startr endr startc endc))
 (defmethod sum-range ((m matrix) (startr fixnum) (endr fixnum) (startc fixnum) (endc fixnum))
   (declare (dynamic-extent startr endr startc endc)
 	   (fixnum startr endr startc endc))
@@ -699,10 +709,12 @@
 		   (incf acc v)))
     acc))
 
+(defgeneric sum (m))
 (defmethod sum ((m matrix))
   (destructuring-bind (mr mc) (dim m)
     (sum-range m 0 (- mr 1) 0 (- mc 1))))
 
+(defgeneric sum-cols (m &key matrix-class))
 (defmethod sum-cols ((m matrix) &key (matrix-class (class-of m)))
   (let ((mr (rows m)) (mc (cols m)))
     (let ((n (make-instance matrix-class :rows 1 :cols mc)))
@@ -711,6 +723,7 @@
           (incf (mref n 0 j) (mref m i j))))
       n)))
 
+(defgeneric sum-rows (m &key matrix-class))
 (defmethod sum-rows ((m matrix) &key (matrix-class (class-of m)))
   (let ((mr (rows m)) (mc (cols m)))
     (let ((n (make-instance matrix-class :rows mr :cols 1)))
@@ -719,6 +732,7 @@
           (incf (mref n i 0) (mref m i j))))
       n)))
 
+(defgeneric sum-square-range (m startr endr startc endc))
 (defmethod sum-square-range ((m matrix) (startr fixnum) (endr fixnum) (startc fixnum) (endc fixnum))
   (declare (dynamic-extent startr endr startc endc)
 	   (fixnum startr endr startc endc))
@@ -729,6 +743,7 @@
 		   (incf acc (* v v))))
     acc))
 
+(defgeneric sum-square (m))
 (defmethod sum-square ((m matrix))
   (destructuring-bind (mr mc) (dim m)
     (sum-square-range m 0 (- mr 1) 0 (- mc 1))))
@@ -739,15 +754,17 @@
 (defun double-float-divide (&rest args)
   (apply #'/ (mapcar #'(lambda (x) (coerce x 'double-float)) args)))
 
+(defgeneric mean-range (m startr endr startc endc))
 (defmethod mean-range ((m matrix) startr endr startc endc)
   (double-float-divide (sum-range m startr endr startc endc)
 		(count-range startr endr startc endc)))
 
-
+(defgeneric mean (m))
 (defmethod mean ((m matrix))
   (destructuring-bind (mr mc) (dim m)
     (mean-range m 0 (- mr 1) 0 (- mc 1))))
 
+(defgeneric variance-range (m startr endr startc endc))
 (defmethod variance-range ((m matrix) startr endr startc endc)
   (declare (dynamic-extent startr endr startc endc)
 	   (fixnum startr endr startc endc))
@@ -759,10 +776,12 @@
 	  (- (double-float-divide ssr cr)
 	     musq))))))
 
+(defgeneric variance (m))
 (defmethod variance ((m matrix))
   (destructuring-bind (mr mc) (dim m)
     (variance-range m 0 (- mr 1) 0 (- mc 1))))
 
+(defgeneric sample-variance-range (m startr endr startc endc))
 (defmethod sample-variance-range ((m matrix) startr endr startc endc)
   (let* ((acc 0)
 	 (mu (mean-range m startr endr startc endc))
@@ -773,11 +792,12 @@
 		   (incf acc (- (* v v) musq))))
     (double-float-divide acc (1- (count-range startr endr startc endc)))))
 
+(defgeneric sample-variance (m))
 (defmethod sample-variance ((m matrix))
   (destructuring-bind (mr mc) (dim m)
     (sample-variance-range m 0 (- mr 1) 0 (- mc 1))))
 
-
+(defgeneric min-val (m))
 (defmethod min-val ((m matrix))
   (let ((minval (val m 0 0)))
     (let ((d (dim m)))
@@ -786,6 +806,7 @@
 	  (setf minval (min minval (val m i j))))))
     minval))
 
+(defgeneric max-val (m))
 (defmethod max-val ((m matrix))
   (let ((maxval (val m 0 0)))
     (let ((d (dim m)))
@@ -794,19 +815,23 @@
 	  (setf maxval (max maxval (val m i j))))))
     maxval))
 
+(defgeneric mat-square (u))
 (defmethod mat-square ((u matrix))
   (map-set-val-copy u #'(lambda (x) (* x x))))
 
+(defgeneric mat-square! (u))
 (defmethod mat-square! ((u matrix))
   (map-set-val u #'(lambda (x) (* x x))))
 
+(defgeneric mat-sqrt (u))
 (defmethod mat-sqrt ((u matrix))
   (map-set-val-copy u #'(lambda (x) (sqrt x))))
 
+(defgeneric mat-sqrt! (u))
 (defmethod mat-sqrt! ((u matrix))
   (map-set-val u #'(lambda (x) (sqrt x))))
 
-
+(defgeneric normalize (u &key normin normax truncate))
 (defmethod normalize ((u matrix) &key (normin) (normax) (truncate nil))
   (let ((min (min-val u))
 	(max (max-val u))
@@ -816,12 +841,15 @@
       (map-set-val-fit u #'(lambda (x) (+ nmin (* slope (- x min))))
 		       :truncate truncate))))
 
+(defgeneric norm-0-255 (u))
 (defmethod norm-0-255 ((u matrix))
   (normalize u :normin 0 :normax 255 :truncate t))
 
+(defgeneric norm-0-1 (u))
 (defmethod norm-0-1 ((u matrix))
   (normalize u :normin 0 :normax 1 :truncate t))
 
+(defgeneric subset-matrix (u startr endr startc endc))
 (defmethod subset-matrix ((u matrix) startr endr startc endc)
   (destructuring-bind (ur uc) (dim u)
     (cond
@@ -835,6 +863,7 @@
 	c))
      (t nil))))
 
+(defgeneric map-matrix (a f))
 (defmethod map-matrix ((a matrix) f)
   (destructuring-bind (m n) (dim a)
     (dotimes (i m)
@@ -842,6 +871,7 @@
 	(set-val a i j (funcall f a i j)))))
   a)
 
+(defgeneric map-matrix-copy (a f &key matrix-class))
 (defmethod map-matrix-copy ((a matrix) f &key (matrix-class (class-of a)))
   (destructuring-bind (m n) (dim a)
     (let* ((b (make-instance matrix-class :rows m :cols n)))
@@ -850,6 +880,7 @@
 	  (set-val b i j (funcall f a i j))))
       b)))
 
+(defgeneric array->matrix (a &key matrix-class))
 (defmethod array->matrix ((a array) &key (matrix-class 'matrix))
   (let ((d (array-dimensions a))
 	(m))
@@ -872,6 +903,7 @@
 		     (incf k)))))))))
     m))
 
+(defgeneric trim-one (m k))
 (defmethod trim-one ((m matrix) k)
   (destructuring-bind (mr mc) (dim m)
     (subset-matrix m k (- mr k 1) k (- mc k 1))))
@@ -880,26 +912,26 @@
 ;;;;
 ;;;; convenience arithmetic functions
 
-(defgeneric matrix+ (&rest matrices))
-(defmethod matrix+ (&rest matrices)
+(defgeneric m+ (&rest matrices))
+(defmethod m+ (&rest matrices)
   (reduce #'mat-add matrices))
 
-(defgeneric matrix- (&rest matrices))
-(defmethod matrix- (&rest matrices)
+(defgeneric m- (&rest matrices))
+(defmethod m- (&rest matrices)
   (if (cdr matrices)
       (reduce #'mat-subtr matrices)
       (mat-scale (car matrices) -1)))
 
-(defgeneric matrix* (&rest matrices))
-(defmethod matrix* (&rest matrices)
+(defgeneric m* (&rest matrices))
+(defmethod m* (&rest matrices)
   (reduce #'(lambda (x y)
               (if (typep y 'matrix)
                   (mat-mult x y)
                   (mat-scale x y)))
           matrices))
 
-(defgeneric matrix.* (&rest matrices))
-(defmethod matrix.* (&rest matrices)
+(defgeneric m.* (&rest matrices))
+(defmethod m.* (&rest matrices)
   (reduce #'mat-hprod matrices))
 
 ;;;;
