@@ -58,21 +58,49 @@
    (minval :initarg :minval :initform nil)
    (maxval :initarg :maxval :initform nil)))
 
+(defgeneric element-type (smc)
+  (:documentation "the type of the elements of instances
+of this matrix class"))
 (defmethod element-type ((smc standard-matrix-class))
   (car (slot-value smc 'element-type)))
 
+(defgeneric accumulator-type (smc)
+  (:documentation "the type of the result of various mathematical
+opreations on instances of this matrix class. needs work."))
 (defmethod accumulator-type ((smc standard-matrix-class))
   (car (slot-value smc 'accumulator-type)))
 
+;;; FIXME! This is a hack to get around the fact that
+;;; if we have a say, integer-matrix class, we can't
+;;; make certain declarations. this needs to be fixed
+;;; and hopefully removed
+(defgeneric specialized-array-p (smc))
 (defmethod specialized-array-p ((smc standard-matrix-class))
   (car (slot-value smc 'specialized-array)))
 
+(defgeneric val-format (smc)
+  (:documentation "the format string used to print out
+element values of instances of this matrix class"))
 (defmethod val-format ((smc standard-matrix-class))
   (car (slot-value smc 'val-format)))
 
+;;; FIXME this name is _way_ too close to min-val. Should
+;;; be something like min-allowed-value or some such.
+;;; also should be enforced more places if we're going to
+;;; really use this!
+(defgeneric minval (smc)
+  (:documentation "the minimum value allowed by instances
+of this matrix class."))
 (defmethod minval ((smc standard-matrix-class))
   (car (slot-value smc 'minval)))
 
+;;; FIXME this name is _way_ too close to max-val. Should
+;;; be something like max-allowed-value or some such.
+;;; also should be enforced more places if we're going to
+;;; really use this!
+(defgeneric maxval (smc)
+  (:documentation "the maximum value allowed by instances
+of this matrix class."))
 (defmethod maxval ((smc standard-matrix-class))
   (car (slot-value smc 'maxval)))
 
@@ -93,13 +121,15 @@
 		     (car (class-direct-superclasses root-class))
 		     direct-superclasses)))
 
-(Defclass typed-mixin ()
+(defclass typed-mixin ()
   ((specialzied-array :allocation :class :accessor specialized-array-p :initform nil)))
 
-(Defmethod set-val-fit ((m typed-mixin) i j v &key (truncate nil))
+;;; FIXME this needs work
+(defgeneric set-val-fit (m i j v &key))
+(defmethod set-val-fit ((m typed-mixin) i j v &key (truncate nil))
   (set-val m i j (if truncate (truncate v) v)))
 
-
+(defgeneric map-matrix-fit (f a))
 (defmethod map-matrix-fit (f (a typed-mixin))
   (destructuring-bind (m n) (dim a)
     (dotimes (i m)
