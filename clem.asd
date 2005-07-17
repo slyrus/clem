@@ -57,7 +57,7 @@
        (:clem-cl-source-file "defmatrix-mult")
        (:clem-cl-source-file "defmatrix-mult-block")
        (:clem-cl-source-file "defmatrix-transform")
-       (:clem-cl-source-file "defmatrix-convolve"))
+       (:clem-cl-source-file "defmatrix-convolve" :depends-on ("defmatrix-sum")))
       :depends-on ("defmatrix-types"))))
    (:static-file "Makefile")))
 
