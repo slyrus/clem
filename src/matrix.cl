@@ -123,6 +123,8 @@
 (defgeneric mref (m i j))
 (defmethod mref ((m matrix) i j) (aref (matrix-vals m) i j))
 
+(defgeneric (setf mref) (v m row col))
+
 ;;; rvref treats the matrix as a row-vector (that is a
 ;;; 1 x n matrix). we should throw an error if this is not the case.
 ;;; TODO: add rvref methods for row-vector, column-vector, and scalar
@@ -226,6 +228,7 @@
 ;;; FIXME - figure out what to do about truncate
 (defgeneric mat-copy-into (a c &key truncate constrain))
 (defmethod mat-copy-into ((a matrix) (c matrix) &key truncate constrain)
+  (declare (ignore truncate constrain))
   (destructuring-bind (m n) (dim a)
     (dotimes (i m)
       (declare (type fixnum i))
@@ -652,6 +655,7 @@
       (declare (dynamic-extent j) (type fixnum j))
       (funcall f (val a i j) i j))))
 
+(defgeneric map-set-range (a startr endr startc endc func))
 (defmethod map-set-range ((a matrix)
                           (startr fixnum)
                           (endr fixnum)
@@ -831,7 +835,7 @@
 (defmethod mat-sqrt! ((u matrix))
   (map-set-val u #'(lambda (x) (sqrt x))))
 
-(defgeneric normalize (u &key))
+(defgeneric normalize (u &key normin normax))
 (defmethod normalize ((u matrix) &key (normin) (normax) (truncate nil))
   (let ((min (min-val u))
 	(max (max-val u))

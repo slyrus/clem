@@ -5,7 +5,7 @@
 
 (in-package :clem)
 
-(defclass row-vector (matrix) ())
+(defclass row-vector (base-vector) ())
 
 (defmethod allocate-matrix-vals ((object row-vector) &key rows cols adjustable initial-element)
   (declare (ignore rows))
@@ -15,6 +15,7 @@
 		    :initial-element initial-element
 		    :element-type (element-type (class-of object)))))
 
+(defgeneric array->row-vector (a))
 (defmethod array->row-vector ((a array))
   (let ((d (array-dimensions a)))
     (cond ((= (length d) 2)
@@ -65,11 +66,13 @@
       ((= i (cols v)))
     (set-val m i r (vec-val v i))))
 
+(defgeneric get-row-vector (m r))
 (defmethod get-row-vector ((m matrix) r)
   (let ((rv (make-instance 'row-vector :cols (second (dim m)))))
     (dotimes (i (second (dim m)))
       (vec-set-val rv i (val m r i)))))
 
+(defgeneric zero-row-vector (j))
 (defmethod zero-row-vector((j fixnum))
   (zero-matrix 1 j))
 

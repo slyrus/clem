@@ -105,4 +105,3 @@
     (format t "~&~A of ~A tests passed" (ch-util:test-run-passed run) (ch-util:test-run-tests run))
     ))
 
-

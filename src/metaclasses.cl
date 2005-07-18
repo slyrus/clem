@@ -125,7 +125,7 @@ of this matrix class."))
   ((specialzied-array :allocation :class :accessor specialized-array-p :initform nil)))
 
 ;;; FIXME this needs work
-(defgeneric set-val-fit (m i j v &key))
+(defgeneric set-val-fit (m i j v &key truncate))
 (defmethod set-val-fit ((m typed-mixin) i j v &key (truncate nil))
   (set-val m i j (if truncate (truncate v) v)))
 

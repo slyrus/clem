@@ -33,10 +33,11 @@
 ;;; not (0,0) x (0,0)
 
 
+(defgeneric discrete-convolve (u v &key))
 (defmethod discrete-convolve ((u matrix) (v matrix)
 			      &key (truncate nil) (norm-v t)
 			      (matrix-class nil))
-  (declare (optimize (speed 3) (safety 0) (space 0)))
+  ;; (declare (optimize (speed 3) (safety 0) (space 0)))
   ;;; ur, uc, vr, vc are the number of rows and columns in u and v
   (print 'unspecialized-discrete-convolve!)
   (destructuring-bind (ur uc) (dim u)
@@ -51,8 +52,6 @@
 	(unless matrix-class
 	  (setf matrix-class (type-of u)))
 	(let ((z (make-instance matrix-class :rows zr :cols zc))
-	      (uval (matrix-vals u))
-	      (vval (matrix-vals v))
 	      (vsum (sum v)))
 	  (dotimes (i zr)
 	    (let ((ustartr (max 0 (- i vr -1)))
@@ -93,88 +92,6 @@
 		    (if truncate
 			(set-val-fit z i j acc :truncate truncate)
 			(set-val z i j acc)))))))
-	  z)))))
-
-(defmethod discrete-convolve-orig ((u matrix) (v matrix) &key (truncate))
-  ;;; ur, uc, vr, vc are the number of rows and columns in u and v
-  (destructuring-bind (ur uc) (dim u)
-    (destructuring-bind (vr vc) (dim v)
-      ;;; need a new matrix z to hold the values of the convolved matrix
-      ;;; dim z should be dim u + dim v - 1
-      (let ((zr (+ ur vr (- 1)))
-	    (zc (+ uc vc (- 1))))
-	(let ((z (make-instance (class-of u) :rows zr :cols zc))
-	      (ustartr 0)
-	      (uendr 0)
-	      (vstartr (- vr 1))
-	      (vendr 0)
-	      (ustartc 0)
-	      (uendc 0)
-	      (vstartc (- vc 1))
-	      (vendc 0)
-	      (acc 0))
-	  (dotimes (i zr)
-	    (setf ustartr (max 0 (- i vr -1)))
-	    (setf uendr (min (- ur 1) i))
-	    (setf vstartr (- vr (max (- vr i) 1)))
-	    (setf vendr (- vr (min (- zr i) vr)))
-	    (dotimes (j zc)
-	      (setf ustartc (max 0 (- j vc -1)))
-	      (setf uendc (min (- uc 1) j))
-	      (setf vstartc (- vc (max (- vc j) 1)))
-	      (setf vendc (- vc (min (- zc j) vc)))
-	      (setf acc 0)
-		  (print (list i j ";" ustartr uendr ";" ustartc uendc
-			       ";" vstartr vendr ";" vstartc vendc))
-	      (do ((urow ustartr (1+ urow))
-		   (vrow vstartr (1- vrow)))
-		  ((> urow uendr))
-		(do ((ucol ustartc (1+ ucol))
-		     (vcol vstartc (1- vcol)))
-		    ((> ucol uendc))
-		  (incf acc (* (val u urow ucol) (val v vrow vcol)))))
-	      (if truncate
-		  (set-val z i j (fit z acc))
-		(set-val z i j acc))))
-	  z)))))
-
-
-(defmethod old-discrete-convolve ((u matrix) (v matrix) &key (truncate))
-  (declare (optimize (speed 3) (safety 0) (space 0)))
-  ;;; ur, uc, vr, vc are the number of rows and columns in u and v
-  (destructuring-bind (ur uc) (dim u)
-    (destructuring-bind (vr vc) (dim v)
-      ;;; need a new matrix z to hold the values of the convolved matrix
-      ;;; dim z should be dim u + dim v - 1
-      (let ((zr (+ ur vr (- 1)))
-	    (zc (+ uc vc (- 1))))
-	(let ((z (make-instance (class-of u) :rows zr :cols zc)))
-	  (dotimes (i zr)
-	    (let ((ustartr (max 0 (- i vr -1)))
-		  (uendr (min (- ur 1) i))
-		  (vstartr (- vr (max (- vr i) 1)))
-;		  (vendr (- vr (min (- zr i) vr)))
-		  )
-	      (dotimes (j zc)
-		(let ((ustartc (max 0 (- j vc -1)))
-		      (uendc (min (- uc 1) j))
-		      (vstartc (- vc (max (- vc j) 1)))
-;		      (vendc (- vc (min (- zc j) vc))
-		      (acc 0))
-;		  (print (list i j ";" ustartr uendr ";" ustartc uendc
-;			       ";" vstartr vendr ";" vstartc vendc))
-		  (do ((urow ustartr (1+ urow))
-		       (vrow vstartr (1- vrow)))
-		    ((> urow uendr))
-		    (do ((ucol ustartc (1+ ucol))
-			 (vcol vstartc (1- vcol)))
-			((> ucol uendc))
-		      (let ((uval (val u urow ucol))
-			    (vval (val v vrow vcol)))
-			(incf acc (* uval vval)))))
-		  (if truncate
-		      (set-val z i j (fit z acc))
-		    (set-val z i j acc))))))
 	  z)))))
 
 (defun gaussian-kernel (k sigma)
@@ -255,6 +172,8 @@
 		       :matrix-class 'double-float-matrix))))
 
 (defun sample-variance-window (a &key (k 1) (truncate nil))
+  ;;; FIXME remove truncate, I think
+  (declare (ignore truncate))
   (destructuring-bind (m n) (dim a)
     (let ((zm (1- m))
 	  (zn (1- n)))
@@ -265,6 +184,7 @@
 					    (max 0 (- j k))
 					    (min zn (+ j k))))))))
 
+(defgeneric morphological-op (u v f))
 (defmethod morphological-op ((u matrix) (v matrix) f)
   ;;; ur, uc, vr, vc are the number of rows and columns in u and v
   (destructuring-bind (ur uc) (dim u)

@@ -8,7 +8,10 @@
     (scalar-set-val m val)
     m))
 
+(defgeneric scalar-val (s))
 (defmethod scalar-val ((s scalar)) (matrix-vals s))
+
+(defgeneric scalar-set-val (s v))
 (defmethod scalar-set-val ((s scalar) v) (setf (matrix-vals s) v))
 
 (defmethod dim ((s scalar)) '(1 1))

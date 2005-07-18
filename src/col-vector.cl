@@ -1,7 +1,7 @@
 
 (in-package :clem)
 
-(defclass col-vector (matrix) ())
+(defclass col-vector (base-vector) ())
 
 (defmethod allocate-matrix-vals ((object col-vector) &key rows cols adjustable initial-element)
   (declare (ignore cols))
@@ -60,16 +60,18 @@
       ((= i (first (dim v))))
     (set-val m i c (val v i 0))))
 
+(defgeneric get-row-as-col-vector (m r))
 (defmethod get-row-as-col-vector ((m matrix) r)
   (let ((cv (make-instance 'col-vector :rows (second (dim m)))))
     (dotimes (i (second (dim m)))
       (vec-set-val cv i (val m r i)))))
 		 
+(defgeneric get-col-vector (m r))
 (defmethod get-col-vector ((m matrix) r)
   (let ((cv (make-instance 'col-vector :rows (first (dim m)))))
     (dotimes (i (first (dim m)))
       (vec-set-val cv i (val m i r)))))
 
+(defgeneric zero-col-vector (j))
 (defmethod zero-col-vector((j fixnum))
   (zero-matrix j 1))
-
