@@ -47,65 +47,10 @@
 		 (t
 		  (matrix-move-range m n 0 (1- mr) 0 (1- mc)))))))))
 
-(defmacro def-matrix-add (type-1 type-2 accumulator-type &key suffix)
-  (let ((element-type-1 (element-type (find-class `,type-1)))
-	(element-type-2 (element-type (find-class `,type-2)))
-	(accumulator-element-type (element-type (find-class `,accumulator-type))))
-    `(progn
-       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-add-range" suffix))
-	   ((m ,type-1) (n ,type-2) startr endr startc endc)
-	 (destructuring-bind (mr mc) (dim m)
-	   (let ((p (make-instance ',accumulator-type :rows mr :cols mc)))
-	     (with-matrix-vals (m ,element-type-1 a)
-	       (with-matrix-vals (n ,element-type-2 b)
-		 (with-matrix-vals (p ,accumulator-element-type c)
-		   (do ((i startr (1+ i)))
-		       ((> i endr))
-		     (declare (dynamic-extent i) (type fixnum i))
-		     (do ((j startc (1+ j)))
-			 ((> j endc))
-		       (declare (dynamic-extent j) (type fixnum j))
-		       (setf (aref c i j)
-			     (+ (aref a i j) (aref b i j))))))))
-	     p)))
-       
-       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-add" suffix))
-	   ((m ,type-1) (n ,type-2))
-	 (destructuring-bind (mr mc) (dim m)
-	   (,(ch-util:make-intern (concatenate 'string "mat-add-range" suffix)) m n 0 (1- mr) 0 (1- mc)))))))
-       
-(defmacro def-matrix-add! (type-1 type-2 accumulator-type &key suffix)
-  (declare (ignore accumulator-type))
-  (let ((element-type-1 (element-type (find-class `,type-1)))
-	(element-type-2 (element-type (find-class `,type-2))))
-    `(progn
-       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-add!-range" suffix))
-	   ((m ,type-1) (n ,type-2) startr endr startc endc)
-	 (with-matrix-vals (m ,element-type-1 a)
-	   (with-matrix-vals (n ,element-type-2 b)
-	     (do ((i startr (1+ i)))
-		 ((> i endr))
-	       (declare (dynamic-extent i) (type fixnum i))
-	       (do ((j startc (1+ j)))
-		   ((> j endc))
-		 (declare (dynamic-extent j) (type fixnum j))
-		 (setf (aref a i j)
-		       (+ (aref a i j) (aref b i j))))))
-	   m))
-       
-       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-add!" suffix))
-	   ((m ,type-1) (n ,type-2))
-	 (destructuring-bind (mr mc) (dim m)
-	   (,(ch-util:make-intern (concatenate 'string "mat-add!-range" suffix)) m n 0 (1- mr) 0 (1- mc))))
-       
-       )))
-
 (macrolet ((frob (type-1 type-2 type-3 &key suffix)
 	     `(progn
 		(def-move-element ,type-1 ,type-2)
-		(def-matrix-move ,type-1 ,type-2)
-		(def-matrix-add ,type-1 ,type-2 ,type-3 :suffix ,suffix)
-		(def-matrix-add! ,type-1 ,type-2 ,type-3 :suffix ,suffix))))
+		(def-matrix-move ,type-1 ,type-2))))
   
   (frob double-float-matrix double-float-matrix double-float-matrix)
   (frob double-float-matrix single-float-matrix double-float-matrix)
@@ -146,8 +91,8 @@
 (macrolet ((frob (type-1 type-2 type-3 &key suffix)
 	     `(progn
 		(def-move-element ,type-1 ,type-2)
-		(def-matrix-move ,type-1 ,type-2)
-		(def-matrix-add ,type-1 ,type-2 ,type-3 :suffix ,suffix))))
+		(def-matrix-move ,type-1 ,type-2))))
+
   (frob single-float-matrix double-float-matrix double-float-matrix)
 
   (frob ub8-matrix double-float-matrix double-float-matrix)
