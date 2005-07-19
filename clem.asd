@@ -51,7 +51,9 @@
       :typed-ops
       :components
       ((:clem-cl-source-file "defmatrix-mref")
-       (:clem-cl-source-file "defmatrix-move-add-subtr")
+       (:clem-cl-source-file "defmatrix-move")
+       (:clem-cl-source-file "defmatrix-add")
+       (:clem-cl-source-file "defmatrix-subtr")
        (:clem-cl-source-file "defmatrix-sum")
        (:clem-cl-source-file "defmatrix-scale")
        (:clem-cl-source-file "defmatrix-hprod")

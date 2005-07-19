@@ -2,7 +2,6 @@
 ;;;
 ;;; file: matrix.cl
 ;;; author: cyrus harmon
-;;; time-stamp: Fri Apr 23 13:44:30 EDT 2004
 ;;;
 
 ;;;
@@ -295,8 +294,9 @@
 
        
 
-(defgeneric mat-subtr (a b))
-(defmethod mat-subtr ((a matrix) (b matrix))
+(defgeneric mat-subtr (a b &key matrix-class))
+(defmethod mat-subtr ((a matrix) (b matrix) &key matrix-class)
+  (declare (ignore matrix-class))
   (mat-scalar-op a b #'-))
 
 (defgeneric swap-rows (a k l))

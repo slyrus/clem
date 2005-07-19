@@ -145,10 +145,10 @@ of this matrix class."))
 	(if (member-if #'(lambda (super)
 			   (eq (class-of super) mc)) direct-superclasses)
 	    (call-next-method)
-	    (apply #'call-next-method class
-		   :direct-superclasses
-		   (add-root-class root-class direct-superclasses)
-		   (remove-keyword-arg all-keys :direct-superclasses)))
+            (apply #'call-next-method class
+                   :direct-superclasses
+                   (add-root-class root-class direct-superclasses)
+                   (remove-keyword-arg all-keys :direct-superclasses)))
 	(call-next-method)))
   (fill-slots-from-ancestor '(:element-type :specialized-array) class all-keys))
 
