@@ -54,7 +54,7 @@
   ((element-type :initarg :element-type)
    (accumulator-type :initarg :accumulator-type)
    (specialized-array :initarg :specialized-array :initform nil)
-   (val-format :initarg :val-format :initform "~4,9F")
+   (val-format :initarg :val-format :initform (list "~4,9F"))
    (minval :initarg :minval :initform nil)
    (maxval :initarg :maxval :initform nil)))
 
@@ -150,7 +150,7 @@ of this matrix class."))
                    (add-root-class root-class direct-superclasses)
                    (remove-keyword-arg all-keys :direct-superclasses)))
 	(call-next-method)))
-  (fill-slots-from-ancestor '(:element-type :specialized-array) class all-keys))
+  (fill-slots-from-ancestor '(:element-type :specialized-array :val-format) class all-keys))
 
 (defmethod reinitialize-instance :around
     ((class standard-matrix-class) &rest all-keys &key direct-superclasses &allow-other-keys)
@@ -165,5 +165,5 @@ of this matrix class."))
 		   (add-root-class root-class direct-superclasses)
 		   (remove-keyword-arg all-keys :direct-superclasses)))
 	(call-next-method)))
-  (fill-slots-from-ancestor '(:element-type :specialized-array) class all-keys))
+  (fill-slots-from-ancestor '(:element-type :specialized-array :val-format) class all-keys))
 
