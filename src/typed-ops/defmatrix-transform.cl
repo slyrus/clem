@@ -53,11 +53,11 @@
 		     ;;; based on what we know is in the affine
 		     ;;; transformation matrix, we can get away with
 		     ;;; fewer operations (Foley et al., 1996, p. 213)
-                     (setf (aref d 0 0) (+ (* (aref c 0 0) (aref g 0 0))
-                                           (* (aref c 1 0) (aref g 0 1))
+                     (setf (aref d 1 0) (+ (* (aref c 1 0) (aref g 0 0))
+                                           (* (aref c 0 0) (aref g 0 1))
                                            (aref g 0 2))
-                           (aref d 1 0) (+ (* (aref c 0 0) (aref g 1 0))
-                                           (* (aref c 1 0) (aref g 1 1))
+                           (aref d 0 0) (+ (* (aref c 1 0) (aref g 1 0))
+                                           (* (aref c 0 0) (aref g 1 1))
                                            (aref g 1 2)))
                      ;;; this does nearest neighbor interpolation
                      ;;; we should also offer a way to do bilinear,
