@@ -96,15 +96,14 @@
 
     ;; Need to rework math to do the right thing here!
 
-    (print (list u v x y))
     (let ((pre-shift1 (make-affine-transformation
-                       :y (car v) :x (car u)))
+                       :y-shift (car v) :x-shift (car u)))
           (pre-shift2 (make-affine-transformation
                        :y-scale (log (/ (- (cdr v) (car v)) (rows m)))
                        :x-scale (log (/ (- (cdr u) (car u)) (cols m))))))
       (setf xfrm-shift (mat-mult xfrm-shift (mat-mult pre-shift1 pre-shift2))))
     (let ((post-shift (make-affine-transformation
-                       :y (- (car y)) :x (- (car x))
+                       :y-shift (- (car y)) :x-shift (- (car x))
                        ))
           (post-shift2 (make-affine-transformation
                         :y-scale (log (/ (rows n) (- (cdr y) (car y)))) 
@@ -112,20 +111,23 @@
                         )))
       (setf xfrm-shift (mat-mult post-shift (mat-mult post-shift2 xfrm-shift))))
 
-    (print xfrm-shift)
     (apply #'%transform-matrix m n xfrm-shift
            (append
             (when background-supplied-p (list :background background))
             (when interpolation-supplied-p (list :interpolation interpolation))))))
 
+
+;;; replace these variables with either typed variables or an array
+;;; accessing this is proving to be too slow...
+
 (defclass affine-transformation (double-float-matrix)
-  ((y :accessor y :initarg :y :initform 0d0)
-   (x :accessor x :initarg :x :initform 0d0)
-   (y-scale :accessor y-scale :initarg :y-scale :initform 0d0)
-   (x-scale :accessor x-scale :initarg :x-scale :initform 0d0)
-   (y-shear :accessor y-shear :initarg :y-shear :initform 0d0)
-   (x-shear :accessor x-shear :initarg :x-shear :initform 0d0)
-   (theta :accessor theta :initarg :theta :initform 0d0)
+  ((y-shift :accessor y-shift :initarg :y-shift :initform 0d0 :type 'double-float)
+   (x-shift :accessor x-shift :initarg :x-shift :initform 0d0 :type 'double-float)
+   (theta :accessor theta :initarg :theta :initform 0d0 :type 'double-float)
+   (y-scale :accessor y-scale :initarg :y-scale :initform 0d0 :type 'double-float)
+   (x-scale :accessor x-scale :initarg :x-scale :initform 0d0 :type 'double-float)
+   (y-shear :accessor y-shear :initarg :y-shear :initform 0d0 :type 'double-float)
+   (x-shear :accessor x-shear :initarg :x-shear :initform 0d0 :type 'double-float)
    (rows :accessor matrix-rows :initarg :rows :initform 3)
    (cols :accessor matrix-cols :initarg :cols :initform 3))
   (:metaclass standard-matrix-class)
@@ -136,17 +138,51 @@
 			   (* (sin (theta xfrm)) (exp (y-scale xfrm)) (y-shear xfrm))))
   (setf (mref xfrm 0 1) (- (* (cos (theta xfrm)) (exp (x-scale xfrm)) (x-shear xfrm))
 			   (* (sin (theta xfrm)) (exp (y-scale xfrm)))))
-  (setf (mref xfrm 0 2) (coerce (x xfrm) 'double-float))
+  (setf (mref xfrm 0 2) (coerce (x-shift xfrm) 'double-float))
   
   (setf (mref xfrm 1 0) (+ (* (sin (theta xfrm)) (exp (x-scale xfrm)))
 			   (* (cos (theta xfrm)) (exp (y-scale xfrm)) (y-shear xfrm))))
   (setf (mref xfrm 1 1) (+ (* (sin (theta xfrm)) (exp (x-scale xfrm)) (x-shear xfrm))
 			   (* (cos (theta xfrm)) (exp (y-scale xfrm)))))
-  (setf (mref xfrm 1 2) (coerce (y xfrm) 'double-float))
+  (setf (mref xfrm 1 2) (coerce (y-shift xfrm) 'double-float))
   
   (setf (mref xfrm 2 0) 0d0)
   (setf (mref xfrm 2 1) 0d0)
-  (setf (mref xfrm 2 2) 1d0))
+  (setf (mref xfrm 2 2) 1d0)
+  xfrm)
+
+(defmethod copy-affine-transformation ((xfrm affine-transformation))
+  (with-slots (y-shift x-shift theta y-scale x-scale y-shear x-shear) xfrm
+    (make-instance 'affine-transformation
+                 :y-shift y-shift
+                 :x-shift x-shift
+                 :theta theta
+                 :y-scale y-scale
+                 :x-scale x-scale
+                 :y-shear y-shear
+                 :x-shear x-shear)))
+
+(defmethod move-affine-transformation ((src affine-transformation) (dest affine-transformation))
+  (with-slots (y-shift x-shift theta y-scale x-scale y-shear x-shear) src
+    (setf (y-shift dest) y-shift)
+    (setf (x-shift dest) x-shift)
+    (setf (theta dest) theta)
+    (setf (y-scale dest) y-scale)
+    (setf (x-scale dest) x-scale)
+    (setf (y-shear dest) y-shear)
+    (setf (x-shear dest) x-shear)
+    (update-affine-transformation-matrix dest)))
+
+(defmethod decf-affine-transformation ((src affine-transformation) (dest affine-transformation))
+  (with-slots (y-shift x-shift theta y-scale x-scale y-shear x-shear) src
+    (decf y-shift (y-shift dest))
+    (decf x-shift (x-shift dest))
+    (decf theta (theta dest))
+    (decf y-scale (y-scale dest))
+    (decf x-scale (x-scale dest))
+    (decf y-shear (y-shear dest))
+    (decf x-shear (x-shear dest))
+    (update-affine-transformation-matrix src)))
 
 (defmethod shared-initialize :after
     ((object affine-transformation) slot-names &rest args)
@@ -161,12 +197,25 @@
 ;;; swapped WRT the usual parameterization of this kind of
 ;;; affine transformation matrix.
 (defun make-affine-transformation (&key
-				   (x 0d0)
-				   (y 0d0)
+				   (x-shift 0d0)
+				   (y-shift 0d0)
 				   (x-scale 0.0d0)
 				   (y-scale 0.0d0)
 				   (x-shear 0.0d0)
 				   (y-shear 0.0d0)
 				   (theta 0d0))
   (make-instance 'affine-transformation
-		 :x x :y y :x-scale x-scale :y-scale y-scale :x-shear x-shear :y-shear y-shear :theta theta))
+		 :x-shift x-shift :y-shift y-shift :x-scale x-scale :y-scale y-scale :x-shear x-shear :y-shear y-shear :theta theta))
+
+(defmethod parameters-list ((xfrm affine-transformation))
+  (list 
+   :y-shift (y-shift xfrm) 
+   :x-shift (x-shift xfrm)
+   :theta (theta xfrm)
+   :y-scale (y-scale xfrm)
+   :x-scale (x-scale xfrm)
+   :y-shear (y-shear xfrm)
+   :x-shear (x-shear xfrm)))
+   
+
+   
