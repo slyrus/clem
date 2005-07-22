@@ -11,7 +11,7 @@
   (let ((element-type-1 (element-type (find-class `,type-1)))
 	(element-type-2 (element-type (find-class `,type-2)))
 	(transform-element-type (element-type (find-class `,transform-type))))
-    (let ((zero (coerce 0 `,transform-element-type))
+    (let ((zero (coerce 0 `,element-type-2))
 	  (one (coerce 1 `,transform-element-type)))
       `(progn
 	 (defmethod %transform-matrix ((m ,type-1) (n ,type-2) (xfrm ,transform-type)
