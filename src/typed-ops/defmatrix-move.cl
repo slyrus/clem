@@ -86,7 +86,7 @@
   (frob sb32-matrix bit-matrix)
   
   (frob sb32-matrix ub8-matrix)
-  (frob sb32-matrix ub16-matrix)
+  (frob sb32-matrix ub16-matrix))
 
 (macrolet ((frob (type-1 type-2 &key suffix)
 	     `(progn
