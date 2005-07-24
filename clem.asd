@@ -26,7 +26,7 @@
 (defsystem :clem
   :name "clem"
   :author "Cyrus Harmon <ch-lisp@bobobeach.com>"
-  :version "0.1.1-20050714"
+  :version "0.1.2-20050724"
   :licence "BSD"
   :depends-on (ch-util)
   :components
