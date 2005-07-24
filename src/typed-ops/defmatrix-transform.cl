@@ -164,7 +164,7 @@
 
 (macrolet ((frob (type-1 type-2 type-3)
 	     `(def-matrix-transform ,type-1 ,type-2 ,type-3)))
-#|  (frob double-float-matrix double-float-matrix double-float-matrix)
+  (frob double-float-matrix double-float-matrix double-float-matrix)
   (frob single-float-matrix single-float-matrix double-float-matrix)
   (frob single-float-matrix single-float-matrix single-float-matrix)
   (frob ub8-matrix ub8-matrix double-float-matrix)
@@ -174,4 +174,4 @@
   (frob sb16-matrix sb16-matrix double-float-matrix)
   (frob sb32-matrix sb32-matrix double-float-matrix)
   (frob fixnum-matrix fixnum-matrix double-float-matrix)
-|#  (frob bit-matrix bit-matrix double-float-matrix))
+  (frob bit-matrix bit-matrix double-float-matrix))
