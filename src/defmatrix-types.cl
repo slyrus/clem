@@ -11,28 +11,36 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmatrixtype real-matrix (t-matrix)
-    :element-type t
-    :accumulator-type t))
+    :element-type real
+    :accumulator-type real))
 (defmatrixfuncs real-matrix
-  :element-type t
-  :accumulator-type t)
+  :element-type real
+  :accumulator-type real)
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defmatrixtype complex-matrix (t-matrix)
+    :element-type complex
+    :accumulator-type complex))
+(defmatrixfuncs complex-matrix
+  :element-type complex
+  :accumulator-type complex)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmatrixtype float-matrix (real-matrix)
-    :element-type t
-    :accumulator-type t
+    :element-type float
+    :accumulator-type float
     :val-format "~4,9F"))
-(defmatrixfuncs float-matrix :element-type t :accumulator-type t)
+(defmatrixfuncs float-matrix :element-type float :accumulator-type float)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmatrixtype integer-matrix (real-matrix)
-    :element-type t
-    :accumulator-type t
+    :element-type integer
+    :accumulator-type integer
     :val-format "~d"
     :specialized-array t))
 (defmatrixfuncs integer-matrix
-  :element-type t
-  :accumulator-type t
+  :element-type integer
+  :accumulator-type integer
   :integral t
   :specialized-array t)
 

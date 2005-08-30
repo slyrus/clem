@@ -62,5 +62,7 @@
   (frob sb16-matrix sb16-matrix)
   (frob sb32-matrix sb32-matrix)
   (frob bit-matrix bit-matrix)
-  (frob fixnum-matrix fixnum-matrix))
-
+  (frob fixnum-matrix fixnum-matrix)
+  (frob real-matrix real-matrix)
+  (frob integer-matrix integer-matrix)
+  (frob t-matrix t-matrix))
