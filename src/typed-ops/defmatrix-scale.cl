@@ -49,9 +49,9 @@
 	 (destructuring-bind (mr mc) (dim m)
 	   (,(ch-util:make-intern (concatenate 'string "mat-scale-range!" suffix)) m q 0 (1- mr) 0 (1- mc)))))))
 
-(macrolet ((frob (type-1 type-3 &key suffix)
+(macrolet ((frob (type-1 type-2 &key suffix)
 	     `(progn
-		(def-matrix-scale ,type-1 ,type-3 :suffix ,suffix)
+		(def-matrix-scale ,type-1 ,type-2 :suffix ,suffix)
 		(def-matrix-scale! ,type-1 :suffix ,suffix))))
   (frob double-float-matrix double-float-matrix)
   (frob single-float-matrix single-float-matrix)
@@ -65,4 +65,5 @@
   (frob fixnum-matrix fixnum-matrix)
   (frob real-matrix real-matrix)
   (frob integer-matrix integer-matrix)
+  (frob complex-matrix complex-matrix)
   (frob t-matrix t-matrix))

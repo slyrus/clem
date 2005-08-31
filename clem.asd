@@ -51,6 +51,7 @@
       :typed-ops
       :components
       ((:clem-cl-source-file "defmatrix-mref")
+       (:clem-cl-source-file "defmatrix-minmax")
        (:clem-cl-source-file "defmatrix-move")
        (:clem-cl-source-file "defmatrix-add")
        (:clem-cl-source-file "defmatrix-subtr")

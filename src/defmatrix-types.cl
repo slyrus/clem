@@ -14,16 +14,17 @@
     :element-type real
     :accumulator-type real))
 (defmatrixfuncs real-matrix
-  :element-type real
-  :accumulator-type real)
+    :element-type real
+    :accumulator-type real)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmatrixtype complex-matrix (t-matrix)
     :element-type complex
-    :accumulator-type complex))
+    :accumulator-type complex
+    :specialized-array t))
 (defmatrixfuncs complex-matrix
-  :element-type complex
-  :accumulator-type complex)
+    :element-type complex
+    :accumulator-type complex)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmatrixtype float-matrix (real-matrix)
@@ -41,7 +42,6 @@
 (defmatrixfuncs integer-matrix
   :element-type integer
   :accumulator-type integer
-  :integral t
   :specialized-array t)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
@@ -56,7 +56,6 @@
     :accumulator-type (signed-byte 32)
     :minval 0
     :maxval 1
-    :integral t
     :specialized-array t)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
@@ -71,7 +70,6 @@
     :accumulator-type (signed-byte 32)
     :minval #.(- (expt 2 7))
     :maxval #.(- (expt 2 7) 1)
-    :integral t
     :specialized-array t)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
@@ -87,7 +85,6 @@
     :accumulator-type (unsigned-byte 32)
     :minval 0
     :maxval #.(- (expt 2 8) 1)
-    :integral t
     :specialized-array t)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
@@ -103,7 +100,6 @@
     :accumulator-type (signed-byte 32)
     :minval #.(- (expt 2 15))
     :maxval #.(- (expt 2 15) 1)
-    :integral t
     :specialized-array t)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
@@ -119,7 +115,6 @@
     :accumulator-type (unsigned-byte 32)
     :minval 0
     :maxval #.(- (expt 2 16) 1)
-    :integral t
     :specialized-array t)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
@@ -135,7 +130,6 @@
     :accumulator-type (signed-byte 32)
     :minval #.(- (expt 2 31))
     :maxval #.(- (expt 2 31) 1)
-    :integral t
     :specialized-array t)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
@@ -151,7 +145,6 @@
     :accumulator-type (unsigned-byte 32)
     :minval 0
     :maxval #.(- (expt 2 32) 1)
-    :integral t
     :specialized-array t)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
@@ -166,7 +159,6 @@
     :accumulator-type (unsigned-byte 32)
     :minval most-negative-fixnum
     :maxval most-positive-fixnum
-    :integral t
     :specialized-array t)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)

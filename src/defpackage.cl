@@ -151,6 +151,16 @@
    #:random-bit-matrix
 
    #:integer-matrix
+   #:array->integer-matrix
+   #:random-integer-matrix
+
+   #:real-matrix
+   #:array->real-matrix
+   #:random-real-matrix
+
+   #:complex-matrix
+   #:array->complex-matrix
+   #:random-complex-matrix
 
    ;;; affine transformation stuff
    #:affine-transformation

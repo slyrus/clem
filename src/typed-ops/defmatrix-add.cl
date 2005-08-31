@@ -98,7 +98,18 @@
   (frob sb32-matrix bit-matrix sb32-matrix)
   
   (frob sb32-matrix ub8-matrix sb32-matrix)
-  (frob sb32-matrix ub16-matrix sb32-matrix))
+  (frob sb32-matrix ub16-matrix sb32-matrix)
+
+  (frob real-matrix real-matrix real-matrix)
+  (frob real-matrix double-float-matrix real-matrix)
+  (frob real-matrix single-float-matrix real-matrix)
+  (frob real-matrix integer-matrix real-matrix)
+
+  (frob integer-matrix integer-matrix integer-matrix)
+
+  (frob complex-matrix complex-matrix complex-matrix)
+  (frob complex-matrix integer-matrix complex-matrix)
+  (frob complex-matrix real-matrix complex-matrix))
 
 (macrolet ((frob (type-1 type-2 type-3 &key suffix)
 	     `(progn

@@ -102,10 +102,7 @@
 			  (element-type 'double-float)
 			  (accumulator-type 'double-float)
 			  (specialized-array nil)
-			  (integral nil)
 			  minval maxval)
-  ;;; FIXME integral should probably go away
-  (declare (ignore integral))
   `(progn
      (defmethod mref ((m ,type) (row fixnum) (col fixnum))
        (with-typed-matrix-vals (m ,element-type t a)
@@ -118,22 +115,6 @@
      (defgeneric ,(ch-util:make-intern (concatenate 'string "array->" (symbol-name type))) (a))
      (defmethod ,(ch-util:make-intern (concatenate 'string "array->" (symbol-name type))) ((a array))
        (array->matrix a :matrix-class ',type))
-     
-     (defmethod min-range ((m ,type) (startr fixnum) (endr fixnum) (startc fixnum) (endc fixnum))
-       (let ((acc (coerce (aref (matrix-vals m) startr startc) ',accumulator-type)))
-	 (declare (type ,accumulator-type acc))
-	 (with-map-range m ,element-type startr endr startc endc (a i j)
-	   (when (< (aref a i j) acc)
-	     (setf acc (aref a i j))))
-	 acc))
-
-     (defmethod max-range ((m ,type) (startr fixnum) (endr fixnum) (startc fixnum) (endc fixnum))
-       (let ((acc (coerce (aref (matrix-vals m) startr startc) ',accumulator-type)))
-	 (declare (type ,accumulator-type acc))
-	 (with-map-range m ,element-type startr endr startc endc (a i j)
-	   (when (> (aref a i j) acc)
-	     (setf acc (aref a i j))))
-	 acc))
      
      (defmethod sample-variance-range ((m ,type) (startr fixnum) (endr fixnum) (startc fixnum) (endc fixnum))
        (let ((acc (coerce 0 ',accumulator-type)))
@@ -152,16 +133,17 @@
 
      (defmethod fit ((m ,type) v)
        (declare (ignore m))
-       ,(if maxval
-	    `(if (> v ,maxval)
-		 ,maxval
-		 ,(if minval `(if (< v ,minval) ,minval v) `v))
-	    (if minval `(if (< v ,minval) ,minval v) `v)))
+       ,(if (subtypep element-type 'real)
+            (if maxval
+                `(if (> v ,maxval)
+                     ,maxval
+                     ,(if minval `(if (< v ,minval) ,minval v) `v))
+                (if minval `(if (< v ,minval) ,minval v) `v))
+            `v))
      
-       
      (defmethod set-val-fit ((m ,type) i j v &key (truncate nil))
        (set-val m i j (coerce 
-		       ,(if (and minval maxval)
+		       ,(if (and (subtypep element-type 'real) minval maxval)
 			    `(cond ((< v ,minval) ,minval)
 				   ((> v ,maxval) ,maxval)
 				   (t (if truncate (truncate v) v)))
