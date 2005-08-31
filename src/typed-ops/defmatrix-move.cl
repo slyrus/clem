@@ -62,6 +62,9 @@
   (frob double-float-matrix sb32-matrix)
   (frob double-float-matrix bit-matrix)
   (frob double-float-matrix fixnum-matrix)
+  (frob double-float-matrix real-matrix)
+  (frob double-float-matrix complex-matrix)
+  (frob double-float-matrix number-matrix)
 
   (frob single-float-matrix single-float-matrix)
   (frob single-float-matrix ub8-matrix)
@@ -72,6 +75,9 @@
   (frob single-float-matrix sb32-matrix)
   (frob single-float-matrix bit-matrix)
   (frob single-float-matrix fixnum-matrix)
+  (frob single-float-matrix real-matrix)
+  (frob single-float-matrix complex-matrix)
+  (frob single-float-matrix number-matrix)
 
   (frob ub8-matrix ub8-matrix)
   (frob ub16-matrix ub16-matrix)
@@ -125,3 +131,10 @@
   (frob bit-matrix sb16-matrix)
   (frob bit-matrix sb32-matrix))
 
+(macrolet ((frob (type-1 type-2 &key suffix)
+	     `(progn
+		(def-move-element ,type-1 ,type-2)
+		(def-matrix-move ,type-1 ,type-2))))
+  (frob real-matrix double-float-matrix)
+  (frob real-matrix single-float-matrix))
+  

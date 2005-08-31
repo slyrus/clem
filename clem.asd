@@ -57,6 +57,8 @@
        (:clem-cl-source-file "defmatrix-subtr")
        (:clem-cl-source-file "defmatrix-sum")
        (:clem-cl-source-file "defmatrix-scale")
+       (:clem-cl-source-file "defmatrix-log")
+       (:clem-cl-source-file "defmatrix-abs")
        (:clem-cl-source-file "defmatrix-hprod")
        (:clem-cl-source-file "defmatrix-mult")
        (:clem-cl-source-file "defmatrix-mult-block")

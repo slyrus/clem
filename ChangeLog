@@ -1,3 +1,88 @@
+2005-08-31  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/typed-ops/defmatrix-scale.cl, src/typed-ops/defmatrix-mref.cl, src/typed-ops/defmatrix-minmax.cl, src/typed-ops/defmatrix-add.cl, src/defpackage.cl, src/defmatrix.cl, src/defmatrix-types.cl, clem.asd:
+	initial support for complex matrices
+	real, integer and float matrices should work now
+	moved min and max into their own file
+	currently only do min and max for real matrices and
+	subtypes. we should fix this and use the min and max of the
+	abs for complex matrices.
+
+2005-08-30  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/typed-ops/defmatrix-scale.cl, src/defmatrix-types.cl:
+	added complex-matrix type
+	changed the element-types for real-matrix, integer-matrix, etc... to
+	  be real, integer, etc...
+
+2005-07-24  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* clem.asd: bumping version # again
+
+	* clem.asd: made typed-ops depend on interpolation
+
+	* src/typed-ops/defmatrix-transform.cl:
+	whoops. forgot I had commented out some frobs.
+
+	* clem.asd: bumped version #
+
+	* src/typed-ops/defmatrix-transform.cl, src/matrix.cl:
+	added :type fixnum arguments to matrix class definition
+	fixed a bad bug in typed affine-transform routines where I
+	  was setting a local column variable to the number of rows
+	added a half variable and add .5d0 and call truncate instead
+	of round, which I think was consing.
+
+2005-07-24  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* clem.asd: bumped version #
+
+	* src/typed-ops/defmatrix-transform.cl, src/matrix.cl:
+	added :type fixnum arguments to matrix class definition
+	fixed a bad bug in typed affine-transform routines where I
+	  was setting a local column variable to the number of rows
+	added a half variable and add .5d0 and call truncate instead
+	of round, which I think was consing.
+
+2005-07-23  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/typed-ops/defmatrix-move.cl: fixed a missing paren
+
+	* src/typed-ops/defmatrix-move-add-subtr.cl: removed
+
+2005-07-22  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/typed-ops/defmatrix-transform.cl:
+	fixed the type of zero. I was declaring zero as the type of the coord,
+	not of the value at the coord. this was compiling (safety 0) but
+	causing the background to be hosed. whoops!
+
+	* src/typed-ops/defmatrix-move.cl:
+	removed unused third argument of frobs
+	added more bit-matrix move types
+
+	* src/transform.cl: :x and :y become :x-shift and :y-shift
+	added decf-affine-transformation, move-affine-transformation,
+	copy-affine-transformation
+	added type declarations to the affine-transformation slots
+	added parameters-list function
+
+2005-07-20  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* ChangeLog: updating changelogs
+
+	* src/typed-ops/defmatrix-transform.cl:
+	fixed how we compute the transform. the notions of x and y were messed up.
+
+	* src/transform.cl:
+	transform-coord now returns multiple-values x and y instead of a matrix
+	added compute-bounds
+
+	* src/metaclasses.cl:
+	setting initform of val-format to a list to match how the :val-format
+	  args come in from instances of the metaclass
+	filling val-format from ancestor, for what that's worth
+
 2005-07-20  Cyrus Harmon  <cyrus@bobobeach.com>
 
 	* src/typed-ops/defmatrix-transform.cl:

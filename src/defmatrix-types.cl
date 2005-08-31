@@ -10,6 +10,14 @@
     :accumulator-type t)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
+  (defmatrixtype number-matrix (t-matrix)
+    :element-type number
+    :accumulator-type number))
+(defmatrixfuncs number-matrix
+    :element-type number
+    :accumulator-type number)
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
   (defmatrixtype real-matrix (t-matrix)
     :element-type real
     :accumulator-type real))

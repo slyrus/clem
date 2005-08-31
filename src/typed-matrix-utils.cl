@@ -25,3 +25,7 @@
 (defgeneric copy-to-bit-matrix (m &key constrain))
 (defmethod copy-to-bit-matrix ((m matrix) &key (constrain t))
   (copy-to-matrix-type m 'bit-matrix :constrain constrain))
+
+(defgeneric copy-to-complex-matrix (m &key constrain))
+(defmethod copy-to-complex-matrix ((m matrix) &key (constrain t))
+  (copy-to-matrix-type m 'complex-matrix :constrain constrain))

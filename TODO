@@ -66,3 +66,15 @@ bit (or whatever the appropriate one bit type is)
     instances with more type-aware, or at least optionally more
     type-aware matrix creation functions.
 
+16. igure out what to do about col-vector, row-vector, and scalar in
+    the face of the typed matrices. This could get a bit messy. Need
+    to thin about how to handle this.
+
+17. Mostly DONE. Add generics as appropriate.
+
+18. Add conditions for dealing with type-errors on things like mat-subtr.
+
+19. Figure out how to specify different destination types for things
+    like mat-add an mat-subtr.
+
+20. Add frobs for complex, real, and integer matrices.

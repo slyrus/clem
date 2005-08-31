@@ -172,7 +172,7 @@
 	     (nmin (if normin normin (if ,minval ,minval 0)))
 	     (nmax (if normax normax (if ,maxval ,maxval 255))))
 	 (let ((slope (double-float-divide (- nmax nmin)  (- max min))))
-	   (map-set-val-fit u #'(lambda (x) (+ nmin (* slope (- x min))))))))
+	   (map-set-val u #'(lambda (x) (+ nmin (* slope (- x min))))))))
      
      (cond ((and (find-class 'integer-matrix nil)
 		 (member (find-class 'integer-matrix) (sb-mop::class-precedence-list (find-class ',type))))

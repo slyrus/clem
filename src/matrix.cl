@@ -835,6 +835,15 @@
 (defmethod mat-sqrt! ((u matrix))
   (map-set-val u #'(lambda (x) (sqrt x))))
 
+(defgeneric mat-abs (u))
+(defmethod mat-abs ((u matrix))
+  (map-set-val-copy u #'(lambda (x) (abs x))))
+
+(defgeneric mat-log (u &optional base))
+(defmethod mat-log ((u matrix) &optional base)
+  (map-set-val-copy u #'(lambda (x) (apply #'log x (when base base)))))
+
+
 (defgeneric normalize (u &key normin normax))
 (defmethod normalize ((u matrix) &key (normin) (normax) (truncate nil))
   (let ((min (min-val u))
