@@ -135,6 +135,12 @@
 	     `(progn
 		(def-move-element ,type-1 ,type-2)
 		(def-matrix-move ,type-1 ,type-2))))
+
+  (frob complex-matrix real-matrix)
+  (frob complex-matrix complex-matrix)
+
+  (frob real-matrix real-matrix)
+  (frob real-matrix complex-matrix)
   (frob real-matrix double-float-matrix)
   (frob real-matrix single-float-matrix))
   
