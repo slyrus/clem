@@ -107,3 +107,33 @@
 
   (frob bit-matrix bit-matrix bit-matrix))
 
+(macrolet ((frob (type-1 type-2 type-3 &key suffix)
+	     `(progn
+		(def-matrix-hprod ,type-1 ,type-2 ,type-3 :suffix ,suffix)
+		(def-matrix-hprod! ,type-1 ,type-2 ,type-3 :suffix ,suffix))))
+
+  (frob real-matrix double-float-matrix real-matrix)
+  (frob real-matrix single-float-matrix real-matrix)
+  (frob real-matrix ub8-matrix real-matrix)
+  (frob real-matrix ub16-matrix real-matrix)
+  (frob real-matrix ub32-matrix real-matrix)
+  (frob real-matrix sb8-matrix real-matrix)
+  (frob real-matrix sb16-matrix real-matrix)
+  (frob real-matrix sb32-matrix real-matrix)
+  (frob real-matrix real-matrix real-matrix)
+  (frob real-matrix number-matrix real-matrix)
+  (frob real-matrix bit-matrix real-matrix)
+
+  (frob complex-matrix double-float-matrix complex-matrix)
+  (frob complex-matrix single-float-matrix complex-matrix)
+  (frob complex-matrix ub8-matrix complex-matrix)
+  (frob complex-matrix ub16-matrix complex-matrix)
+  (frob complex-matrix ub32-matrix complex-matrix)
+  (frob complex-matrix sb8-matrix complex-matrix)
+  (frob complex-matrix sb16-matrix complex-matrix)
+  (frob complex-matrix sb32-matrix complex-matrix)
+  (frob complex-matrix real-matrix complex-matrix)
+  (frob complex-matrix complex-matrix complex-matrix)
+  (frob complex-matrix number-matrix complex-matrix)
+  (frob complex-matrix bit-matrix complex-matrix))
+
