@@ -139,6 +139,7 @@
   (frob complex-matrix real-matrix)
   (frob complex-matrix complex-matrix)
 
+  (frob real-matrix ub8-matrix)
   (frob real-matrix real-matrix)
   (frob real-matrix complex-matrix)
   (frob real-matrix double-float-matrix)
