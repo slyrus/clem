@@ -196,5 +196,17 @@
 	     `(progn
 		(def-matrix-add-scalar ,type-1 ,type-2 ,type-3 :suffix ,suffix)
 		(def-matrix-add-scalar! ,type-1 ,type-2 ,type-3 :suffix ,suffix))))
-  (frob double-float-matrix double-float double-float-matrix))
+  (frob double-float-matrix double-float double-float-matrix)
+  (frob double-float-matrix single-float double-float-matrix)
+  (frob double-float-matrix integer double-float-matrix)
+
+  (frob integer-matrix integer integer-matrix))
+
+(macrolet ((frob (type-1 type-2 type-3 &key suffix)
+	     `(progn
+		(def-matrix-add-scalar ,type-1 ,type-2 ,type-3 :suffix ,suffix))))
+
+  (frob ub8-matrix integer integer-matrix)
+  (frob ub8-matrix double-float double-float-matrix)
+  (frob ub8-matrix single-float single-float-matrix))
 
