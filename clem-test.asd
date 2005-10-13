@@ -24,7 +24,9 @@
 
 
 (defsystem :clem-test
-  :version "20050614.1"
+  :name "clem-test"
+  :author "Cyrus Harmon <ch-lisp@bobobeach.com>"
+  :version "0.1.5-20051012.1"
   :depends-on (ch-util clem)
   :components
   ((:module :test
