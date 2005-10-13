@@ -17,7 +17,7 @@
 			       :initial-element ,val-1))
 	     (n (make-instance ',m2 :cols size :rows size
 			       :initial-element ,val-2)))
-	 (let ((p (time (clem::mat-hprod m n))))
+	 (let ((p (time (clem:mat-hprod m n))))
 	   p)))))
 
 (defmacro def-hprod!-test (type-1 val-1 type-2 val-2)
@@ -30,7 +30,7 @@
 			       :initial-element ,val-1))
 	     (n (make-instance ',m2 :cols size :rows size
 			       :initial-element ,val-2)))
-	 (let ((p (time (clem::mat-hprod! m n))))
+	 (let ((p (time (clem:mat-hprod! m n))))
 	   p)))))
 
 (defmacro def-hprod-tests (type-1 val-1 type-2 val-2)

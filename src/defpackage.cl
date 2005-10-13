@@ -36,6 +36,7 @@
    #:vertcat
    #:pad-matrix
 
+   #:scalar-divide
    #:scalar-mult-col
    #:scalar-mult-row
    #:scalar-divide-col
@@ -80,9 +81,12 @@
    ;;; matrix operations
    
    #:discrete-convolve
+   #:separable-discrete-convolve
 
    #:gaussian-blur
    #:gaussian-blur-word
+   
+   #:gaussian-kernel
 
    #:dilate
    #:erode
@@ -167,6 +171,22 @@
    #:make-affine-transformation
    #:transform-matrix
 
+   #:subset-matrix
+
+   #:mat-scale
+   #:mat-scale-range
+   #:mat-abs
+   #:mat-abs-range
+   #:mat-log
+   #:mat-log-range
+
+   #:mat-hprod
+   #:mat-hprod!
+
+
+   #:matrix-move
+   #:matrix-move-range
+   
    ;;; typed matrix operations
    #:matrix-move
    ;;; more to come...

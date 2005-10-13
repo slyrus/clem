@@ -1,5 +1,5 @@
 
-(in-package :matrix)
+(in-package :clem-test)
 
 (let ((x (copy-to-ub8-matrix (normalize (random-matrix 10 10))))
       (h (array->matrix #2A((0 0 0 0 0)(0 0 0 0 0)(0 0 0 0 0)(0 0 0 0 0)(0 0 0 0 0))))

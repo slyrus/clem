@@ -75,24 +75,6 @@
     (dotimes (j 1000)
       (set-val m1 i j (- i j)))))
 
-(defmethod clem::mat-add ((a double-float-matrix) (b double-float-matrix))
-  (declare (optimize (speed 3) (safety 0) (space 0)))
-  (and (equal (dim a) (dim b))
-       (destructuring-bind (m n) (dim a)
-	 (declare (fixnum m n))
-	 (let* ((c (clem::mat-copy-proto a))
-		(v (clem::matrix-vals c))
-		(va (clem::matrix-vals a))
-		(vb (clem::matrix-vals b)))
-	   (declare (type (simple-array double-float (* *)) v va vb))
-	   (dotimes (i m c)
-	     (dotimes (j n)
-	       (setf (aref v i j)
-		     (+
-		      (aref va i j)
-		      (aref vb i j)))))))))
-
-
 (defun run-tests ()
   (let ((run (ch-util:make-test-run)))
     (ch-util:run-test #'matrix-test-1 "matrix-test-1" run)

@@ -12,11 +12,11 @@
         nc))))
 
 (defun test-affine-transform-3 (&key (stack (make-congeal-test-stack)))
-  (let ((t1 (clem::make-affine-transformation
+  (let ((t1 (clem:make-affine-transformation
              :x-shift 20d0 :y-shift 20d0 :theta (/ (* 120 pi) 180) :x-scale (log 2) :y-scale (log 2)))
-        (t2 (clem::make-affine-transformation
+        (t2 (clem:make-affine-transformation
              :x-shift 100d0 :y 100d0)))
     (clem:print-matrix t1)
     (clem:print-matrix t2)
-    (clem:print-matrix (clem::mat-mult t2 t1))))
+    (clem:print-matrix (clem:mat-mult t2 t1))))
 

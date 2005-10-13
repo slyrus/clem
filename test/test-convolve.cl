@@ -2,10 +2,10 @@
 (in-package :clem-test)
 
 (defun convolve-test ()
-  (let* ((h (clem::mat-scale (clem::gaussian-kernel 2 1) 16d0))
+  (let* ((h (clem:mat-scale (clem:gaussian-kernel 2 1) 16d0))
 	 (g (make-instance 'double-float-matrix :rows 512 :cols 512
                            :initial-element 16d0))
-	 (m (time (clem::discrete-convolve g h :truncate t))))
+	 (m (time (clem:discrete-convolve g h :truncate t))))
     m))
 
 
@@ -16,7 +16,7 @@
                  (11 12 13 14 15))))
          (h (clem:array->double-float-matrix
              #2A((1 2 1)(2 4 2) (1 2 1))))
-         (m (clem:print-matrix (clem::discrete-convolve g h :truncate t :norm-v nil))))
+         (m (clem:print-matrix (clem:discrete-convolve g h :truncate t :norm-v nil))))
     m))
 
 (defun convolve-test-3 ()
@@ -28,8 +28,8 @@
               #2A((1 2 1))))
          (h2 (clem:transpose h1))
          (m (clem:print-matrix
-             (clem::discrete-convolve 
-              (clem::discrete-convolve g h1 :truncate t :norm-v nil)
+             (clem:discrete-convolve 
+              (clem:discrete-convolve g h1 :truncate t :norm-v nil)
               h2 :truncate t :norm-v nil))))
     m))
 
@@ -42,5 +42,5 @@
          (hrow (clem:array->double-float-matrix
               #2A((0.1 0.8 0.1))))
          (hcol (clem:transpose hrow))
-         (m (clem:print-matrix (clem::separable-discrete-convolve g hcol hrow :truncate t :norm-v nil))))
+         (m (clem:print-matrix (clem:separable-discrete-convolve g hcol hrow :truncate t :norm-v nil))))
     m))
