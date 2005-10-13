@@ -1,3 +1,48 @@
+2005-10-13  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* test/test-transform.cl, test/test-mean.cl, test/test-hprod.cl, test/test-dilate.cl, test/test-convolve.cl, test/test-clem.cl, test/mattest4.cl, src/defpackage.cl:
+	exporting some symbols
+
+	* clem-test.asd, clem.asd: bumping version number
+
+2005-10-12  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* make-dist.sh: new make-dist shell scripts
+
+2005-09-27  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/typed-ops/defmatrix-add.cl: added some add frobs
+
+2005-09-07  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/typed-ops/defmatrix-move.cl:
+	added frob for real-matrix to ub8-matrix
+
+	* src/typed-ops/defmatrix-add.cl:
+	added methods to add a scalar to a matrix
+
+2005-09-03  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/typed-ops/defmatrix-hprod.cl, src/metaclasses.cl:
+	fixed metaclasses so that the really do inherit properties
+	  from ancestor meta-classes
+	add hprod frobs for complex and real matrices
+
+2005-09-01  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/typed-ops/defmatrix-move.cl:
+	added some more frobs for complex, rea, etc...
+
+2005-08-31  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* ChangeLog, TODO, clem.asd, src/defmatrix-types.cl, src/defmatrix.cl, src/matrix.cl, src/typed-matrix-utils.cl, src/typed-ops/defmatrix-abs.cl, src/typed-ops/defmatrix-log.cl, src/typed-ops/defmatrix-move.cl, src/typed-ops/defmatrix-range-ops.cl, test/test-transform.cl:
+	added complex matrix type
+	fixed up real, integer, number, etc... matrices a bit
+	new functions log and abs
+	moved range functions
+	added test-transform.cl
+	added (some, not all yet) new frobs for complex matrices, etc...
+
 2005-08-31  Cyrus Harmon  <cyrus@bobobeach.com>
 
 	* src/typed-ops/defmatrix-scale.cl, src/typed-ops/defmatrix-mref.cl, src/typed-ops/defmatrix-minmax.cl, src/typed-ops/defmatrix-add.cl, src/defpackage.cl, src/defmatrix.cl, src/defmatrix-types.cl, clem.asd:

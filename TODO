@@ -66,7 +66,7 @@ bit (or whatever the appropriate one bit type is)
     instances with more type-aware, or at least optionally more
     type-aware matrix creation functions.
 
-16. igure out what to do about col-vector, row-vector, and scalar in
+16. Figure out what to do about col-vector, row-vector, and scalar in
     the face of the typed matrices. This could get a bit messy. Need
     to thin about how to handle this.
 
@@ -77,4 +77,9 @@ bit (or whatever the appropriate one bit type is)
 19. Figure out how to specify different destination types for things
     like mat-add an mat-subtr.
 
-20. Add frobs for complex, real, and integer matrices.
+20. SORT OF DONE - Add frobs for complex, real, and integer
+    matrices. Which frobs did you have in mind? A lot are there, more
+    needed.
+
+21. DONE add multiply funcs for real and complex matrices!
+    esp. hadamard product for a bit-mask!!
