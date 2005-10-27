@@ -65,5 +65,8 @@
        (:clem-cl-source-file "defmatrix-transform")
        (:clem-cl-source-file "defmatrix-convolve" :depends-on ("defmatrix-sum")))
       :depends-on ("defmatrix-types" "interpolation"))))
-   (:static-file "Makefile")))
+   (:static-file "bootstrap" :pathname #p"bootstrap.cl")
+   (:static-file "COPYRIGHT")
+   (:static-file "README")
+   (:static-file "make-dist" :pathname #p"make-dist.sh")))
 
