@@ -6,7 +6,37 @@
 
 (in-package :clem)
 
+;;; consider replacing these variables with either typed variables or
+;;; an array accessing this is proving to be too slow...
+
+(defclass affine-transformation (double-float-matrix)
+  ((y-shift :accessor y-shift :initarg :y-shift :initform 0d0 :type 'double-float)
+   (x-shift :accessor x-shift :initarg :x-shift :initform 0d0 :type 'double-float)
+   (theta :accessor theta :initarg :theta :initform 0d0 :type 'double-float)
+   (y-scale :accessor y-scale :initarg :y-scale :initform 0d0 :type 'double-float)
+   (x-scale :accessor x-scale :initarg :x-scale :initform 0d0 :type 'double-float)
+   (y-shear :accessor y-shear :initarg :y-shear :initform 0d0 :type 'double-float)
+   (x-shear :accessor x-shear :initarg :x-shear :initform 0d0 :type 'double-float)
+   (rows :accessor matrix-rows :initarg :rows :initform 3)
+   (cols :accessor matrix-cols :initarg :cols :initform 3))
+  (:metaclass standard-matrix-class)
+  (:documentation "a matrix that represents an affine-transformation"))
+
+(defgeneric transform-matrix
+    (m n xfrm &key u v x y
+       interpolation background
+       update-transform)
+  (:documentation
+   "applies the affine transform xfrm to the contents of matrix m and
+    places the contents in n"))
+
+(defgeneric update-affine-transformation-matrix (xfrm))
+(defgeneric copy-affine-transformation (xfrm))
+(defgeneric move-affine-transformation (src dest))
+
 (defun transform-coord (x y xfrm)
+  "applies the affine transformation xfrm to the point {x,y} and
+  returns the position of the point after applying the transformation"
   (let ((coord1 (make-instance 'double-float-matrix :rows 3 :cols 1)))
     (setf (mref coord1 0 0) (coerce x 'double-float)
 	  (mref coord1 1 0) (coerce y 'double-float)
@@ -15,6 +45,9 @@
       (values (mref coord2 0 0) (mref coord2 1 0)))))
 
 (defun compute-bounds (x1 y1 x2 y2 xfrm)
+  "takes a region bound by x1 and x2 on the x-axis and y1 and y2 on
+  the y-axis and returns the coordinates of the bounding rectangle
+  after applying the affine transform xfrm"
   (multiple-value-bind (p1 q1)
       (clem::transform-coord x1 y1 xfrm)
     (multiple-value-bind (p2 q2)
@@ -117,22 +150,6 @@
             (when interpolation-supplied-p (list :interpolation interpolation))))))
 
 
-;;; replace these variables with either typed variables or an array
-;;; accessing this is proving to be too slow...
-
-(defclass affine-transformation (double-float-matrix)
-  ((y-shift :accessor y-shift :initarg :y-shift :initform 0d0 :type 'double-float)
-   (x-shift :accessor x-shift :initarg :x-shift :initform 0d0 :type 'double-float)
-   (theta :accessor theta :initarg :theta :initform 0d0 :type 'double-float)
-   (y-scale :accessor y-scale :initarg :y-scale :initform 0d0 :type 'double-float)
-   (x-scale :accessor x-scale :initarg :x-scale :initform 0d0 :type 'double-float)
-   (y-shear :accessor y-shear :initarg :y-shear :initform 0d0 :type 'double-float)
-   (x-shear :accessor x-shear :initarg :x-shear :initform 0d0 :type 'double-float)
-   (rows :accessor matrix-rows :initarg :rows :initform 3)
-   (cols :accessor matrix-cols :initarg :cols :initform 3))
-  (:metaclass standard-matrix-class)
-  (:element-type double-float))
-
 (defmethod update-affine-transformation-matrix ((xfrm affine-transformation))
   (setf (mref xfrm 0 0) (- (* (cos (theta xfrm)) (exp (x-scale xfrm)))
 			   (* (sin (theta xfrm)) (exp (y-scale xfrm)) (y-shear xfrm))))
@@ -162,7 +179,8 @@
                  :y-shear y-shear
                  :x-shear x-shear)))
 
-(defmethod move-affine-transformation ((src affine-transformation) (dest affine-transformation))
+(defmethod move-affine-transformation ((src affine-transformation)
+				       (dest affine-transformation))
   (with-slots (y-shift x-shift theta y-scale x-scale y-shear x-shear) src
     (setf (y-shift dest) y-shift)
     (setf (x-shift dest) x-shift)
@@ -173,7 +191,8 @@
     (setf (x-shear dest) x-shear)
     (update-affine-transformation-matrix dest)))
 
-(defmethod decf-affine-transformation ((src affine-transformation) (dest affine-transformation))
+(defmethod decf-affine-transformation ((src affine-transformation)
+				       (dest affine-transformation))
   (with-slots (y-shift x-shift theta y-scale x-scale y-shear x-shear) src
     (decf y-shift (y-shift dest))
     (decf x-shift (x-shift dest))
@@ -205,7 +224,10 @@
 				   (y-shear 0.0d0)
 				   (theta 0d0))
   (make-instance 'affine-transformation
-		 :x-shift x-shift :y-shift y-shift :x-scale x-scale :y-scale y-scale :x-shear x-shear :y-shear y-shear :theta theta))
+		 :x-shift x-shift :y-shift y-shift
+		 :x-scale x-scale :y-scale y-scale
+		 :x-shear x-shear :y-shear y-shear
+		 :theta theta))
 
 (defmethod parameters-list ((xfrm affine-transformation))
   (list 
@@ -216,6 +238,4 @@
    :x-scale (x-scale xfrm)
    :y-shear (y-shear xfrm)
    :x-shear (x-shear xfrm)))
-   
-
    
