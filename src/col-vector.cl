@@ -23,6 +23,8 @@
   (declare (ignore j))
   (vec-set-val cv i (if coerce (coerce v (element-type (class-of cv))) v)))
 
+(defgeneric array->col-vector (a))
+
 (defmethod array->col-vector ((a array))
   (let ((d (array-dimensions a)))
     (cond ((= (length d) 2)
