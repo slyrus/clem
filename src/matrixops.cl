@@ -124,6 +124,8 @@
     (scalar-divide a (sum-range a 0 (- d 1) 0 0))
     a))
 
+(defgeneric separable-discrete-convolve (m h1 h2 &key truncate norm-v))
+
 (defmethod separable-discrete-convolve (m h1 h2 &key (truncate nil) (norm-v nil))
   (let* ((m1 (discrete-convolve m h1 :truncate truncate :norm-v norm-v))
          (m2 (discrete-convolve m1 h2 :truncate truncate :norm-v norm-v)))
@@ -235,6 +237,7 @@
 	   (m2 (morphological-op m1 h2 f)))
 	m2))))
 
+(defgeneric dilate (u v))
 (defmethod dilate ((u matrix) (v matrix))
   (separable-morphological-op u v #'(lambda (acc uval vval)
 				      (let ((opval (+ uval vval)))
@@ -242,6 +245,7 @@
 					 ((null acc) opval)
 					 (t (max acc opval)))))))
 
+(defgeneric erode (u v))
 (defmethod erode ((u matrix) (v matrix))
   (separable-morphological-op u v #'(lambda (acc uval vval)
 				      (let ((opval (- uval vval)))
