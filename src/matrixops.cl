@@ -33,7 +33,8 @@
 ;;; not (0,0) x (0,0)
 
 
-(defgeneric discrete-convolve (u v &key truncate matrix-class))
+(defgeneric discrete-convolve (u v &key truncate norm-v matrix-class))
+
 (defmethod discrete-convolve ((u matrix) (v matrix)
 			      &key (truncate nil) (norm-v t)
 			      (matrix-class nil))
