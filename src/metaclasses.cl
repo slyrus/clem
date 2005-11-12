@@ -55,8 +55,8 @@
    (accumulator-type :initarg :accumulator-type)
    (specialized-array :initarg :specialized-array :initform nil)
    (val-format :initarg :val-format :initform (list "~4,9F"))
-   (minval :initarg :minval :initform nil)
-   (maxval :initarg :maxval :initform nil)))
+   (minval :initarg :minval)
+   (maxval :initarg :maxval)))
 
 (defgeneric element-type (smc)
   (:documentation "the type of the elements of instances
