@@ -159,7 +159,7 @@
 	(yd (y-derivative m :truncate truncate)))
     (mat-square! xd)
     (mat-square! yd)
-    (mat-sqrt! (mat-add xd yd))))
+    (mat-sqrt! (mat-add! xd yd))))
 
 (defun variance-window (a &key (k 2))
   (destructuring-bind (m n) (dim a)
