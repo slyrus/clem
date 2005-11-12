@@ -37,6 +37,7 @@
 	     (:clem-test-cl-source-file "test-clem3" :depends-on ("defpackage"))
 	     (:clem-test-cl-source-file "test-defmatrix" :depends-on ("defpackage"))
 	     (:clem-test-cl-source-file "test-transform" :depends-on ("defpackage"))
+	     (:clem-test-cl-source-file "test-convolve" :depends-on ("defpackage"))
 	     (:clem-test-cl-source-file "bench-matrix" :depends-on ("defpackage"))
 	     (:clem-test-cl-source-file "test-hprod" :depends-on ("defpackage"))
 	     ))))
