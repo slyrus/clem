@@ -63,10 +63,11 @@
        (:clem-cl-source-file "defmatrix-mult")
        (:clem-cl-source-file "defmatrix-mult-block")
        (:clem-cl-source-file "defmatrix-transform")
+       (:clem-cl-source-file "defmatrix-square")
+       (:clem-cl-source-file "defmatrix-subset-matrix")
        (:clem-cl-source-file "defmatrix-convolve" :depends-on ("defmatrix-sum")))
       :depends-on ("defmatrix-types" "interpolation"))))
    (:static-file "bootstrap" :pathname #p"bootstrap.cl")
    (:static-file "COPYRIGHT")
    (:static-file "README")
    (:static-file "make-dist" :pathname #p"make-dist.sh")))
-
