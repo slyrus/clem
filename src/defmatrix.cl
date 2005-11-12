@@ -222,7 +222,8 @@
 
 (defmacro maybe-truncate (val type-1 type-2)
   (if (and (subtypep type-2 'integer)
-	   (subtypep type-1 'float))
+	   (and (subtypep type-1 'real)
+                (not (subtypep type-1 'integer))))
       `(nth-value 0 (truncate ,val))
       `(maybe-coerce ,val ,type-1 ,type-2)))
 
