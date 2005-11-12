@@ -33,7 +33,7 @@
 ;;; not (0,0) x (0,0)
 
 
-(defgeneric discrete-convolve (u v &key))
+(defgeneric discrete-convolve (u v &key truncate matrix-class))
 (defmethod discrete-convolve ((u matrix) (v matrix)
 			      &key (truncate nil) (norm-v t)
 			      (matrix-class nil))
@@ -137,29 +137,29 @@
     (separable-discrete-convolve m hr hc :truncate truncate)))
 
 (defparameter *x-derivative-conv-matrix*
-  (transpose (array->fixnum-matrix #2A((1 0 -1)(1 0 -1)(1 0 -1)))))
+  (transpose (array->sb8-matrix #2A((1 0 -1)(1 0 -1)(1 0 -1)))))
 
-(defun x-derivative (m &key (truncate t))
-  (discrete-convolve (copy-to-fixnum-matrix m)
-		     *x-derivative-conv-matrix*
-		     :truncate truncate :matrix-class 'fixnum-matrix))
+(defun x-derivative (m &key (matrix-class 'double-float-matrix) (truncate t))
+  (let ((m1 (copy-to-matrix-type m matrix-class))
+	(m2 (copy-to-matrix-type *x-derivative-conv-matrix* matrix-class)))
+    (discrete-convolve m1 m2
+		       :truncate truncate :matrix-class matrix-class)))
 
 (defparameter *y-derivative-conv-matrix*
-  (array->fixnum-matrix #2A((1 0 -1)(1 0 -1)(1 0 -1))))
+  (array->sb8-matrix #2A((1 0 -1)(1 0 -1)(1 0 -1))))
 
-(defun y-derivative (m &key (truncate t))
-  (discrete-convolve (copy-to-fixnum-matrix m) 
-		     *y-derivative-conv-matrix*
-		     :truncate truncate :matrix-class 'fixnum-matrix))
-  
+(defun y-derivative (m &key (matrix-class 'double-float-matrix) (truncate t))
+  (discrete-convolve (copy-to-matrix-type m matrix-class) 
+		     (copy-to-matrix-type *y-derivative-conv-matrix* matrix-class)
+		     :truncate truncate :matrix-class matrix-class))
+
+;;; this is broken because convolve is broken!  
 (defun gradmag (m &key (truncate nil))
   (let ((xd (x-derivative m :truncate truncate))
 	(yd (y-derivative m :truncate truncate)))
     (mat-square! xd)
     (mat-square! yd)
-    (mat-add xd yd)
-    (mat-sqrt! xd)
-    xd))
+    (mat-sqrt! (mat-add xd yd))))
 
 (defun variance-window (a &key (k 2))
   (destructuring-bind (m n) (dim a)
