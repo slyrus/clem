@@ -154,7 +154,6 @@
 		     (copy-to-matrix-type *y-derivative-conv-matrix* matrix-class)
 		     :truncate truncate :matrix-class matrix-class))
 
-;;; this is broken because convolve is broken!  
 (defun gradmag (m &key (truncate nil))
   (let ((xd (x-derivative m :truncate truncate))
 	(yd (y-derivative m :truncate truncate)))
