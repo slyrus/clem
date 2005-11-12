@@ -916,8 +916,8 @@
 		     (incf k)))))))))
     m))
 
-(defgeneric trim-one (m k))
-(defmethod trim-one ((m matrix) k)
+(defgeneric mat-trim (m k))
+(defmethod mat-trim ((m matrix) k)
   (destructuring-bind (mr mc) (dim m)
     (subset-matrix m k (- mr k 1) k (- mc k 1))))
 

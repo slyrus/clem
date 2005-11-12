@@ -102,7 +102,7 @@
 
    ;;; from matrixutils.cl
    #:array->matrix
-   #:trim-one
+   #:mat-trim
    
    ;;; typed-matrix stuff
    #:typed-matrix
