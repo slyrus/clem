@@ -1,3 +1,73 @@
+2005-11-12  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/typed-ops/defmatrix-square.cl: added mat-sqrt
+
+	* src/matrixops.cl:
+	do an in-place in grad-mag to avoid consing a new matrix
+
+	* test/test-convolve.cl: adding more convolution tests
+
+	* src/metaclasses.cl:
+	removed initform nil from minval and maxval. This needs more testing!!
+
+	* src/matrixops.cl: removed bogus comment about gradmag being broken
+
+	* src/matrix.cl, src/defpackage.cl: trim-one -> mat-trim
+
+	* src/defmatrix.cl:
+	improve the test for maybe truncate to do the right thing for reals.
+
+	* src/typed-ops/defmatrix-subset-matrix.cl, clem.asd:
+	* added defmatrix-subset-matrix
+	* and defmatrix-subset-matrix and defmatrix-square to the asd file
+
+	* src/typed-ops/defmatrix-square.cl: adding typed square func
+
+	* src/matrixops.cl:
+	added norm-v to the discrete-convolve defgeneric keys
+
+	* clem-test.asd: added test-convolve.cl to the asdf
+
+	* src/matrixops.cl:
+	trying to fix gradmag but convolve is busted! BROKEN! FIXME!
+
+	* src/typed-ops/defmatrix-mult.cl: removed timestamp
+
+2005-11-11  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* test/test-transform.cl, clem-test.asd:
+	cleaning up tests a (very) little bit
+
+	* src/transform.cl: * added some documentation
+	* moved things around a little bit
+
+	* src/col-vector.cl: added a defgeneric for array->col-vector
+
+	* src/matrixops.cl: added some defgenerics
+
+2005-10-29  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* COPYRIGHT: added COPYRIGHT file
+
+2005-10-27  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* clem.asd:
+	adding some static files to the :clem system so that these get
+	packaged up via make-dist.sh
+
+2005-10-14  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/metaclasses.cl, src/defmatrix.cl:
+	 * use map-set-val-fit in normalize instead of map-set-val
+	 * inherit minval and maxval slots from ancestor matrix classes
+
+2005-10-13  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* TODO, ChangeLog: updating ChangeLog and TODO
+
+	* test/test-transform.cl, test/test-mean.cl, test/test-hprod.cl, test/test-dilate.cl, test/test-convolve.cl, test/test-clem.cl, test/mattest4.cl, src/defpackage.cl:
+	exporting some symbols
+
 2005-10-13  Cyrus Harmon  <cyrus@bobobeach.com>
 
 	* test/test-transform.cl, test/test-mean.cl, test/test-hprod.cl, test/test-dilate.cl, test/test-convolve.cl, test/test-clem.cl, test/mattest4.cl, src/defpackage.cl:
