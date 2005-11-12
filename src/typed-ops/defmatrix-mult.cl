@@ -2,7 +2,6 @@
 ;;;
 ;;; file: defmatrix-mult.cl
 ;;; author: cyrus harmon
-;;; time-stamp: Thu Jul  7 09:21:21 2005
 ;;;
 
 (in-package :clem)
