@@ -179,7 +179,7 @@
 	    (defmethod scalar-divide-row ((m ,type)  k q)
 	      (with-typed-matrix-vals (m ,element-type ,specialized-array a)
 		(dotimes (j (cols m))
-		  (setf (aref a k j) (fit m (truncate (/ (aref a k j) q))))))
+		  (setf (aref a k j) (fit m (truncate (aref a k j) q)))))
 	      m)
 	    (defmethod scalar-mult-row ((m ,type) k q)
 	      (with-typed-matrix-vals (m ,element-type ,specialized-array a)
