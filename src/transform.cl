@@ -239,3 +239,50 @@
    :y-shear (y-shear xfrm)
    :x-shear (x-shear xfrm)))
    
+(defgeneric affine-transform (mat xfrm &key u v x y interpolation background matrix-class))
+(defmethod affine-transform ((mat matrix)
+                             (xfrm clem:affine-transformation)
+                             &key
+                             u v x y
+                             (interpolation nil interpolation-supplied-p)
+                             (background nil background-supplied-p)
+                             (matrix-class (class-of mat)))
+  (unless u (setf u (cons 0 (cols mat))))
+  (unless v (setf v (cons 0 (rows mat)))) 
+  (multiple-value-bind (x1 y1 x2 y2)
+      (compute-bounds (car u) (car v) (cdr u) (cdr v) xfrm)
+    (unless x (setf x (cons (floor x1) (ceiling x2))))
+    (unless y (setf y (cons (floor y1) (ceiling y2)))))
+  (let ((rows (if y (1+ (- (cdr y) (car y)))
+                    (rows mat)))
+        (cols  (if x (1+ (- (cdr x) (car x)))
+                   (cols mat))))
+    (let ((m (make-instance matrix-class
+                            :rows rows
+                            :cols cols
+                            :initial-element
+                            (coerce 0 (element-type (class-of mat))))))
+      (apply #'clem:transform-matrix mat m xfrm
+             (append
+              (when u (list :u u))
+              (when v (list :v v))
+              (when x (list :x x))
+              (when y (list :y y))
+              (when background-supplied-p
+                (list :background background))
+              (when interpolation-supplied-p
+                (list :interpolation interpolation))))
+      m)))
+
+(defun resize-matrix (m y x &key (interpolation :bilinear))
+  (let ((oldy (rows m))
+        (oldx (cols m)))
+    (let ((xfrm (make-affine-transformation :x-scale (log (/ x oldx))
+                                                  :y-scale (log (/ y oldy)))))
+      (let ((n (affine-transform
+                m xfrm
+                :interpolation interpolation
+                :u `(0 . ,oldx) :v `(0 . ,oldy)
+                :x `(0 . ,x) :y `(0 . ,y))))
+        n))))
+

@@ -171,7 +171,9 @@
 	     (max (max-val u))
 	     (nmin (if normin normin (if ,minval ,minval 0)))
 	     (nmax (if normax normax (if ,maxval ,maxval 255))))
-	 (let ((slope (double-float-divide (- nmax nmin)  (- max min))))
+	 (let ((slope (if (= max min)
+                          0d0
+                          (double-float-divide (- nmax nmin)  (- max min)))))
 	   (map-set-val-fit u #'(lambda (x) (+ nmin (* slope (- x min))))))))
      
      (cond ((and (find-class 'integer-matrix nil)

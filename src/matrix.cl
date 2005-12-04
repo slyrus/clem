@@ -527,7 +527,6 @@
                               :cols cols)))
         (let ((coff 0))
           (dolist (x (cons m1 mr))
-            (print x)
             (map-set-range z 0 (- (rows x) 1) coff (+ coff (- (cols x) 1))
                            #'(lambda (v i j) (declare (ignore v)) (val x i (- j coff))))
             (incf coff (cols x))
@@ -543,7 +542,6 @@
                               :cols cols)))
         (let ((roff 0))
           (dolist (x (cons m1 mr))
-            (print x)
             (map-set-range z roff (+ roff (- (rows x) 1)) 0 (- (cols x) 1)
                            #'(lambda (v i j) (declare (ignore v)) (val x (- i roff) j)))
             (incf roff (rows x))
@@ -850,7 +848,9 @@
 	(max (max-val u))
 	(nmin (if normin normin 0))
 	(nmax (if normax normax 255)))
-    (let ((slope (/ (- nmax nmin) (- max min))))
+    (let ((slope (if (= max min)
+                     0
+                     (/ (- nmax nmin) (- max min)))))
       (map-set-val-fit u #'(lambda (x) (+ nmin (* slope (- x min))))
 		       :truncate truncate))))
 

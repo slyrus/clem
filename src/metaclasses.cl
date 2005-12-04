@@ -37,13 +37,13 @@
   (let ((ancestor (find-if #'(lambda (anc)
 			       (when (slot-exists-p anc slot)
 				 (slot-boundp anc slot)))
-			   (compute-class-precedence-list class))))
+			   (cdr (compute-class-precedence-list class)))))
     (when ancestor
       (setf (slot-value class slot) (slot-value ancestor slot)))))
 
 (defun fill-slots-from-ancestor (slots class &rest all-keys)
   (mapcar #'(lambda (x)
-	      (unless (getf (car all-keys) x)
+	      (unless (getf (car all-keys) (ch-util:make-keyword x))
 		(fill-slot-from-ancestor x class)))
 	  slots))
 
