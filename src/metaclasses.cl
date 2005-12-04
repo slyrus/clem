@@ -34,18 +34,26 @@
 
 
 (defun fill-slot-from-ancestor (slot class)
+  (print (cons 'slot slot))
   (let ((ancestor (find-if #'(lambda (anc)
 			       (when (slot-exists-p anc slot)
 				 (slot-boundp anc slot)))
 			   (cdr (compute-class-precedence-list class)))))
     (when ancestor
-      (setf (slot-value class slot) (slot-value ancestor slot)))))
+      (setf (slot-value class slot) (print (slot-value ancestor slot))))))
 
-(defun fill-slots-from-ancestor (slots class &rest all-keys)
+(defun fill-standard-matrix-class-slots-from-ancestors (class &rest all-keys)
+  (print class)
+  (print all-keys)
   (mapcar #'(lambda (x)
-	      (unless (getf (car all-keys) (ch-util:make-keyword x))
-		(fill-slot-from-ancestor x class)))
-	  slots))
+              (let ((name (slot-definition-name x))
+                    (initargs (slot-definition-initargs x)))
+;                (declare (ignore name))
+                (print name)
+                (print initargs)
+                (unless (getf (car all-keys) (car initargs))
+                  (fill-slot-from-ancestor name class))))
+          (standard-matrix-class-slots class)))
 
 
 ;;; NOTE: don't use accessors here as they will return a list!
@@ -54,9 +62,32 @@
   ((element-type :initarg :element-type)
    (accumulator-type :initarg :accumulator-type)
    (specialized-array :initarg :specialized-array :initform nil)
-   (val-format :initarg :val-format :initform (list "~4,9F"))
+   (val-format :initarg :val-format :initform nil)
    (minval :initarg :minval)
    (maxval :initarg :maxval)))
+
+(let ((smc (find-class 'standard-matrix-class)))
+  (defun standard-matrix-class-p (class)
+    (subtypep (class-of class) smc)))
+
+(defun standard-matrix-class-precedence-list (class)
+  (remove-if-not
+   #'(lambda (x) (standard-matrix-class-p x))
+   (class-precedence-list class)))
+
+(defun standard-matrix-class-slots (class)
+  (let ((slots) (slot-names))
+    (mapcar #'(lambda (x)
+                (mapcar #'(lambda (y)
+                            (unless (member (slot-definition-name y)
+                                            slot-names)
+                              (push y slots)
+                              (print (cons 'fuck (slot-definition-initargs y)))
+                              (push (slot-definition-name y)
+                                    slot-names)))
+                        (class-direct-slots (class-of x))))
+            (standard-matrix-class-precedence-list class))
+    slots))
 
 (defgeneric element-type (smc)
   (:documentation "the type of the elements of instances
@@ -150,10 +181,11 @@ of this matrix class."))
                    (add-root-class root-class direct-superclasses)
                    (remove-keyword-arg all-keys :direct-superclasses)))
 	(call-next-method)))
-  (fill-slots-from-ancestor '(element-type specialized-array val-format minval maxval) class all-keys))
+  (fill-standard-matrix-class-slots-from-ancestors class all-keys))
 
 (defmethod reinitialize-instance :around
     ((class standard-matrix-class) &rest all-keys &key direct-superclasses &allow-other-keys)
+  (print (cons 'moose all-keys))
   (let ((root-class (find-class 'typed-mixin))
 	(mc (find-class 'standard-matrix-class)))
     (if (and root-class (not (equal class root-class)))
@@ -165,5 +197,5 @@ of this matrix class."))
 		   (add-root-class root-class direct-superclasses)
 		   (remove-keyword-arg all-keys :direct-superclasses)))
 	(call-next-method)))
-  (fill-slots-from-ancestor '(element-type specialized-array val-format minval maxval) class all-keys))
+  (fill-standard-matrix-class-slots-from-ancestors class all-keys))
 
