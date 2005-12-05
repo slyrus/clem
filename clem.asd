@@ -26,7 +26,7 @@
 (defsystem :clem
   :name "clem"
   :author "Cyrus Harmon <ch-lisp@bobobeach.com>"
-  :version "0.1.4-20051012"
+  :version "0.1.5-20051204"
   :licence "BSD"
   :depends-on (ch-util)
   :components
@@ -69,5 +69,6 @@
       :depends-on ("defmatrix-types" "interpolation"))))
    (:static-file "bootstrap" :pathname #p"bootstrap.cl")
    (:static-file "COPYRIGHT")
+   (:static-file "NEWS")
    (:static-file "README")
    (:static-file "make-dist" :pathname #p"make-dist.sh")))
