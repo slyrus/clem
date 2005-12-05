@@ -57,7 +57,7 @@
 		 :accumulator-type (signed-byte 32)
 		 :minval 0
 		 :maxval 1
-		 :val-format "~d"
+		 :val-format "~b"
 		 :specialized-array t))
 (defmatrixfuncs bit-matrix
     :element-type (unsigned-byte 1)
@@ -71,7 +71,6 @@
 		 :accumulator-type (signed-byte 32)
 		 :minval #.(- (expt 2 7))
 		 :maxval #.(- (expt 2 7) 1)
-		 :val-format "~d"
 		 :specialized-array t))
 (defmatrixfuncs sb8-matrix
     :element-type (signed-byte 8)
@@ -86,7 +85,6 @@
     :accumulator-type (unsigned-byte 32)
     :minval 0
     :maxval #.(- (expt 2 8) 1)
-    :val-format "~d"
     :specialized-array t))
 (defmatrixfuncs ub8-matrix
     :element-type (unsigned-byte 8)
@@ -101,7 +99,6 @@
     :accumulator-type (signed-byte 32)
     :minval #.(- (expt 2 15))
     :maxval #.(- (expt 2 15) 1)
-    :val-format "~d"
     :specialized-array t))
 (defmatrixfuncs sb16-matrix
     :element-type (signed-byte 16)
@@ -116,7 +113,6 @@
     :accumulator-type (unsigned-byte 32)
     :minval 0
     :maxval #.(- (expt 2 16) 1)
-    :val-format "~d"
     :specialized-array t))
 (defmatrixfuncs ub16-matrix
     :element-type (unsigned-byte 16)
@@ -131,7 +127,6 @@
     :accumulator-type (signed-byte 32)
     :minval #.(- (expt 2 31))
     :maxval #.(- (expt 2 31) 1)
-    :val-format "~d"
     :specialized-array t))
 (defmatrixfuncs sb32-matrix
     :element-type (signed-byte 32)
@@ -146,7 +141,6 @@
     :accumulator-type (unsigned-byte 32)
     :minval 0
     :maxval #.(- (expt 2 32) 1)
-    :val-format "~d"
     :specialized-array t))
 (defmatrixfuncs ub32-matrix
     :element-type (unsigned-byte 32)
@@ -160,7 +154,6 @@
 		 :accumulator-type (unsigned-byte 32)
 		 :minval most-negative-fixnum
 		 :maxval most-positive-fixnum
-		 :val-format "~d"
 		 :specialized-array t))
 (defmatrixfuncs fixnum-matrix
     :element-type fixnum

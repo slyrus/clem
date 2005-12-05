@@ -50,10 +50,12 @@
    (resizeable :accessor resizable :initform nil))
   (:metaclass standard-matrix-class)
   (:element-type double-float)
-  (:val-format "~4,9F"))
+  (:val-format "~4,9F")
+  (:minval nil)
+  (:maxval nil))
 
 (defgeneric allocate-matrix-vals (object &key rows cols adjustable initial-element))
-(defmethod allocate-matrix-vals ((object matrix) &key rows cols adjustable initial-element)
+(defmethod allocate-matrix-vals ((object matrix) &key rows cols adjustable (initial-element 0))
   (setf (slot-value object 'm)
 	(make-array (list rows cols)
 		    :adjustable adjustable
@@ -64,11 +66,13 @@
 (defmethod shared-initialize :after
     ((object matrix) slot-names &rest initargs &key rows cols adjustable initial-element)
   (declare (ignore slot-names initargs rows cols adjustable initial-element))
-  (allocate-matrix-vals object
-                        :rows (slot-value object 'rows)
-                        :cols (slot-value object 'cols)
-                        :adjustable (slot-value object 'adjustable)                        
-                        :initial-element (slot-value object 'initial-element)))
+  (apply #'allocate-matrix-vals object
+         (append
+          (list :rows (slot-value object 'rows))
+          (list :cols (slot-value object 'cols))
+          (list :adjustable (slot-value object 'adjustable))
+          (when (slot-value object 'initial-element)
+            (list :initial-element (slot-value object 'initial-element))))))
 
 (defun list-if (x)
   (if x (list x) x))

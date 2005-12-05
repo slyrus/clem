@@ -34,23 +34,17 @@
 
 
 (defun fill-slot-from-ancestor (slot class)
-  (print (cons 'slot slot))
   (let ((ancestor (find-if #'(lambda (anc)
 			       (when (slot-exists-p anc slot)
 				 (slot-boundp anc slot)))
 			   (cdr (compute-class-precedence-list class)))))
     (when ancestor
-      (setf (slot-value class slot) (print (slot-value ancestor slot))))))
+      (setf (slot-value class slot) (slot-value ancestor slot)))))
 
 (defun fill-standard-matrix-class-slots-from-ancestors (class &rest all-keys)
-  (print class)
-  (print all-keys)
   (mapcar #'(lambda (x)
               (let ((name (slot-definition-name x))
                     (initargs (slot-definition-initargs x)))
-;                (declare (ignore name))
-                (print name)
-                (print initargs)
                 (unless (getf (car all-keys) (car initargs))
                   (fill-slot-from-ancestor name class))))
           (standard-matrix-class-slots class)))
@@ -82,7 +76,6 @@
                             (unless (member (slot-definition-name y)
                                             slot-names)
                               (push y slots)
-                              (print (cons 'fuck (slot-definition-initargs y)))
                               (push (slot-definition-name y)
                                     slot-names)))
                         (class-direct-slots (class-of x))))
@@ -185,7 +178,6 @@ of this matrix class."))
 
 (defmethod reinitialize-instance :around
     ((class standard-matrix-class) &rest all-keys &key direct-superclasses &allow-other-keys)
-  (print (cons 'moose all-keys))
   (let ((root-class (find-class 'typed-mixin))
 	(mc (find-class 'standard-matrix-class)))
     (if (and root-class (not (equal class root-class)))

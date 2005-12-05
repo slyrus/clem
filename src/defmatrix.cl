@@ -80,23 +80,23 @@
 ;;; any of these macros to generate specialized functions so
 ;;; we just get the generic version. consider removing this flag.
 (defmacro defmatrixtype (type direct-superclasses &key 
-			 (element-type 'double-float)
-			 (accumulator-type 'double-float)
-			 (initial-element 0)
-			 (specialized-array nil)
+			 (element-type)
+			 (accumulator-type)
+			 (initial-element)
+			 (specialized-array)
 			 minval maxval
-			 (val-format "~4,9F"))
+			 (val-format))
   (declare (ignore specialized-array))
   (unless direct-superclasses (setf direct-superclasses '(matrix)))
   `(progn
      (defclass ,type ,direct-superclasses
        ((initial-element :accessor initial-element :initarg :initial-element :initform ,initial-element))
        (:metaclass standard-matrix-class)
-       (:element-type ,(delistify element-type))
-       (:accumulator-type ,(delistify accumulator-type))
-       (:val-format ,(delistify val-format))
-       (:minval ,(if (symbolp minval) (symbol-value minval) minval))
-       (:maxval ,(if (symbolp maxval) (symbol-value minval) maxval)))))
+       ,@(when element-type `((:element-type ,(delistify element-type))))
+       ,@(when accumulator-type `((:accumulator-type ,(delistify accumulator-type))))
+       ,@(when val-format `((:val-format ,(delistify val-format))))
+       ,@(when minval `((:minval ,(if (symbolp minval) (symbol-value minval) minval))))
+       ,@(when maxval `((:maxval ,(if (symbolp maxval) (symbol-value minval) maxval)))))))
 
 (defmacro defmatrixfuncs (type &key 
 			  (element-type 'double-float)
