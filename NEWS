@@ -1,0 +1,5 @@
+
+clem-0.1.5 -- Sun Dec  4 23:42:24 2005
+
+* fixed some fundamental problems with the metaclass stuff so that
+  classes now inherit metaclass slots from ancestor classes.
