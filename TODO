@@ -6,9 +6,10 @@
    now we have a standard-matrix-class metaclass that handles much of
    the type information.
 
-3. Remove specialized-matrix-class stuff and replace abstract matrix
+3. DONE -- Remove specialized-matrix-class stuff and replace abstract matrix
    types (like real-matrix, integer-matrix, float-matrix) with
-   subclasses of standard-matrix-class.
+   subclasses of standard-matrix-class. Except that I didn't replace
+   the abstract matrix classes, but rather made them work. I think.
 
 4. DONE -- (element-type matrix) is wrong! we should go through the
    metaclass on this and not have this be part of the class at all!
@@ -25,16 +26,10 @@
    add more type conversions.
 
 7. DONE -- This is a dup of 6. Need a better mechanism for creating,
-populating, copying and converting to and from matrices of a given
-type. How to create matrices of the following types:
-
-double-float
-single-float
-unsigned-byte
-signed-byte
-unsigned-word
-signed-word
-bit (or whatever the appropriate one bit type is)
+  populating, copying and converting to and from matrices of a given
+  type. How to create matrices of the following types: double-float,
+  single-float, unsigned-byte, signed-byte, unsigned-word,
+  signed-word, bit (or whatever the appropriate one bit type is)
 
 8. Need to set/get values from a given matrix type appropriately. This
    is done now with mref which works in some cases, but not in all
