@@ -12,22 +12,22 @@
                        ,fast-mref-symbol))
        (declaim (inline ,fast-mref-symbol))
        (defun ,fast-mref-symbol (m row col)
-	 (with-typed-matrix-vals (m ,element-type t a)
+	 (with-typed-matrix-vals (m ,element-type a)
 	   (aref a row col)))
        
        (declaim (ftype (function (,element-type ,type fixnum fixnum) ,element-type)
                        (setf ,fast-mref-symbol)))
        (declaim (inline (setf ,fast-mref-symbol)))
        (defun (setf ,fast-mref-symbol) (v m row col)
-	 (with-typed-matrix-vals (m ,element-type t a)
+	 (with-typed-matrix-vals (m ,element-type a)
 	   (setf (aref a row col) v)))
        
        (defmethod mref ((m ,type) (row fixnum) (col fixnum))
-	 (with-typed-matrix-vals (m ,element-type t a)
+	 (with-typed-matrix-vals (m ,element-type a)
 	   (aref a row col)))
        
        (defmethod (setf mref) (v (m ,type) (row fixnum) (col fixnum))
-	 (with-typed-matrix-vals (m ,element-type t a)
+	 (with-typed-matrix-vals (m ,element-type a)
 	   (setf (aref a row col) v))))))
 
 (macrolet ((frob (type)
