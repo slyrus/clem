@@ -23,23 +23,21 @@
       (car list)
       list))
 
-(defmacro with-typed-matrix-vals ((m element-type specialized-array a) &body body)
+(defmacro with-typed-matrix-vals ((m element-type a) &body body)
   `(let ((,a (matrix-vals ,m)))
-     ,(when specialized-array
-	    `(declare 
-	      (type (simple-array ,element-type (* *)) ,a)))
+     (declare (type (simple-array ,element-type (* *)) ,a))
      ,@body))
 
-(defmacro with-untyped-matrix-vals ((m element-type specialized-array a) &body body)
-  (declare (ignore element-type specialized-array))
+(defmacro with-untyped-matrix-vals ((m element-type a) &body body)
+  (declare (ignore element-type))
   `(let ((,a (matrix-vals ,m)))
      ,@body))
 
 (defmacro with-matrix-vals ((m element-type a) &body body)
   `(if (equal ',element-type (element-type (class-of ,m)))
-       (with-typed-matrix-vals (,m ,element-type t ,a)
+       (with-typed-matrix-vals (,m ,element-type ,a)
 	 ,@body)
-       (with-untyped-matrix-vals (,m ,element-type nil ,a)
+       (with-untyped-matrix-vals (,m ,element-type ,a)
 	 ,@body)))
 	 
 (defmacro with-map-range (m element-type startr endr startc endc (a i j) &body body)
@@ -52,12 +50,8 @@
 	 (declare (dynamic-extent ,j) (type fixnum ,j))
 	 ,@body))))
 
-;;; FIXME
-;;; Change with-matrix-range-do to take matrix-type instead of element-type
-;;; and specialized-array and use the metaclass to get this information.
-;;; Can't just do this at runtime, unfortunately.
-
-(defmacro with-matrix-range-do (matrix-class m n p startr endr startc endc (a b c i j) &body body)
+(defmacro with-matrix-range-do (matrix-class m n p
+                                startr endr startc endc (a b c i j) &body body)
   (let ((mat-class (if (typep matrix-class 'class)
 		       matrix-class
 		       (find-class matrix-class))))
@@ -74,23 +68,17 @@
 		 ,@body))))))))
 
 
-;;; for the moment we're ignoring the specialized-array flag in
-;;; theory, we could use this to allow for arrays of non-specialized
-;;; types like integer, real or number, but for now we don't call
-;;; any of these macros to generate specialized functions so
-;;; we just get the generic version. consider removing this flag.
 (defmacro defmatrixtype (type direct-superclasses &key 
 			 (element-type)
 			 (accumulator-type)
 			 (initial-element)
-			 (specialized-array)
 			 minval maxval
 			 (val-format))
-  (declare (ignore specialized-array))
   (unless direct-superclasses (setf direct-superclasses '(matrix)))
   `(progn
      (defclass ,type ,direct-superclasses
-       ((initial-element :accessor initial-element :initarg :initial-element :initform ,initial-element))
+       ((initial-element :accessor initial-element
+                         :initarg :initial-element :initform ,initial-element))
        (:metaclass standard-matrix-class)
        ,@(when element-type `((:element-type ,(delistify element-type))))
        ,@(when accumulator-type `((:accumulator-type ,(delistify accumulator-type))))
@@ -101,22 +89,25 @@
 (defmacro defmatrixfuncs (type &key 
 			  (element-type 'double-float)
 			  (accumulator-type 'double-float)
-			  (specialized-array nil)
 			  minval maxval)
   `(progn
      (defmethod mref ((m ,type) (row fixnum) (col fixnum))
-       (with-typed-matrix-vals (m ,element-type t a)
+       (with-typed-matrix-vals (m ,element-type a)
 	 (aref a row col)))
 
      (defmethod (setf mref) (v (m ,type) (row fixnum) (col fixnum))
-       (with-typed-matrix-vals (m ,element-type t a)
+       (with-typed-matrix-vals (m ,element-type a)
 	 (setf (aref a row col) v)))
 
-     (defgeneric ,(ch-util:make-intern (concatenate 'string "array->" (symbol-name type))) (a))
-     (defmethod ,(ch-util:make-intern (concatenate 'string "array->" (symbol-name type))) ((a array))
+     (defgeneric ,(ch-util:make-intern
+                   (concatenate 'string "array->" (symbol-name type))) (a))
+     (defmethod ,(ch-util:make-intern
+                  (concatenate 'string "array->" (symbol-name type))) ((a array))
        (array->matrix a :matrix-class ',type))
      
-     (defmethod sample-variance-range ((m ,type) (startr fixnum) (endr fixnum) (startc fixnum) (endc fixnum))
+     (defmethod sample-variance-range ((m ,type)
+                                       (startr fixnum) (endr fixnum)
+                                       (startc fixnum) (endc fixnum))
        (let ((acc (coerce 0 ',accumulator-type)))
 	 (let ((mu (mean-range m startr endr startc endc)))
 	   (let ((musq (* mu mu)))
@@ -157,8 +148,12 @@
 	   (setf (aref a i j) (funcall f (aref a i j)))))
        m)
      
-     (defgeneric ,(ch-util:make-intern (concatenate 'string "random-" (symbol-name type))) (rows cols &key max))
-     (defmethod ,(ch-util:make-intern (concatenate 'string "random-" (symbol-name type))) (rows cols &key (max nil))
+     (defgeneric
+         ,(ch-util:make-intern (concatenate 'string "random-" (symbol-name type)))
+         (rows cols &key max))
+     (defmethod
+         ,(ch-util:make-intern (concatenate 'string "random-" (symbol-name type)))
+         (rows cols &key (max nil))
        (let ((a (make-instance ',type :rows rows :cols cols)))
 	 (map-set-val-fit a #'(lambda (x) (declare (ignore x))
 				      (random
@@ -175,33 +170,32 @@
                           0d0
                           (double-float-divide (- nmax nmin)  (- max min)))))
 	   (map-set-val-fit u #'(lambda (x) (+ nmin (* slope (- x min))))))))
-     
-     (cond ((and (find-class 'integer-matrix nil)
-		 (member (find-class 'integer-matrix) (sb-mop::class-precedence-list (find-class ',type))))
-	    (defmethod scalar-divide-row ((m ,type)  k q)
-	      (with-typed-matrix-vals (m ,element-type ,specialized-array a)
-		(dotimes (j (cols m))
-		  (setf (aref a k j) (fit m (truncate (aref a k j) q)))))
-	      m)
-	    (defmethod scalar-mult-row ((m ,type) k q)
-	      (with-typed-matrix-vals (m ,element-type ,specialized-array a)
-		(dotimes (j (cols m))
-		  (setf (aref a k j) (fit m (truncate (* (aref a k j) q))))))
-	      m))
-	   ((and (find-class 'float-matrix nil)
-		 (member (find-class 'float-matrix) (sb-mop::class-precedence-list (find-class ',type))))
-	    (defmethod scalar-divide-row ((m ,type)  k q)
-	      (with-typed-matrix-vals (m ,element-type ,specialized-array a)
-		(dotimes (j (cols m))
-		  (setf (aref a k j) (fit m (/ (aref a k j) q)))))
-	      m)
-	    (defmethod scalar-mult-row ((m ,type) k q)
-	      (with-typed-matrix-vals (m ,element-type ,specialized-array a)
-		(dotimes (j (cols m))
-		  (setf (aref a k j) (fit m (* (aref a k j) q)))))
-	      m)))
-     
-     ))
+
+     ,(cond ((and (find-class 'integer-matrix nil)
+                  (member (find-class 'integer-matrix)
+                          (sb-mop::class-precedence-list (find-class type))))
+             `(progn
+                (defmethod scalar-divide-row ((m ,type)  k q)
+                  (with-typed-matrix-vals (m ,element-type a)
+                    (dotimes (j (cols m))
+                      (setf (aref a k j) (fit m (truncate (aref a k j) q)))))
+                  m)
+                (defmethod scalar-mult-row ((m ,type) k q)
+                  (with-typed-matrix-vals (m ,element-type a)
+                    (dotimes (j (cols m))
+                      (setf (aref a k j) (fit m (truncate (* (aref a k j) q))))))
+                  m)))
+            (t `(progn
+                  (defmethod scalar-divide-row ((m ,type)  k q)
+                    (with-typed-matrix-vals (m ,element-type a)
+                      (dotimes (j (cols m))
+                        (setf (aref a k j) (fit m (/ (aref a k j) q)))))
+                    m)
+                  (defmethod scalar-mult-row ((m ,type) k q)
+                    (with-typed-matrix-vals (m ,element-type a)
+                      (dotimes (j (cols m))
+                        (setf (aref a k j) (fit m (* (aref a k j) q)))))
+                    m))))))
 
 
 (defmacro def-move-element (type-1 type-2)

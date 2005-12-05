@@ -28,8 +28,7 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmatrixtype complex-matrix (t-matrix)
     :element-type complex
-    :accumulator-type complex
-    :specialized-array t))
+    :accumulator-type complex))
 (defmatrixfuncs complex-matrix
     :element-type complex
     :accumulator-type complex)
@@ -45,148 +44,126 @@
   (defmatrixtype integer-matrix (real-matrix)
     :element-type integer
     :accumulator-type integer
-    :val-format "~d"
-    :specialized-array t))
+    :val-format "~d"))
 (defmatrixfuncs integer-matrix
   :element-type integer
-  :accumulator-type integer
-  :specialized-array t)
+  :accumulator-type integer)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmatrixtype bit-matrix (integer-matrix) :element-type (unsigned-byte 1)
 		 :accumulator-type (signed-byte 32)
 		 :minval 0
 		 :maxval 1
-		 :val-format "~b"
-		 :specialized-array t))
+		 :val-format "~b"))
 (defmatrixfuncs bit-matrix
     :element-type (unsigned-byte 1)
     :accumulator-type (signed-byte 32)
     :minval 0
-    :maxval 1
-    :specialized-array t)
+    :maxval 1)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmatrixtype sb8-matrix (integer-matrix) :element-type (signed-byte 8)
 		 :accumulator-type (signed-byte 32)
 		 :minval #.(- (expt 2 7))
-		 :maxval #.(- (expt 2 7) 1)
-		 :specialized-array t))
+		 :maxval #.(- (expt 2 7) 1)))
 (defmatrixfuncs sb8-matrix
     :element-type (signed-byte 8)
     :accumulator-type (signed-byte 32)
     :minval #.(- (expt 2 7))
-    :maxval #.(- (expt 2 7) 1)
-    :specialized-array t)
+    :maxval #.(- (expt 2 7) 1))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmatrixtype ub8-matrix (integer-matrix)
     :element-type (unsigned-byte 8)
     :accumulator-type (unsigned-byte 32)
     :minval 0
-    :maxval #.(- (expt 2 8) 1)
-    :specialized-array t))
+    :maxval #.(- (expt 2 8) 1)))
 (defmatrixfuncs ub8-matrix
     :element-type (unsigned-byte 8)
     :accumulator-type (unsigned-byte 32)
     :minval 0
-    :maxval #.(- (expt 2 8) 1)
-    :specialized-array t)
+    :maxval #.(- (expt 2 8) 1))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmatrixtype sb16-matrix (integer-matrix)
     :element-type (signed-byte 16)
     :accumulator-type (signed-byte 32)
     :minval #.(- (expt 2 15))
-    :maxval #.(- (expt 2 15) 1)
-    :specialized-array t))
+    :maxval #.(- (expt 2 15) 1)))
 (defmatrixfuncs sb16-matrix
     :element-type (signed-byte 16)
     :accumulator-type (signed-byte 32)
     :minval #.(- (expt 2 15))
-    :maxval #.(- (expt 2 15) 1)
-    :specialized-array t)
+    :maxval #.(- (expt 2 15) 1))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmatrixtype ub16-matrix (integer-matrix)
     :element-type (unsigned-byte 16)
     :accumulator-type (unsigned-byte 32)
     :minval 0
-    :maxval #.(- (expt 2 16) 1)
-    :specialized-array t))
+    :maxval #.(- (expt 2 16) 1)))
 (defmatrixfuncs ub16-matrix
     :element-type (unsigned-byte 16)
     :accumulator-type (unsigned-byte 32)
     :minval 0
-    :maxval #.(- (expt 2 16) 1)
-    :specialized-array t)
+    :maxval #.(- (expt 2 16) 1))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmatrixtype sb32-matrix (integer-matrix)
     :element-type (signed-byte 32)
     :accumulator-type (signed-byte 32)
     :minval #.(- (expt 2 31))
-    :maxval #.(- (expt 2 31) 1)
-    :specialized-array t))
+    :maxval #.(- (expt 2 31) 1)))
 (defmatrixfuncs sb32-matrix
     :element-type (signed-byte 32)
     :accumulator-type (signed-byte 32)
     :minval #.(- (expt 2 31))
-    :maxval #.(- (expt 2 31) 1)
-    :specialized-array t)
+    :maxval #.(- (expt 2 31) 1))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmatrixtype ub32-matrix (integer-matrix)
     :element-type (unsigned-byte 32)
     :accumulator-type (unsigned-byte 32)
     :minval 0
-    :maxval #.(- (expt 2 32) 1)
-    :specialized-array t))
+    :maxval #.(- (expt 2 32) 1)))
 (defmatrixfuncs ub32-matrix
     :element-type (unsigned-byte 32)
     :accumulator-type (unsigned-byte 32)
     :minval 0
-    :maxval #.(- (expt 2 32) 1)
-    :specialized-array t)
+    :maxval #.(- (expt 2 32) 1))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmatrixtype fixnum-matrix (integer-matrix) :element-type fixnum
 		 :accumulator-type (unsigned-byte 32)
 		 :minval most-negative-fixnum
-		 :maxval most-positive-fixnum
-		 :specialized-array t))
+		 :maxval most-positive-fixnum))
 (defmatrixfuncs fixnum-matrix
     :element-type fixnum
     :accumulator-type (unsigned-byte 32)
     :minval most-negative-fixnum
-    :maxval most-positive-fixnum
-    :specialized-array t)
+    :maxval most-positive-fixnum)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmatrixtype single-float-matrix (float-matrix) :element-type single-float
 		 :accumulator-type single-float
 		 :initial-element 0f0
 		 :minval most-negative-single-float
-		 :maxval most-positive-single-float
-		 :specialized-array t))
+		 :maxval most-positive-single-float))
 (defmatrixfuncs single-float-matrix :element-type single-float
 		:accumulator-type single-float
 		:minval most-negative-single-float
-		:maxval most-positive-single-float
-		:specialized-array t)
+		:maxval most-positive-single-float)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmatrixtype double-float-matrix (float-matrix) :element-type double-float
 		 :accumulator-type double-float
 		 :initial-element 0d0
 		 :minval most-negative-double-float
-		 :maxval most-positive-double-float
-		 :specialized-array t))
+		 :maxval most-positive-double-float))
 (defmatrixfuncs double-float-matrix :element-type double-float
 		:accumulator-type double-float
 		:minval most-negative-double-float
-		:maxval most-positive-double-float
-		:specialized-array t)
+		:maxval most-positive-double-float)
 
 (defparameter *typed-matrix-types*
   '((double-float-matrix double-float "double-float") 
