@@ -1,52 +1,55 @@
 
-1. Figure out how to properly do integer division for gaussian blur in
-   bench-matrix.cl.
+1.  Figure out how to properly do integer division for gaussian blur
+    in bench-matrix.cl.
 
-2. DONE --  make metaclass for matrices to better handle type stuff
-   now we have a standard-matrix-class metaclass that handles much of
-   the type information.
+2.  DONE -- make metaclass for matrices to better handle type stuff
+    now we have a standard-matrix-class metaclass that handles much of
+    the type information.
 
-3. DONE -- Remove specialized-matrix-class stuff and replace abstract matrix
-   types (like real-matrix, integer-matrix, float-matrix) with
-   subclasses of standard-matrix-class. Except that I didn't replace
-   the abstract matrix classes, but rather made them work. I think.
+3.  DONE -- Remove specialized-matrix-class stuff and replace abstract
+    matrix types (like real-matrix, integer-matrix, float-matrix) with
+    subclasses of standard-matrix-class. Except that I didn't replace
+    the abstract matrix classes, but rather made them work. I think.
 
-4. DONE -- (element-type matrix) is wrong! we should go through the
-   metaclass on this and not have this be part of the class at all!
-   element-type is now only part of the metaclass. I think.
+4.  DONE -- (element-type matrix) is wrong! we should go through the
+    metaclass on this and not have this be part of the class at all!
+    element-type is now only part of the metaclass. I think.
 
-5. Try inlining the functions to avoid all of the type declarations!
-   This doesn't work. I think I need the type declarations to make
-   this go fast.
+5.  Try inlining the functions to avoid all of the type declarations!
+    This doesn't work. I think I need the type declarations to make
+    this go fast.
 
-6. DONE -- Make a type moved-element function that moves an element from one
-   matrix to another with things properly typed, coerced, etc...
-   This is at least partially done and works well enough, although the
-   list of supported matrices is minimal. However, it is trivial to
-   add more type conversions.
+6.  DONE -- Make a type moved-element function that moves an element
+    from one matrix to another with things properly typed, coerced,
+    etc...  This is at least partially done and works well enough,
+    although the list of supported matrices is minimal. However, it is
+    trivial to add more type conversions.
 
-7. DONE -- This is a dup of 6. Need a better mechanism for creating,
-  populating, copying and converting to and from matrices of a given
-  type. How to create matrices of the following types: double-float,
-  single-float, unsigned-byte, signed-byte, unsigned-word,
-  signed-word, bit (or whatever the appropriate one bit type is)
+7.  DONE -- This is a dup of 6. Need a better mechanism for creating,
+    populating, copying and converting to and from matrices of a given
+    type. How to create matrices of the following types: double-float,
+    single-float, unsigned-byte, signed-byte, unsigned-word,
+    signed-word, bit (or whatever the appropriate one bit type is)
 
-8. Need to set/get values from a given matrix type appropriately. This
-   is done now with mref which works in some cases, but not in all
-   cases. Should mref be a funciton that gets compiled for each
-   subclass and stored as a class allocated slot or in the metaclass?
+8.  Need to set/get values from a given matrix type
+    appropriately. This is done now with mref which works in some
+    cases, but not in all cases. Should mref be a funciton that gets
+    compiled for each subclass and stored as a class allocated slot or
+    in the metaclass?
 
-9. IN PROGRESS. scalar-ops should work between matrices of different types. Slowly
-   adding these. add and subtract now work for most types.
+9.  IN PROGRESS. scalar-ops should work between matrices of different
+    types. Slowly adding these. add and subtract now work for most
+    types.
 
 10. IN PROGRES. Need to be able to convert from one matrix type to
     another. I have a bunch of these.
 
-11. DONE, I THINK. random-matrix should work. This should be working now.
+11. DONE, I THINK. random-matrix should work. This should be working
+    now.
 
 12. DONE. need functions to create a matrix of the same type, and of
-    the same type and dimensions. Yes, this could be more elegant, but
-    I think it works at the moment.
+    the same type and dimensions. Yes, this could be more elegant,
+    but I think it works at the moment.
 
 13. DONE. shared-initialize Ok, so being new to CL, I didn't know
     about shared-initialize (and initialize-instance and
@@ -78,3 +81,8 @@
 
 21. DONE add multiply funcs for real and complex matrices!
     esp. hadamard product for a bit-mask!!
+
+22. Break out array math functions for operating on two-d arrays. This
+    will make functions like affine-transform available for use on
+    common-lisp arrays, not just clem matrices.
+
