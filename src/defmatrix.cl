@@ -173,7 +173,7 @@
 
      ,(cond ((and (find-class 'integer-matrix nil)
                   (member (find-class 'integer-matrix)
-                          (sb-mop::class-precedence-list (find-class type))))
+                          (class-precedence-list (find-class type))))
              `(progn
                 (defmethod scalar-divide-row ((m ,type)  k q)
                   (with-typed-matrix-vals (m ,element-type a)

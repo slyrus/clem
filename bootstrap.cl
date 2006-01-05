@@ -1,11 +1,8 @@
 
 (require 'asdf)
 
-(let ((curdir (directory-namestring *load-truename*)))
-  (pushnew (make-pathname :directory curdir) asdf:*central-registry*)
-  (asdf:operate 'asdf:load-op 'clem)
-  (asdf:operate 'asdf:load-op 'clem-test)
-  )
+(asdf:operate 'asdf:load-op 'clem)
+(asdf:operate 'asdf:load-op 'clem-test)
 
 (let ((m1 (make-instance 'clem:ub8-matrix :rows 8 :cols 10 :initial-element 2))
       (m2 (make-instance 'clem:ub8-matrix :rows 10 :cols 7 :initial-element 3)))

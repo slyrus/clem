@@ -2,13 +2,16 @@
 (in-package #:cl-user)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
- #+sbcl
+  #+sbcl
   (if (find-package 'sb-mop)
       (pushnew :clem-sbcl-mop cl:*features*)
       (pushnew :clem-sbcl-pcl cl:*features*)))
+  
 
 (defpackage #:clem
-  (:use #:cl #:asdf #+clem-sbcl-mop #:sb-mop)
+  (:use #:cl #:asdf
+        #+clem-sbcl-mop #:sb-mop
+        #+(and cmu pcl) #:clos-mop)
   (:export
    #:matrix
    #:dim
