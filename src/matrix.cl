@@ -240,9 +240,13 @@
         (move-element a i j c i j)))
     c))
   
-(defgeneric mat-copy-proto-dim (a m n))
-(defmethod mat-copy-proto-dim ((a matrix) (m fixnum) (n fixnum))
-  (make-instance (class-of a) :rows m :cols n))
+(defgeneric mat-copy-proto-dim (a m n &key initial-element))
+(defmethod mat-copy-proto-dim ((a matrix) (m fixnum) (n fixnum)
+                               &key (initial-element nil initial-element-supplied-p))
+  (apply #'make-instance (class-of a) :rows m :cols n
+         (when initial-element-supplied-p
+           (list :initial-element initial-element))))
+  
 
 (defgeneric mat-copy-proto (a))
 (defmethod mat-copy-proto ((a matrix))

@@ -143,7 +143,6 @@
                         :x-scale (log (/ (cols n) (- (cdr x) (car x))))
                         )))
       (setf xfrm-shift (mat-mult post-shift (mat-mult post-shift2 xfrm-shift))))
-
     (apply #'%transform-matrix m n xfrm-shift
            (append
             (when background-supplied-p (list :background background))
@@ -253,9 +252,9 @@
       (compute-bounds (car u) (car v) (cdr u) (cdr v) xfrm)
     (unless x (setf x (cons (floor x1) (ceiling x2))))
     (unless y (setf y (cons (floor y1) (ceiling y2)))))
-  (let ((rows (if y (1+ (- (cdr y) (car y)))
-                    (rows mat)))
-        (cols  (if x (1+ (- (cdr x) (car x)))
+  (let ((rows (if y (truncate (- (cdr y) (car y)))
+                  (rows mat)))
+        (cols  (if x (truncate (- (cdr x) (car x)))
                    (cols mat))))
     (let ((m (make-instance matrix-class
                             :rows rows
