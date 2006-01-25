@@ -6,12 +6,49 @@
 
 (in-package :clem)
   
+#+sbcl
+(defun displace-to-1d-array (matrix)
+  (sb-c::%array-data-vector (clem::matrix-vals matrix)))
+
 (defmacro def-matrix-mult (type-1 type-2 accumulator-type &key suffix)
   (let ((element-type-1 (element-type (find-class `,type-1)))
 	(element-type-2 (element-type (find-class `,type-2)))
 	(accumulator-element-type (element-type (find-class `,accumulator-type))))
     `(progn
 
+       #+sbcl
+       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-mult3" suffix))
+	   ((m ,type-1) (n ,type-1) (p ,type-1))
+	 (declare (optimize (speed 3) (safety 0)))
+	 (let ((a (displace-to-1d-array m))
+	       (b (displace-to-1d-array n))
+	       (c (displace-to-1d-array p))
+	       (atemp (coerce 0 ',accumulator-element-type)))
+	   (declare (type (simple-array ,element-type-1 (*)) a)
+		    (type (simple-array ,element-type-2 (*)) b)
+		    (type (simple-array ,accumulator-element-type (*)) c)
+		    (type ,accumulator-element-type atemp))
+	   (let ((mr (rows m)) (mc (cols m))
+		 (nr (rows n)) (nc (cols n)))
+	     (declare (type fixnum mr mc nr nc))
+	     (when (eql mc nr)
+	       (do ((k 0 (the fixnum (1+ k))))
+		   ((>= k mc))
+		 (declare (type fixnum k))
+		 (do* ((i 0 (the fixnum (1+ i)))
+                       (aind k (+ aind mc)))
+		     ((>= i mr))
+		   (declare (type fixnum i aind))
+		   (setf atemp (aref a aind))
+		   (do ((j 0 (the fixnum (1+ j)))
+                        (bind (* k nc) (1+ bind))
+                        (cind (* i nc) (1+ cind)))
+		       ((>= j nc))
+		     (declare (type fixnum j bind cind))
+		     (incf (aref c cind) (the ,accumulator-element-type (* atemp (aref b bind))))))))))
+	 p)
+
+       #-sbcl
        (defmethod ,(ch-util:make-intern (concatenate 'string "mat-mult3" suffix))
 	   ((m ,type-1) (n ,type-1) (p ,type-1))
 	 (declare (optimize (speed 3) (safety 0)))
