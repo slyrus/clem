@@ -24,6 +24,7 @@
    #:transpose
    #:mat-mult
    #:mat-hprod
+   #:mat-hprod!
    #:mat-copy-into
    #:mat-add
    #:mat-add!
@@ -183,16 +184,10 @@
    #:mat-log
    #:mat-log-range
 
-   #:mat-hprod
-   #:mat-hprod!
-
-
    #:matrix-move
    #:matrix-move-range
    
    ;;; typed matrix operations
-   #:matrix-move
-   ;;; more to come...
 
    #:m+
    #:m-
