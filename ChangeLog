@@ -1,4 +1,92 @@
+2006-01-26  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* doc/clem.gmarkup: fix bib ref
+
+2006-01-25  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* test/bench-matrix.cl: add more benchmarks
+
+	* src/typed-ops/defmatrix-mult.cl:
+	add some SBCL specific matrix multiplication hacks
+
+	* src/defpackage.cl: add mat-hprod
+	remove dups
+
+	* clem-doc.asd: add doc asdf file
+
+	* doc/clem.gmarkup: checking in outline.
+
+2006-01-23  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/typed-ops/defmatrix-move.cl:
+	* matrix-move-range and matrix-move-range-constrain now take range
+	  arguments in both the source and destination matrix so that one can
+	  move part of the src matrix to a different part of the dest matrix.
+	* Added generics for matrix-move-range and matrix-move-range-constrain.
+
+	* src/transform.cl, src/matrix.cl:
+	* mat-copy-proto-dim now takes an initial element
+	* transform-matrix truncates rows and cols to get matrix with
+	    integral # of rows and cols
+
+2006-01-05  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/defpackage.cl, src/defmatrix.cl, bootstrap.cl:
+	fixing MOP stuff for CMUCL
+
+2006-01-03  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* TODO: work on TODO list.
+
+2005-12-05  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* clem.asd: * bumped version number, added NEWS
+
+	* src/typed-ops/defmatrix-mref.cl:
+	* some with-typed-matrix-vals that I missed. (needed to remove the t
+	  for the removed specialized-array arg.
+
+2005-12-05  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* TODO: update clem TODO list.
+
+	* test/test-clem.cl: some more minor tests
+
+	* src/defmatrix.cl, src/defmatrix-types.cl:
+	* removed the specialized-array cruft.
+	* fixed some of the macro-logic to make complex scalar row ops
+	  happy
+
+	* src/metaclasses.cl, src/matrix.cl, src/defmatrix.cl, src/defmatrix-types.cl:
+	* finally got inheritance of meta-class slots from parent classes. I'm
+	  not sure if this is the wisest thing, but it seems to work, and
+	  solves some OAOO problems.
+	* removed a bunch of now extraneous val-formats and what not.
+
+2005-12-04  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/metaclasses.cl:
+	metaclass stuff with debug comments on in case we need to go back here
+
+	* src/transform.cl, src/metaclasses.cl, src/matrix.cl, src/defmatrix.cl:
+	* check for zero slope in normalize so we don't get a divide-by-zero
+	  error
+	* remove print statements in horzcat and vertcat
+	* keep working on filling ancestor slots. I think i've got it
+	  this time. the problem is that we need both the slotname
+	  and the initarg. because they can be different, we probably should
+	  check for that explicitly. At the moment, we just cons up a keyword
+	  and use that for the initarg.
+	* added new affine-transform generic and method.
+	* added resize-matrix (which scales, not pads the matrix)
+
+2005-11-29  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/defmatrix.cl: use (truncate instead of (truncate (/
+
 2005-11-12  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* ChangeLog: updating ChangeLogs
 
 	* src/typed-ops/defmatrix-square.cl: added mat-sqrt
 
@@ -64,11 +152,6 @@
 2005-10-13  Cyrus Harmon  <cyrus@bobobeach.com>
 
 	* TODO, ChangeLog: updating ChangeLog and TODO
-
-	* test/test-transform.cl, test/test-mean.cl, test/test-hprod.cl, test/test-dilate.cl, test/test-convolve.cl, test/test-clem.cl, test/mattest4.cl, src/defpackage.cl:
-	exporting some symbols
-
-2005-10-13  Cyrus Harmon  <cyrus@bobobeach.com>
 
 	* test/test-transform.cl, test/test-mean.cl, test/test-hprod.cl, test/test-dilate.cl, test/test-convolve.cl, test/test-clem.cl, test/mattest4.cl, src/defpackage.cl:
 	exporting some symbols
@@ -148,17 +231,6 @@
 	added a half variable and add .5d0 and call truncate instead
 	of round, which I think was consing.
 
-2005-07-24  Cyrus Harmon  <cyrus@bobobeach.com>
-
-	* clem.asd: bumped version #
-
-	* src/typed-ops/defmatrix-transform.cl, src/matrix.cl:
-	added :type fixnum arguments to matrix class definition
-	fixed a bad bug in typed affine-transform routines where I
-	  was setting a local column variable to the number of rows
-	added a half variable and add .5d0 and call truncate instead
-	of round, which I think was consing.
-
 2005-07-23  Cyrus Harmon  <cyrus@bobobeach.com>
 
 	* src/typed-ops/defmatrix-move.cl: fixed a missing paren
@@ -185,20 +257,6 @@
 2005-07-20  Cyrus Harmon  <cyrus@bobobeach.com>
 
 	* ChangeLog: updating changelogs
-
-	* src/typed-ops/defmatrix-transform.cl:
-	fixed how we compute the transform. the notions of x and y were messed up.
-
-	* src/transform.cl:
-	transform-coord now returns multiple-values x and y instead of a matrix
-	added compute-bounds
-
-	* src/metaclasses.cl:
-	setting initform of val-format to a list to match how the :val-format
-	  args come in from instances of the metaclass
-	filling val-format from ancestor, for what that's worth
-
-2005-07-20  Cyrus Harmon  <cyrus@bobobeach.com>
 
 	* src/typed-ops/defmatrix-transform.cl:
 	fixed how we compute the transform. the notions of x and y were messed up.
