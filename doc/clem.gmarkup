@@ -56,13 +56,7 @@ The following code creates a 16-row by 16-column matrix of type
 \lisp{
 (defparameter *m1*
   (make-instance 'clem:double-float-matrix :rows 16 :cols 16))
-}
-
-The contents of the matrix *m1* can be seen with the
-\code{print} function.
-
-\lisp{
-(print *m1*)
+*m1*
 }
 
 The default is to only show the first 7 and the last rows and
@@ -80,7 +74,6 @@ The most general class of numerical matrix is the number matrix.
 
 *** Integer Matrices
 
-The most general 
 *** Floating-point Matrices
 
 *** Complex-value Matrices
