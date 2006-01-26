@@ -23,7 +23,7 @@ and extensible system for the representation of arbitrary
 
 * Introduction
 
-The Common Lisp language\bibcite{steele} offers a rich, dynamic
+The Common Lisp language\bibcite{steele1990common} offers a rich, dynamic
 environment for programming and data analysis. Common Lisp
 contains a powerful object system, the Common Lisp Object
 System (CLOS)\bibcite{keene89object}, and most modern implementations
