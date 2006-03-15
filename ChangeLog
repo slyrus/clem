@@ -1,5 +1,11 @@
 2006-01-26  Cyrus Harmon  <cyrus@bobobeach.com>
 
+	* doc/clem.gmarkup: minor matrix printing change.
+
+	* ChangeLog: commit ChangeLog changes
+
+2006-01-26  Cyrus Harmon  <cyrus@bobobeach.com>
+
 	* doc/clem.gmarkup: fix bib ref
 
 2006-01-25  Cyrus Harmon  <cyrus@bobobeach.com>
