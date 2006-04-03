@@ -54,6 +54,11 @@
   (:minval nil)
   (:maxval nil))
 
+(defmethod make-load-form ((matrix matrix) &optional env)
+  "Creates and returns a creation form and an initialization form
+that can be used to externalize matrices."
+  (make-load-form-saving-slots matrix :environment env))
+
 (defgeneric allocate-matrix-vals (object &key rows cols adjustable initial-element))
 (defmethod allocate-matrix-vals ((object matrix) &key rows cols adjustable (initial-element 0))
   (setf (slot-value object 'm)
@@ -958,6 +963,7 @@
 ;;;;
 ;;;; print-object and friends
 
+(defparameter *matrix-print* t)
 (defparameter *matrix-print-row-limit* 8)
 (defparameter *matrix-print-col-limit* 8)
 
@@ -973,29 +979,29 @@
              (format stream (concatenate 'string " ... " val-format-spec) (val obj i lastcol))))))
 
 (defmethod print-object ((obj matrix) stream)
-  (format stream "<#~A :rows ~A :cols ~A)~%" (class-name (class-of obj)) (rows obj) (cols obj))
-  (let ((startr 0) (endr (min (1- (rows obj)) (- *matrix-print-row-limit* 2)))
-        (startc 0) (endc (min (1- (cols obj)) (- *matrix-print-col-limit* 2))))
-    (let ((val-format-spec (if *print-matrix-float-format*
-                               *print-matrix-float-format*
-                               (val-format (class-of obj))))
-          (lastrow (1- (rows obj)))
-          (lastcol (1- (cols obj))))
-      (format stream "[")
-      (do ((i startr (1+ i)))
-          ((> i endr))
-        (unless (= i startr)
-          (princ "; " stream)
-          (if *print-matrix-newlines*
-              (progn
-                (format stream "~&~1,0T"))))
-        (print-matrix-line obj stream val-format-spec i startc endc lastcol)) 
-      (cond ((>= lastrow (1- *matrix-print-row-limit*))
-             (if (= lastrow (1- *matrix-print-row-limit*))
-                 (format stream (concatenate 'string ";~&~1,0T"))
-                 (format stream (concatenate 'string ";~& ... ~&~1,0T")))
-             (print-matrix-line obj stream val-format-spec lastrow startc endc lastcol)))
-      (format stream "]")))
-  (format stream ">"))
+  (print-unreadable-object (obj stream :type t :identity (not *matrix-print*))
+    (when *matrix-print*
+      (let ((startr 0) (endr (min (1- (rows obj)) (- *matrix-print-row-limit* 2)))
+            (startc 0) (endc (min (1- (cols obj)) (- *matrix-print-col-limit* 2))))
+        (let ((val-format-spec (if *print-matrix-float-format*
+                                   *print-matrix-float-format*
+                                   (val-format (class-of obj))))
+              (lastrow (1- (rows obj)))
+              (lastcol (1- (cols obj))))
+          (format stream "[")
+          (do ((i startr (1+ i)))
+              ((> i endr))
+            (unless (= i startr)
+              (princ "; " stream)
+              (if *print-matrix-newlines*
+                  (progn
+                    (format stream "~&~1,0T"))))
+            (print-matrix-line obj stream val-format-spec i startc endc lastcol)) 
+          (cond ((>= lastrow (1- *matrix-print-row-limit*))
+                 (if (= lastrow (1- *matrix-print-row-limit*))
+                     (format stream (concatenate 'string ";~&~1,0T"))
+                     (format stream (concatenate 'string ";~& ... ~&~1,0T")))
+                 (print-matrix-line obj stream val-format-spec lastrow startc endc lastcol)))
+          (format stream "]"))))))
 
             

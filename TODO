@@ -86,3 +86,8 @@
     will make functions like affine-transform available for use on
     common-lisp arrays, not just clem matrices.
 
+23. mat-add (and friends) need to take multiple args and have a fast
+    two-arg version that gets called as appropriate.
+
+24. min-val -> mmin and max-val -> mmax
+

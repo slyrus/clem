@@ -6,6 +6,7 @@
 
 (in-package :clem)
 
+(defgeneric %get-subtr-matrix-class (a b))
 (defgeneric mat-subtr-range3 (m n p startr endr startc endc))
 
 (defmacro def-matrix-subtr (type-1 type-2 accumulator-type &key suffix)
@@ -14,6 +15,9 @@
 	(accumulator-element-type (element-type (find-class `,accumulator-type))))
     `(progn
 
+       (defmethod %get-subtr-matrix-class ((a ,type-1) (b ,type-2))
+         ',accumulator-type)
+       
        (defmethod ,(ch-util:make-intern (concatenate 'string "mat-subtr-range3" suffix))
 	   ((m ,type-1) (n ,type-2) (p ,accumulator-type) startr endr startc endc)
          (with-matrix-vals (m ,element-type-1 a)
@@ -92,19 +96,16 @@
 
   (frob sb32-matrix double-float-matrix double-float-matrix)
   (frob sb32-matrix single-float-matrix single-float-matrix)
-
-  (frob fixnum-matrix double-float-matrix double-float-matrix)
-  (frob fixnum-matrix single-float-matrix single-float-matrix)
-
   (frob bit-matrix double-float-matrix double-float-matrix)
   (frob bit-matrix single-float-matrix single-float-matrix))
 
-(defmethod mat-subtr-range ((m typed-mixin) (n typed-mixin) startr endr startc endc &key (matrix-class (class-of m)))
+(defmethod mat-subtr-range ((m typed-mixin) (n typed-mixin) startr endr startc endc &key (matrix-class (%get-subtr-matrix-class m n)))
+  (print matrix-class)
   (destructuring-bind (mr mc) (dim m)
     (let ((p (make-instance matrix-class :rows mr :cols mc)))
       (mat-subtr-range3 m n p startr endr startc endc))))
 
-(defmethod mat-subtr :around ((m matrix) (n matrix) &key (matrix-class (class-of m)))
+(defmethod mat-subtr :around ((m matrix) (n matrix) &key (matrix-class (%get-subtr-matrix-class m n)))
   (if (compute-applicable-methods #'mat-subtr-range (list m n 0 0 0 0))
       (destructuring-bind (mr mc) (dim m)
         (mat-subtr-range m n 0 (1- mr) 0 (1- mc) :matrix-class matrix-class))
