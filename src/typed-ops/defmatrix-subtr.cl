@@ -100,7 +100,6 @@
   (frob bit-matrix single-float-matrix single-float-matrix))
 
 (defmethod mat-subtr-range ((m typed-mixin) (n typed-mixin) startr endr startc endc &key (matrix-class (%get-subtr-matrix-class m n)))
-  (print matrix-class)
   (destructuring-bind (mr mc) (dim m)
     (let ((p (make-instance matrix-class :rows mr :cols mc)))
       (mat-subtr-range3 m n p startr endr startc endc))))
