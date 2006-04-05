@@ -73,4 +73,14 @@
    (:static-file "COPYRIGHT")
    (:static-file "NEWS")
    (:static-file "README")
-   (:static-file "make-dist" :pathname #p"make-dist.sh")))
+   (:static-file "make-dist" :pathname #p"make-dist.sh")
+   (:module :tinaadoc)))
+
+(defun make-tinaa-docs ()
+  (asdf:operate 'asdf:load-op 'tinaa)
+  (tinaa:document-system
+   'package 'clem (asdf:component-pathname
+                   (asdf:find-component
+                    (asdf:find-system :clem)
+                    "tinaadoc"))))
+

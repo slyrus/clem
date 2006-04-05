@@ -16,4 +16,4 @@
 ; (clem-test:run-defmatrix-tests)
 ; (let* ((x (clem::random-fixnum-matrix 512 512 :max 255))) (print (clem::sum-range x 2 2 4 4)))
 
-
+;; (clem-system::make-tinaa-docs)
