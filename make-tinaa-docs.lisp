@@ -2,14 +2,17 @@
 (require 'asdf)
 
 (asdf:operate 'asdf:load-op 'clem)
+(asdf:operate 'asdf:load-op 'clem-doc)
 (asdf:operate 'asdf:load-op 'tinaa)
 
-(defun clem-system::make-tinaa-docs ()
+(defun clem-doc-system::make-tinaa-docs ()
   (asdf:operate 'asdf:load-op 'tinaa)
   (tinaa:document-system
    'package 'clem (asdf:component-pathname
                    (asdf:find-component
-                    (asdf:find-system 'clem)
-                    "tinaadoc"))))
+                    (asdf:find-component
+                     (asdf:find-system 'clem-doc)
+                     "doc")
+                    "tinaa"))))
   
-(clem-system::make-tinaa-docs)
+(clem-doc-system::make-tinaa-docs)

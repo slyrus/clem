@@ -26,11 +26,14 @@
 (defsystem :clem
   :name "clem"
   :author "Cyrus Harmon <ch-lisp@bobobeach.com>"
-  :version "0.1.6-20060315"
+  :version #.(with-open-file
+                 (vers (merge-pathnames "version.lisp-expr" *load-truename*))
+               (read vers))
   :licence "BSD"
   :depends-on (ch-util)
   :components
-  ((:module
+  ((:static-file "version" :pathname #p"version.lisp-expr")
+   (:module
     :src
     :components
     ((:clem-cl-source-file "defpackage")
@@ -73,6 +76,5 @@
    (:static-file "COPYRIGHT")
    (:static-file "NEWS")
    (:static-file "README")
-   (:static-file "make-dist" :pathname #p"make-dist.sh")
-   (:module :tinaadoc)))
+   (:static-file "make-dist" :pathname #p"make-dist.sh")))
 

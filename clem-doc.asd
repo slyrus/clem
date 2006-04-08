@@ -8,12 +8,14 @@
 (defsystem :clem-doc
   :name "clem-doc"
   :author "Cyrus Harmon" 
-  :version "0.1.5+-20060122"
+  :version #.(with-open-file
+                 (vers (merge-pathnames "version.lisp-expr" *load-truename*))
+               (read vers))
   :licence "BSD"
-  :depends-on (ch-asdf ch-bib ch-util clem
-                       com.gigamonkeys.markup)
+  :depends-on (ch-asdf ch-bib ch-util clem com.gigamonkeys.markup)
   :components
-  ((:module
+  ((:static-file "make-tinaa-docs" :pathname #p"make-tinaa-docs.lisp")
+   (:module
     :doc
     :components
     ((:module :gmarkup :pathname #P""
@@ -27,6 +29,6 @@
      (:module :xhtml :pathname #P""
               :depends-on (gmarkup)
               :components ((:markup-xhtml-file "clem")))
-     ))))
-
+     (:css-file :simple)
+     (:tinaa-directory :tinaa)))))
 
