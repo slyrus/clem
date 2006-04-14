@@ -80,10 +80,22 @@
 		(def-binary-op! ,name ,op ,type-1 ,type-2 ,type-3 :suffix ,suffix))))
   ;; matand
   (frob "mlogand" logand bit-matrix bit-matrix bit-matrix)
+  (frob "mlogand" logior ub8-matrix ub8-matrix ub8-matrix)
+  (frob "mlogand" logior ub16-matrix ub16-matrix ub16-matrix)
+  (frob "mlogand" logior ub32-matrix ub32-matrix ub32-matrix)
+  (frob "mlogand" logior integer-matrix integer-matrix integer-matrix)
   
   ;; matior
   (frob "mlogior" logior bit-matrix bit-matrix bit-matrix)
+  (frob "mlogior" logior ub8-matrix ub8-matrix ub8-matrix)
+  (frob "mlogior" logior ub16-matrix ub16-matrix ub16-matrix)
+  (frob "mlogior" logior ub32-matrix ub32-matrix ub32-matrix)
+  (frob "mlogior" logior integer-matrix integer-matrix integer-matrix)
   
   ;; matxor
-  (frob "mlogxor" logxor bit-matrix bit-matrix bit-matrix))
+  (frob "mlogxor" logxor bit-matrix bit-matrix bit-matrix)
+  (frob "mlogxor" logxor ub8-matrix ub8-matrix ub8-matrix)
+  (frob "mlogxor" logxor ub16-matrix ub16-matrix ub16-matrix)
+  (frob "mlogxor" logxor ub32-matrix ub32-matrix ub32-matrix)
+  (frob "mlogxor" logxor integer-matrix integer-matrix integer-matrix))
 

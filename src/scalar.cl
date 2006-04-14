@@ -9,7 +9,7 @@
     m))
 
 (defgeneric scalar-val (s))
-(defmethod scalar-val ((s scalar)) (matrix-vals s))
+(defmethod scalar-val ((s scalar)) (aref (matrix-vals s) 0 0))
 
 (defgeneric scalar-set-val (s v))
 (defmethod scalar-set-val ((s scalar) v) (setf (matrix-vals s) v))
