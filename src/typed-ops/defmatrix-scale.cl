@@ -1,6 +1,11 @@
 
 (in-package :clem)
 
+(defgeneric mat-scale-range ( m q startr endr startc endc))
+(defgeneric mat-scale (m q))
+(defgeneric mat-scale-range! ( m q startr endr startc endc))
+(defgeneric mat-scale! (m q))
+
 (defmacro def-matrix-scale (type-1 accumulator-type &key suffix)
   (let ((element-type-1 (element-type (find-class `,type-1)))
 	(accumulator-element-type (element-type (find-class `,accumulator-type))))

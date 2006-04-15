@@ -8,6 +8,15 @@
 (defmacro fixnum1+ (place)
   `(the fixnum (1+ ,place)))
 
+(defgeneric %mat-mult-block (m n p
+                               mstartr mendr mstartc mendc
+                               nstartr nendr nstartc nendc))
+
+
+(defgeneric %mat-mult-with-blocks (m n p
+                                     mstartr mendr mstartc mendc
+                                     nstartr nendr nstartc nendc))
+
 (defmacro def-matrix-mult-block (type-1 type-2 accumulator-type &key suffix)
   (declare (ignore suffix))
   (let ((element-type-1 (element-type (find-class `,type-1)))

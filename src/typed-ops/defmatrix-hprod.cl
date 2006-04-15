@@ -33,7 +33,7 @@
   (let ((element-type-1 (element-type (find-class `,type-1)))
 	(element-type-2 (element-type (find-class `,type-2))))
     `(progn
-       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-hprod!-range" suffix))
+       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-hprod-range!" suffix))
 	   ((m ,type-1) (n ,type-2) startr endr startc endc)
 	 (with-matrix-vals (m ,element-type-1 a)
 	   (with-matrix-vals (n ,element-type-2 b)
@@ -50,7 +50,7 @@
        (defmethod ,(ch-util:make-intern (concatenate 'string "mat-hprod!" suffix))
 	   ((m ,type-1) (n ,type-2))
 	 (destructuring-bind (mr mc) (dim m)
-	   (mat-hprod!-range m n 0 (1- mr) 0 (1- mc)))))))
+	   (mat-hprod-range! m n 0 (1- mr) 0 (1- mc)))))))
 
 (macrolet ((frob (type-1 type-2 type-3 &key suffix)
 	     `(progn

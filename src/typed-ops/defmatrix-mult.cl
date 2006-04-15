@@ -10,6 +10,8 @@
 (defun displace-to-1d-array (matrix)
   (sb-c::%array-data-vector (clem::matrix-vals matrix)))
 
+(defgeneric mat-mult3 (m n p))
+
 (defmacro def-matrix-mult (type-1 type-2 accumulator-type &key suffix)
   (let ((element-type-1 (element-type (find-class `,type-1)))
 	(element-type-2 (element-type (find-class `,type-2)))

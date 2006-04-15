@@ -99,6 +99,8 @@
   (frob bit-matrix double-float-matrix double-float-matrix)
   (frob bit-matrix single-float-matrix single-float-matrix))
 
+(defgeneric mat-subtr-range (m n start endr startc endc &key matrix-class))
+
 (defmethod mat-subtr-range ((m typed-mixin) (n typed-mixin) startr endr startc endc &key (matrix-class (%get-subtr-matrix-class m n)))
   (destructuring-bind (mr mc) (dim m)
     (let ((p (make-instance matrix-class :rows mr :cols mc)))
@@ -109,6 +111,9 @@
       (destructuring-bind (mr mc) (dim m)
         (mat-subtr-range m n 0 (1- mr) 0 (1- mc) :matrix-class matrix-class))
       (call-next-method)))
+
+(defgeneric mat-subtr!-range ( m n startr endr startc endc))
+(defgeneric mat-subtr! (m n))
 
 (defmacro def-matrix-subtr! (type-1 type-2 &key suffix)
   (let ((element-type-1 (element-type (find-class `,type-1)))

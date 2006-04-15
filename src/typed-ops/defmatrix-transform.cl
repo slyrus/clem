@@ -2,7 +2,6 @@
 ;;;
 ;;; file: defmatrix-transform.cl
 ;;; author: cyrus harmon
-;;; time-stamp: Thu Jul  7 09:21:21 2005
 ;;;
 
 (in-package :clem)
@@ -54,12 +53,14 @@
 		     ;;; based on what we know is in the affine
 		     ;;; transformation matrix, we can get away with
 		     ;;; fewer operations (Foley et al., 1996, p. 213)
-                     (setf (aref d 1 0) (+ (* (aref c 1 0) (aref g 0 0))
-                                           (* (aref c 0 0) (aref g 0 1))
-                                           (aref g 0 2))
-                           (aref d 0 0) (+ (* (aref c 1 0) (aref g 1 0))
-                                           (* (aref c 0 0) (aref g 1 1))
-                                           (aref g 1 2)))
+                     (setf (aref d 1 0) (the ,transform-element-type
+                                          (+ (* (aref c 1 0) (aref g 0 0))
+                                             (* (aref c 0 0) (aref g 0 1))
+                                             (aref g 0 2)))
+                           (aref d 0 0) (the ,transform-element-type
+                                          (+ (* (aref c 1 0) (aref g 1 0))
+                                             (* (aref c 0 0) (aref g 1 1))
+                                             (aref g 1 2))))
                      ;;; this does nearest neighbor interpolation
                      ;;; we should also offer a way to do bilinear,
                      ;;; bicubic, etc... interpolation
@@ -69,14 +70,14 @@
                              (<= 0d0 (aref d 0 0) mrf)
                              (<= 0d0 (aref d 1 0) mcf))
                             (multiple-value-bind (l ry)
-                                (round (the (,transform-element-type
+                                (truncate (the (,transform-element-type
                                                 ,(coerce 0d0 `,transform-element-type)
                                                 ,(coerce most-positive-fixnum `,transform-element-type))
                                             (aref d 0 0)))
                               (declare (type fixnum l)
                                        (type ,transform-element-type ry))
                               (multiple-value-bind (k rx)
-                                  (round (the (,transform-element-type
+                                  (truncate (the (,transform-element-type
                                                   ,(coerce 0d0 `,transform-element-type)
                                                   ,(coerce most-positive-fixnum `,transform-element-type))
                                               (aref d 1 0)))
@@ -85,10 +86,10 @@
                                 (cond
                                   ((and (< -1 l mr)
                                         (< -1 k mc))
-                                   (let ((l0 (max (1- l) 0))
-                                         (l2 (min (1+ l) (1- mr)))
-                                         (k0 (max (1- k) 0))
-                                         (k2 (min (1+ k) (1- mc))))
+                                   (let ((l0 (max (the fixnum (1- l)) 0))
+                                         (l2 (min (the fixnum (1+ l)) (the fixnum (1- mr))))
+                                         (k0 (max (the fixnum (1- k)) 0))
+                                         (k2 (min (the fixnum (1+ k)) (the fixnum (1- mc)))))
                                      (declare (type fixnum l0 l2 k0 k2))
                                      (setf (aref b i j)
                                            (maybe-truncate
@@ -135,8 +136,8 @@
                                 (cond
                                   ((and (< -1 l mr)
                                         (< -1 k mc))
-                                   (let ((l1 (min (1+ l) (1- mr)))
-                                         (k1 (min (1+ k) (1- mc))))
+                                   (let ((l1 (the fixnum (min (the fixnum (1+ l)) (the fixnum (1- mr)))))
+                                         (k1 (the fixnum (min (the fixnum (1+ k)) (the fixnum (1- mc))))))
                                      (declare (type fixnum l1 k1))
                                      (setf (aref b i j)
                                            (maybe-truncate

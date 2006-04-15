@@ -6,14 +6,6 @@
 
 (in-package :clem)
 
-(defgeneric matrix-move-range (m n
-                                 startr1 endr1 startc1 endc1
-                                 startr2 endr2 startc2 endc2))
-
-(defgeneric matrix-move-range-constrain (m n
-                                 startr1 endr1 startc1 endc1
-                                 startr2 endr2 startc2 endc2))
-
 (defmacro def-matrix-move (type-1 type-2)
   (let ((element-type-1 (element-type (find-class `,type-1)))
 	(element-type-2 (element-type (find-class `,type-2)))

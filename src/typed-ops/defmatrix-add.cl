@@ -38,7 +38,7 @@
   (let ((element-type-1 (element-type (find-class `,type-1)))
 	(element-type-2 (element-type (find-class `,type-2))))
     `(progn
-       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-add!-range" suffix))
+       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-add-range!" suffix))
 	   ((m ,type-1) (n ,type-2) startr endr startc endc)
 	 (with-matrix-vals (m ,element-type-1 a)
 	   (with-matrix-vals (n ,element-type-2 b)
@@ -55,7 +55,7 @@
        (defmethod ,(ch-util:make-intern (concatenate 'string "mat-add!" suffix))
 	   ((m ,type-1) (n ,type-2))
 	 (destructuring-bind (mr mc) (dim m)
-	   (,(ch-util:make-intern (concatenate 'string "mat-add!-range" suffix)) m n 0 (1- mr) 0 (1- mc))))
+	   (,(ch-util:make-intern (concatenate 'string "mat-add-range!" suffix)) m n 0 (1- mr) 0 (1- mc))))
        
        )))
 
@@ -171,7 +171,7 @@
   (declare (ignore accumulator-type))
   (let ((element-type-1 (element-type (find-class `,type-1))))
     `(progn
-       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-add!-range" suffix))
+       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-add-range!" suffix))
 	   ((m ,type-1) (n ,type-2) startr endr startc endc)
          (declare (type ,type-2 n))
 	 (with-matrix-vals (m ,element-type-1 a)
@@ -188,7 +188,7 @@
        (defmethod ,(ch-util:make-intern (concatenate 'string "mat-add!" suffix))
 	   ((m ,type-1) (n ,type-2))
 	 (destructuring-bind (mr mc) (dim m)
-	   (,(ch-util:make-intern (concatenate 'string "mat-add!-range" suffix)) m n 0 (1- mr) 0 (1- mc))))
+	   (,(ch-util:make-intern (concatenate 'string "mat-add-range!" suffix)) m n 0 (1- mr) 0 (1- mc))))
        
        )))
 
@@ -244,7 +244,7 @@
   (let ((element-type-1 (element-type (find-class `,type-1)))
         (element-type-2 (element-type (find-class `,type-2))))
     `(progn
-       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-add!-range" suffix))
+       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-add-range!" suffix))
 	   ((m ,type-1) (n ,type-2) startr endr startc endc)
          (declare (type ,type-2 n))
          (let ((val (clem::scalar-val n)))
@@ -263,7 +263,7 @@
        (defmethod ,(ch-util:make-intern (concatenate 'string "mat-add!" suffix))
 	   ((m ,type-1) (n ,type-2))
 	 (destructuring-bind (mr mc) (dim m)
-	   (,(ch-util:make-intern (concatenate 'string "mat-add!-range" suffix)) m n 0 (1- mr) 0 (1- mc))))
+	   (,(ch-util:make-intern (concatenate 'string "mat-add-range!" suffix)) m n 0 (1- mr) 0 (1- mc))))
        )))
 
 (macrolet ((frob (type-1 type-2 type-3 &key suffix)
