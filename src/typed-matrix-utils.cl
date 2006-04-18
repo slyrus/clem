@@ -10,6 +10,26 @@
 (defmethod copy-to-ub8-matrix ((m matrix) &key (constrain nil))
   (copy-to-matrix-type m 'ub8-matrix :constrain constrain))
 
+(defgeneric copy-to-ub16-matrix (m &key constrain))
+(defmethod copy-to-ub16-matrix ((m matrix) &key (constrain nil))
+  (copy-to-matrix-type m 'ub16-matrix :constrain constrain))
+
+(defgeneric copy-to-ub32-matrix (m &key constrain))
+(defmethod copy-to-ub32-matrix ((m matrix) &key (constrain nil))
+  (copy-to-matrix-type m 'ub32-matrix :constrain constrain))
+
+(defgeneric copy-to-sb8-matrix (m &key constrain))
+(defmethod copy-to-sb8-matrix ((m matrix) &key (constrain nil))
+  (copy-to-matrix-type m 'sb8-matrix :constrain constrain))
+
+(defgeneric copy-to-sb16-matrix (m &key constrain))
+(defmethod copy-to-sb16-matrix ((m matrix) &key (constrain nil))
+  (copy-to-matrix-type m 'sb16-matrix :constrain constrain))
+
+(defgeneric copy-to-sb32-matrix (m &key constrain))
+(defmethod copy-to-sb32-matrix ((m matrix) &key (constrain nil))
+  (copy-to-matrix-type m 'sb32-matrix :constrain constrain))
+
 (defgeneric copy-to-double-float-matrix (m &key constrain))
 (defmethod copy-to-double-float-matrix ((m matrix) &key (constrain nil))
   (copy-to-matrix-type m 'double-float-matrix :constrain constrain))

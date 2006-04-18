@@ -49,13 +49,13 @@
   the y-axis and returns the coordinates of the bounding rectangle
   after applying the affine transform xfrm"
   (multiple-value-bind (p1 q1)
-      (clem::transform-coord x1 y1 xfrm)
+      (transform-coord x1 y1 xfrm)
     (multiple-value-bind (p2 q2)
-        (clem::transform-coord x2 y2 xfrm)
+        (transform-coord x2 y2 xfrm)
       (multiple-value-bind (p3 q3)
-          (clem::transform-coord x1 y2 xfrm)
+          (transform-coord x1 y2 xfrm)
         (multiple-value-bind (p4 q4)
-            (clem::transform-coord x2 y1 xfrm)
+            (transform-coord x2 y1 xfrm)
           (values (min p1 p2 p3 p4) ;; x1'
                   (min q1 q2 q3 q4) ;; y1'
                   (max p1 p2 p3 p4) ;; x2'
@@ -121,7 +121,7 @@
     (unless v
       (setf v (cons 0 (rows m))))    
     (multiple-value-bind (x1 y1 x2 y2)
-        (clem::compute-bounds (car u) (car v) (cdr u) (cdr v) xfrm)
+        (compute-bounds (car u) (car v) (cdr u) (cdr v) xfrm)
       (unless x
         (setf x (cons (floor x1) (ceiling x2))))
       (unless y
@@ -240,7 +240,7 @@
    
 (defgeneric affine-transform (mat xfrm &key u v x y interpolation background matrix-class))
 (defmethod affine-transform ((mat matrix)
-                             (xfrm clem:affine-transformation)
+                             (xfrm affine-transformation)
                              &key
                              u v x y
                              (interpolation nil interpolation-supplied-p)
@@ -261,7 +261,7 @@
                             :cols cols
                             :initial-element
                             (coerce 0 (element-type (class-of mat))))))
-      (apply #'clem:transform-matrix mat m xfrm
+      (apply #'transform-matrix mat m xfrm
              (append
               (when u (list :u u))
               (when v (list :v v))

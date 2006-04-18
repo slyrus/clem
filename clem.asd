@@ -41,6 +41,7 @@
      (:clem-cl-source-file "matrix" :depends-on ("defpackage" "metaclasses"))
      (:clem-cl-source-file "typed-matrix" :depends-on ("defpackage" "matrix"))
      (:clem-cl-source-file "generics" :depends-on ("defpackage" "matrix"))
+     (:clem-cl-source-file "mloop" :depends-on ("defpackage" "matrix"))
      (:clem-cl-source-file "defmatrix" :depends-on ("typed-matrix"))
      (:clem-cl-source-file "defmatrix-types" :depends-on ("defmatrix"))
      (:clem-cl-source-file "scalar" :depends-on ("matrix"))
@@ -73,7 +74,13 @@
        (:clem-cl-source-file "defmatrix-square")
        (:clem-cl-source-file "defmatrix-subset-matrix")
        (:clem-cl-source-file "defmatrix-convolve" :depends-on ("defmatrix-sum")))
-      :depends-on ("defmatrix-types" "scalar-types" "interpolation"))))
+      :depends-on ("defmatrix-types"
+                   "generics"
+                   "mloop"
+                   "scalar-types"
+                   "interpolation"
+                   "matrixops"
+                   "typed-matrix-utils"))))
    (:static-file "bootstrap" :pathname #p"bootstrap.cl")
    (:static-file "COPYRIGHT")
    (:static-file "NEWS")

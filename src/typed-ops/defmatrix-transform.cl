@@ -6,13 +6,16 @@
 
 (in-package :clem)
 
+(defconstant +epsilon+ 0.00001d0)
+
 (defmacro def-matrix-transform (type-1 type-2 transform-type)
   (let ((element-type-1 (element-type (find-class `,type-1)))
 	(element-type-2 (element-type (find-class `,type-2)))
 	(transform-element-type (element-type (find-class `,transform-type))))
     (let ((zero (coerce 0 `,element-type-2))
 	  (one (coerce 1 `,transform-element-type))
-	  (half (coerce 0.5d0 `,transform-element-type)))
+	  (half (coerce 0.5d0 `,transform-element-type))
+          (epsilon (coerce +epsilon+ `,transform-element-type)))
       `(progn
 	 (defmethod %transform-matrix ((m ,type-1) (n ,type-2) (xfrm ,transform-type)
 				      &key (background ,zero)
@@ -25,8 +28,8 @@
 	     (let  ((inv-xfrm (clem::invert-matrix xfrm))
 		    (coord1 (make-instance ',transform-type :rows 3 :cols 1))
 		    (coord2 (make-instance ',transform-type :rows 3 :cols 1))
-                    (mrf (coerce mr ',transform-element-type))
-                    (mcf (coerce mc ',transform-element-type)))
+                    #+nil (mrf (coerce mr ',transform-element-type))
+                    #+nil (mcf (coerce mc ',transform-element-type)))
 	       (let ((a (clem::matrix-vals m))
 		     (b (clem::matrix-vals n))
 		     (c (clem::matrix-vals coord1))
@@ -67,20 +70,30 @@
                      (case interpolation
                        ((:quadratic)
                         (if (and
-                             (<= 0d0 (aref d 0 0) mrf)
-                             (<= 0d0 (aref d 1 0) mcf))
+                             (< ,(coerce most-negative-fixnum `,transform-element-type)
+                                (aref d 0 0)
+                                ,(coerce most-positive-fixnum `,transform-element-type))
+                             (< ,(coerce most-negative-fixnum `,transform-element-type)
+                                (aref d 1 0)
+                                ,(coerce most-positive-fixnum `,transform-element-type)))
                             (multiple-value-bind (l ry)
-                                (truncate (the (,transform-element-type
-                                                ,(coerce 0d0 `,transform-element-type)
-                                                ,(coerce most-positive-fixnum `,transform-element-type))
-                                            (aref d 0 0)))
+                                
+                                (truncate (the ,transform-element-type
+                                            (+ (the (,transform-element-type
+                                                     ,(coerce most-negative-fixnum `,transform-element-type)
+                                                     ,(coerce most-positive-fixnum `,transform-element-type))
+                                                 (aref d 0 0))
+                                               ,epsilon)))
                               (declare (type fixnum l)
                                        (type ,transform-element-type ry))
                               (multiple-value-bind (k rx)
-                                  (truncate (the (,transform-element-type
-                                                  ,(coerce 0d0 `,transform-element-type)
-                                                  ,(coerce most-positive-fixnum `,transform-element-type))
-                                              (aref d 1 0)))
+                                  (truncate (the ,transform-element-type
+                                              (+ 
+                                               (the (,transform-element-type
+                                                     ,(coerce most-negative-fixnum `,transform-element-type)
+                                                     ,(coerce most-positive-fixnum `,transform-element-type))
+                                                 (aref d 1 0))
+                                               ,epsilon)))
                                 (declare (type fixnum k)
                                          (type ,transform-element-type rx))
                                 (cond
@@ -120,17 +133,22 @@
                                 (aref d 1 0)
                                 ,(coerce most-positive-fixnum `,transform-element-type)))
                             (multiple-value-bind (l ry)
-                                (floor (the (,transform-element-type
-                                             ,(coerce most-negative-fixnum `,transform-element-type)
-                                             ,(coerce most-positive-fixnum `,transform-element-type))
-                                         (aref d 0 0)))
+                                (floor (the ,transform-element-type
+                                         (+ (the (,transform-element-type
+                                                  ,(coerce most-negative-fixnum `,transform-element-type)
+                                                  ,(coerce most-positive-fixnum `,transform-element-type))
+                                              (aref d 0 0))
+                                            ,epsilon)))
                               (declare (type fixnum l)
                                        (type ,transform-element-type ry))
                               (multiple-value-bind (k rx)
-                                  (floor (the (,transform-element-type
-                                             ,(coerce most-negative-fixnum `,transform-element-type)
-                                             ,(coerce most-positive-fixnum `,transform-element-type))
-                                           (aref d 1 0)))
+                                  (floor (the ,transform-element-type
+                                           (+ 
+                                            (the (,transform-element-type
+                                                  ,(coerce most-negative-fixnum `,transform-element-type)
+                                                  ,(coerce most-positive-fixnum `,transform-element-type))
+                                              (aref d 1 0))
+                                            ,epsilon)))
                                 (declare (type fixnum k)
                                          (type ,transform-element-type rx))
                                 (cond
