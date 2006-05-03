@@ -55,8 +55,8 @@
                          (let ((normval
                                 (if (and norm-v
                                          (or (not (= vendr vendc 0))
-                                             (< vstartr (- vr 1))
-                                             (< vstartc (- vc 1))))
+                                             (< vstartr (the fixnum (1- vr)))
+                                             (< vstartc (the fixnum (1- vc)))))
                                     (let ((rsum
                                            (%%sum-range v vendr vstartr vendc vstartc
                                                         ,element-type-2
@@ -69,12 +69,12 @@
                                           ,zero))
                                     ,one)))
                            (declare (type ,accumulator-element-type normval))
-                           (do ((urow ustartr (1+ urow))
-                                (vrow vstartr (1- vrow)))
+                           (do ((urow ustartr (the fixnum (1+ urow)))
+                                (vrow vstartr (the fixnum (1- vrow))))
                                ((> urow uendr))
                              (declare (type fixnum urow vrow))
-                             (do ((ucol ustartc (1+ ucol))
-                                  (vcol vstartc (1- vcol)))
+                             (do ((ucol ustartc (the fixnum (1+ ucol)))
+                                  (vcol vstartc (the fixnum (1- vcol))))
                                ((> ucol uendc))
                                (declare (type fixnum ucol vcol))
                              (let ((uv (aref uval urow ucol))
