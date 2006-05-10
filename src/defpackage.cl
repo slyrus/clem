@@ -19,6 +19,8 @@
    #:cols
    #:val
    #:set-val
+   #:mref
+   
    #:print-range
    #:print-matrix
    #:transpose
@@ -77,6 +79,8 @@
 
    ;;; temporary (maybe) matrix conversion utility functions
    #:copy-to-ub8-matrix
+   #:copy-to-ub16-matrix
+   #:copy-to-ub32-matrix
    #:copy-to-double-float-matrix
    #:copy-to-fixnum-matrix
    #:copy-to-bit-matrix
@@ -115,10 +119,13 @@
    #:defmatrixtype
 
    #:sb8-matrix
+   #:sb8-scalar
    #:array->sb8-matrix
    #:random-sb8-matrix
 
+   
    #:ub8-matrix
+   #:ub8-scalar
    #:array->ub8-matrix
    #:random-ub8-matrix
 
@@ -194,5 +201,11 @@
    #:m*
    #:m.*
 
+   ;;; logical operations
+
+   #:mlogior
+   #:mlogand
+   #:mlogxor
+   
    ))
 

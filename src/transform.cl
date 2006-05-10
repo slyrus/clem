@@ -167,16 +167,36 @@
   (setf (mref xfrm 2 2) 1d0)
   xfrm)
 
+(defmethod update-affine-transformation-slots ((xfrm affine-transformation))
+  (setf (theta xfrm) 0d0)
+  (setf (x-scale xfrm) (log (mref xfrm 0 0)))
+  (setf (y-scale xfrm) (log (mref xfrm 1 1)))
+  (setf (x-shear xfrm) (mref xfrm 0 1))
+  (setf (y-shear xfrm) (mref xfrm 1 0))
+  (setf (x-shift xfrm) (mref xfrm 0 2))
+  (setf (y-shift xfrm) (mref xfrm 1 2))
+  xfrm)
+
+(defmethod set-affine-transformation-matrix ((xfrm affine-transformation) (m matrix))
+  (dotimes (i (rows m))
+    (dotimes (j (cols m))
+      (setf (mref xfrm i j) (mref m i j))))
+  (update-affine-transformation-slots xfrm))
+
 (defmethod copy-affine-transformation ((xfrm affine-transformation))
   (with-slots (y-shift x-shift theta y-scale x-scale y-shear x-shear) xfrm
     (make-instance 'affine-transformation
-                 :y-shift y-shift
-                 :x-shift x-shift
-                 :theta theta
-                 :y-scale y-scale
-                 :x-scale x-scale
-                 :y-shear y-shear
-                 :x-shear x-shear)))
+                   :y-shift y-shift
+                   :x-shift x-shift
+                   :theta theta
+                   :y-scale y-scale
+                   :x-scale x-scale
+                   :y-shear y-shear
+                   :x-shear x-shear)))
+
+(defmethod invert-affine-transformation ((xfrm affine-transformation))
+  (let ((inv (copy-affine-transformation xfrm)))
+    (set-affine-transformation-matrix inv (clem:invert-matrix xfrm))))
 
 (defmethod move-affine-transformation ((src affine-transformation)
 				       (dest affine-transformation))

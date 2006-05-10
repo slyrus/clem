@@ -10,19 +10,6 @@
 
 (in-package :clem)
 
-;;; forward class definitions to keep things going for the moment
-;;; these should go away once the MOP stuff is done.
-;(defclass integer-matrix () ())
-;(defclass float-matrix () ())
-
-;;; Also taken from KMR's clsql package
-(declaim (inline delistify))
-(defun delistify (list)
-  "Some MOPs, like openmcl 0.14.2, cons attribute values in a list."
-  (if (and (listp list) (null (cdr list)))
-      (car list)
-      list))
-
 (defmacro with-typed-matrix-vals ((m element-type a) &body body)
   `(let ((,a (matrix-vals ,m)))
      (declare (type (simple-array ,element-type (* *)) ,a))
@@ -67,24 +54,6 @@
 		 (declare #-sbcl (dynamic-extent ,j) (type fixnum ,j))
 		 ,@body))))))))
 
-
-(defmacro defmatrixtype (type direct-superclasses &key 
-			 (element-type)
-			 (accumulator-type)
-			 (initial-element)
-			 minval maxval
-			 (val-format))
-  (unless direct-superclasses (setf direct-superclasses '(matrix)))
-  `(progn
-     (defclass ,type ,direct-superclasses
-       ((initial-element :accessor initial-element
-                         :initarg :initial-element :initform ,initial-element))
-       (:metaclass standard-matrix-class)
-       ,@(when element-type `((:element-type ,(delistify element-type))))
-       ,@(when accumulator-type `((:accumulator-type ,(delistify accumulator-type))))
-       ,@(when val-format `((:val-format ,(delistify val-format))))
-       ,@(when minval `((:minval ,(if (symbolp minval) (symbol-value minval) minval))))
-       ,@(when maxval `((:maxval ,(if (symbolp maxval) (symbol-value minval) maxval)))))))
 
 (defmacro defmatrixfuncs (type &key 
 			  (element-type 'double-float)

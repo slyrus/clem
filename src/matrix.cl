@@ -119,6 +119,9 @@ that can be used to externalize matrices."
 (defgeneric dim (m))
 (defmethod dim ((m matrix)) (array-dimensions (matrix-vals m)))
 
+(defgeneric dim1 (m index))
+(defmethod dim1 ((m matrix) (index fixnum)) (array-dimension (matrix-vals m) index))
+
 (defgeneric rows (m))
 (defmethod rows ((m matrix)) (the fixnum (array-dimension (matrix-vals m) 0)))
 

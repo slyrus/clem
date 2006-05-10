@@ -38,7 +38,9 @@
     :components
     ((:clem-cl-source-file "defpackage")
      (:clem-cl-source-file "metaclasses" :depends-on ("defpackage"))
-     (:clem-cl-source-file "matrix" :depends-on ("defpackage" "metaclasses"))
+     (:clem-cl-source-file "early-matrix" :depends-on ("defpackage" "metaclasses"))
+     (:clem-cl-source-file "matrix-classes" :depends-on ("defpackage" "metaclasses" "early-matrix"))
+     (:clem-cl-source-file "matrix" :depends-on ("defpackage" "metaclasses" "early-matrix" "matrix-classes"))
      (:clem-cl-source-file "typed-matrix" :depends-on ("defpackage" "matrix"))
      (:clem-cl-source-file "generics" :depends-on ("defpackage" "matrix"))
      (:clem-cl-source-file "mloop" :depends-on ("defpackage" "matrix"))

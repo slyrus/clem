@@ -143,16 +143,19 @@
 (defun x-derivative (m &key (matrix-class 'double-float-matrix) (truncate t))
   (let ((m1 (copy-to-matrix-type m matrix-class))
 	(m2 (copy-to-matrix-type *x-derivative-conv-matrix* matrix-class)))
-    (discrete-convolve m1 m2
-		       :truncate truncate :matrix-class matrix-class)))
+    (mat-scale (discrete-convolve m1 m2
+                                  :truncate truncate :matrix-class matrix-class)
+               (/ 3))))
 
 (defparameter *y-derivative-conv-matrix*
   (array->sb8-matrix #2A((1 0 -1)(1 0 -1)(1 0 -1))))
 
 (defun y-derivative (m &key (matrix-class 'double-float-matrix) (truncate t))
-  (discrete-convolve (copy-to-matrix-type m matrix-class) 
-		     (copy-to-matrix-type *y-derivative-conv-matrix* matrix-class)
-		     :truncate truncate :matrix-class matrix-class))
+  (mat-scale
+   (discrete-convolve (copy-to-matrix-type m matrix-class) 
+                      (copy-to-matrix-type *y-derivative-conv-matrix* matrix-class)
+                      :truncate truncate :matrix-class matrix-class)
+   (/ 3)))
 
 (defun gradmag (m &key (truncate nil))
   (let ((xd (x-derivative m :truncate truncate))
@@ -160,6 +163,17 @@
     (mat-square! xd)
     (mat-square! yd)
     (mat-sqrt! (mat-add! xd yd))))
+
+(defparameter *laplacian-conv-matrix*
+  (array->sb8-matrix #2A((0 1 0)(1 -4 1)(0 1 0))))
+
+(defun laplacian (m &key (matrix-class 'double-float-matrix) (truncate t))
+  (mat-scale
+   (discrete-convolve (copy-to-matrix-type m matrix-class) 
+                      (copy-to-matrix-type *laplacian-conv-matrix* matrix-class)
+                      :truncate truncate :matrix-class matrix-class)
+   (/ 4)))
+
 
 (defun variance-window (a &key (k 2))
   (destructuring-bind (m n) (dim a)
@@ -297,3 +311,22 @@
 					maxval
 				      minval))))
 
+(defmethod binary-threshold ((u matrix) (tval number))
+  (destructuring-bind (rows cols)
+      (clem:dim u)
+    (let ((thresh (make-instance 'bit-matrix :rows (rows u) :cols (cols u))))
+      (dotimes (i rows)
+        (dotimes (j cols)
+          (setf (mref thresh i j)
+                (if (> (mref u i j) tval) 1 0))))
+      thresh)))
+
+(defmethod complement-matrix ((u matrix) &key (maxval (max-val u)))
+  (destructuring-bind (rows cols)
+      (clem:dim u)
+    (let ((comp (mat-copy-proto u)))
+      (dotimes (i rows)
+        (dotimes (j cols)
+          (setf (mref comp i j) (- maxval (mref u i j)))))
+      comp)))
+  
