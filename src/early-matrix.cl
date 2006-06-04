@@ -10,6 +10,8 @@
 
 (define-condition matrix-error (simple-error matrix-condition) ())
 
+(define-condition matrix-argument-error (matrix-error) ())
+
 (deftype index-type ()
   '(integer 0 #.(1- array-dimension-limit)))
 

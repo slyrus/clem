@@ -643,7 +643,11 @@
       (declare (dynamic-extent j) (fixnum j))
       (set-val a i j (funcall f (val a i j) i j)))))
 
-(defgeneric random-matrix (rows cols &key matrix-class limit))
+(defgeneric random-matrix (rows cols &key matrix-class limit)
+  (:documentation "Create a matrix of type <matrix-class> having
+<rows> rows and <cols> cols. The values of the matrix will be
+random numbers of the appropriate type between 0 and <limit>."))
+
 (defmethod random-matrix ((rows fixnum) (cols fixnum) &key
                           (matrix-class 'matrix)
                           (limit 1.0d0))

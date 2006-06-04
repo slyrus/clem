@@ -100,11 +100,13 @@
    #:erode
 
    #:threshold
+   #:binary-threshold
 
    #:x-derivative
    #:y-derivative
    #:gradmag
-
+   #:laplacian
+   
    #:variance-window
    #:sample-variance-window
 
@@ -149,6 +151,8 @@
    #:array->fixnum-matrix
    #:random-fixnum-matrix
 
+   #:float-matrix
+   
    #:single-float-matrix
    #:array->single-float-matrix
    #:random-single-float-matrix
@@ -180,11 +184,17 @@
    ;;; affine transformation stuff
    #:affine-transformation
    #:make-affine-transformation
+
+   #:affine-transform
    #:transform-matrix
 
+   #:compute-bounds
+   #:transform-coord
+   
    #:subset-matrix
 
    #:mat-scale
+   #:mat-scale!
    #:mat-scale-range
    #:mat-abs
    #:mat-abs-range
@@ -204,8 +214,11 @@
    ;;; logical operations
 
    #:mlogior
+   #:mlogior!
    #:mlogand
    #:mlogxor
-   
+
+   ;; matrix looping operator
+   #:mloop
    ))
 

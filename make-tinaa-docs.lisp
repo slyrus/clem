@@ -7,12 +7,13 @@
 
 (defun clem-doc-system::make-tinaa-docs ()
   (asdf:operate 'asdf:load-op 'tinaa)
-  (tinaa:document-system
-   'package 'clem (asdf:component-pathname
-                   (asdf:find-component
-                    (asdf:find-component
-                     (asdf:find-system 'clem-doc)
-                     "doc")
-                    "tinaa"))))
+  (let ((tinaa::*short-documentation-length* 512))
+    (tinaa:document-system
+     'package 'clem (asdf:component-pathname
+                     (asdf:find-component
+                      (asdf:find-component
+                       (asdf:find-system 'clem-doc)
+                       "doc")
+                      "tinaa")))))
   
 (clem-doc-system::make-tinaa-docs)
