@@ -86,6 +86,7 @@
    (:static-file "bootstrap" :pathname #p"bootstrap.cl")
    (:static-file "COPYRIGHT")
    (:static-file "NEWS")
+   (:static-file "ChangeLog")
    (:static-file "README")
    (:static-file "make-dist" :pathname #p"make-dist.sh")))
 
