@@ -1,4 +1,12 @@
 
+changes in clem-0.1.11 relative to clem-0.1.10 (and older)
+
+* moved gmarkup docs to .sexp docs
+* added errors for incongruent matrices in mat-mult
+* added early-matrix.cl and moved some styff that needs to get loaded
+  early there, like the matrix class definition and some matrix
+  condition types
+
 clem-0.1.5 -- Sun Dec  4 23:42:24 2005
 
 * fixed some fundamental problems with the metaclass stuff so that
