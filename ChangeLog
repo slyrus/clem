@@ -1,3 +1,119 @@
+2006-06-04  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* TODO, clem-doc.asd, doc/clem-performance.sexp, doc/clem.sexp, doc/simple.css, make-tinaa-docs.lisp, src/defpackage.cl, src/early-matrix.cl, src/matrix.cl, version.lisp-expr:
+	* update TODO items
+	* replace clem.gmarkup with clem.sexp
+	* increase tinaa::*short-documentation-length*
+	* add initial performance documentation
+	* add css file
+	* aad some more exported symbols
+	* add docstring to random-matrix
+
+	* src/matrix.cl:
+	* throw an error on attempt to multiply incongruent matrices
+
+	* src/typed-ops/defmatrix-mult.cl:
+	* Throw an error on attempt to multiply incongruent matrices
+
+2006-05-10  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* clem.asd, src/defmatrix-types.cl, src/defmatrix.cl, src/defpackage.cl, src/early-matrix.cl, src/matrix-classes.cl, src/matrix.cl, src/matrixops.cl, src/transform.cl, src/typed-ops/defmatrix-mref.cl, test/bench-matrix-2.cl, test/bench-matrix.cl, test/mref-tests.cl, test/test-gradmag.cl, version.lisp-expr:
+	* moved some early matrix class definition stuff into early-matrix.
+	* moved the rest of the matrix class definitions into matrix-classes.
+	* removed the eval-when stuff from defmatrix-types.
+	* exported some more symbols (mref, copy-to-ub16-matrx,
+	  copy-to-ub32-matrix, sb8-scalar, ub8-scalar, mlogior, mlogand,
+	  mlogxor.
+	* added dim1 to get the size of one array dimension.
+	* scale x and y derivative matrices.
+	* added laplacian, binary-threshold and complement-matrix functions.
+	* added updated-affine-transformation-slots and
+	  set-affine-transformation-matrix, to allow for updating to of the
+	  matrix parameters directly, adjusting the slots accordingly.
+	* removed mref2
+	* added some more benchmarks and tests
+
+2006-05-03  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* test/bench-matrix.cl, src/typed-ops/defmatrix-mult.cl, src/typed-ops/defmatrix-mref.cl, src/typed-ops/defmatrix-convolve.cl, version.lisp-expr:
+	* added some fixnum declarations in convolve and mult that muffle some
+	  warnings
+	* getting ready to replace the arefs with mref sbcl compiler hackery
+
+	* src/typed-ops/defmatrix-mref.cl:
+	checking in my hinky sbcl deftransform stuff before i go and mess it up
+
+2006-04-18  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* clem.asd, src/matrix.cl, src/mloop.cl, src/transform.cl, src/typed-matrix-utils.cl, src/typed-ops/defmatrix-add.cl, src/typed-ops/defmatrix-transform.cl, version.lisp-expr:
+	* added mloop file for mloop macro for looping over matrices
+	* fixed some depends
+	* removed map-matrix
+	* removed some spurious clem: package designators
+	* added new copy-to-{ub16,ub32,sb8,sb16,sb32}-matrix
+	  methods
+	* use mloop in defmatrix-add to simplify the logic a bit
+	* added bit-matrix bit-matrix add
+	* add a small epsilon before calling floor in %transform-matrix
+
+2006-04-15  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* version.lisp-expr, clem.asd, src/generics.cl, src/typed-ops/defmatrix-add.cl, src/typed-ops/defmatrix-convolve.cl, src/typed-ops/defmatrix-hprod.cl, src/typed-ops/defmatrix-move.cl, src/typed-ops/defmatrix-mult-block.cl, src/typed-ops/defmatrix-mult.cl, src/typed-ops/defmatrix-scale.cl, src/typed-ops/defmatrix-subtr.cl, src/typed-ops/defmatrix-transform.cl:
+	* added generics file with generic funciton definitions
+	* mat-add!-range -> mat-add-range!
+	* added some fixnum declarations in discrete convolution and
+	  affine transformation routines
+	* added some defgenerics to quiet warnings
+
+2006-04-14  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* clem.asd, src/scalar-types.cl, src/scalar.cl, src/typed-ops/defmatrix-add.cl, src/typed-ops/defmatrix-binary-op.cl, version.lisp-expr:
+	* add scalar-types.cl
+	* added some typed scalar-matrix add functions. this is a hack and
+	  should be cleaned up soon.
+	* added more typed mlogior/mlogxor/mlogand methods
+
+2006-04-08  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* version.lisp-expr, make-tinaa-docs.lisp, make-dist.sh, clem.asd, clem-test.asd, clem-doc.asd:
+	 * tinaa docs
+	 * version.lisp-expr stuff
+
+2006-04-05  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* make-tinaa-docs.lisp: added lisp files for loading to make tinaa docs
+
+	* clem.asd, bootstrap.cl: cleaning up tinaa doc stuff
+
+	* clem.asd, bootstrap.cl: tinaa stuff
+
+2006-04-03  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/typed-ops/defmatrix-unary-op.cl, clem.asd:
+	Added defmatrix-unary-op
+
+	* src/typed-ops/defmatrix-subtr.cl:
+	   * left a debugging print in. remove it.
+
+	* src/typed-ops/defmatrix-subtr.cl, src/typed-ops/defmatrix-binary-op.cl, src/matrix.cl, clem.asd, TODO:
+	    * Reworked matrix printing logic
+	    * Added make-load-form
+	    * Added defmatrix-binary-op with mlogand, mlogior, mlogxor and
+	      destructive and range variants
+	    * Better type inference for destination matrix for mat-subtr
+	    * New TODO:  min-val and max-val -> mmin, mmax
+
+2006-03-15  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* clem.asd, clem-test.asd, ChangeLog:     * Bump version number
+	    * Update ChangeLog
+
+2006-01-26  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* doc/clem.gmarkup: minor matrix printing change.
+
+	* ChangeLog: commit ChangeLog changes
+
 2006-01-26  Cyrus Harmon  <cyrus@bobobeach.com>
 
 	* doc/clem.gmarkup: minor matrix printing change.
