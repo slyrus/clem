@@ -1,37 +1,38 @@
-((:P
-
-  #.(progn
-      (in-package :clem)
-      (defparameter markup::*document-thesis* nil)
-      (markup::setup-headings)
-      nil)
-  
-  (:MARKUP-METADATA
-   (:COPYRIGHT
-    "Copyright 2006, Cyrus Harmon. All Rights Reserved.")
-   (:TITLE "clem: A common-lisp matrix package")
-   (:AUTHOR "Cyrus L. Harmon")
-   (:BIBTEX-DATABASE
-    "(\"asdf:/ch-bib/lisp\" \"asdf:/ch-bib/bio\")")
-   (:BIBTEX-STYLE "Science"))
-  (:HTML-METADATA (:HTMLCSS "simple.css") )
-  
-  (:LISP-SILENT 
-   "(asdf:operate 'asdf:load-op 'clem)"
-   "(setf markup::*baseline-skip* \"14pt\")"
-   "(setf markup::*par-skip* \"0pt\")"))
-
- (:H1 "Abstract")
-
- (:P "CLEM is an open-source Common Lisp library for the
+(#.
+ (cons
+  :p
+  (progn
+    (in-package :clem)
+    (defparameter smarkup::*document-thesis* nil)
+    (smarkup::setup-headings)
+    nil))
+ 
+ (:smarkup-metadata
+  (:copyright
+   "Copyright 2006, Cyrus Harmon. All Rights Reserved.")
+  (:title "clem: A common-lisp matrix package")
+  (:author "Cyrus L. Harmon")
+  (:bibtex-database
+   "(\"asdf:/ch-bib/lisp\" \"asdf:/ch-bib/bio\")")
+  (:bibtex-style "Science"))
+ (:html-metadata (:htmlcss "simple.css") )
+ 
+ (:lisp-silent 
+  "(asdf:operate 'asdf:load-op 'clem)"
+  "(setf smarkup::*baseline-skip* \"14pt\")"
+  "(setf smarkup::*par-skip* \"0pt\")")
+ 
+ (:h1 "Abstract")
+ 
+ (:p "CLEM is an open-source Common Lisp library for the
  representation and manipulation of matrices. CLEM is designed to
  be a flexible and extensible system for the representation of
  arbitrary 2-dimensional matrices.")
+ 
+ (:h1 "Introduction")
 
- (:H1 "Introduction")
-
- (:P "The Common Lisp language"
-     (:BIBCITE "steele1990common")
+ (:p "The Common Lisp language"
+     (:bibcite "steele1990common")
      " offers a rich, dynamic environment for programming and
 data analysis. Common Lisp contains a powerful object system, the
 Common Lisp Object System (CLOS)"
