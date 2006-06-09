@@ -1,10 +1,11 @@
 
 (asdf:operate 'asdf:load-op :ch-asdf)
 (asdf:operate 'asdf:load-op :smarkup)
-(asdf:operate 'asdf:load-op :ch-asdf-markup)
 
-(defpackage #:clem-doc-system (:use #:asdf #:ch-asdf #:ch-asdf-markup #:cl #:smarkup))
+(defpackage #:clem-doc-system (:use #:cl #:asdf #:ch-asdf #:smarkup))
 (in-package #:clem-doc-system)
+
+#.(smarkup::enable-quote-reader-macro)
 
 (defsystem :clem-doc
   :name "clem-doc"
@@ -13,7 +14,7 @@
                  (vers (merge-pathnames "version.lisp-expr" *load-truename*))
                (read vers))
   :licence "BSD"
-  :depends-on (ch-asdf ch-bib ch-util clem com.gigamonkeys.markup)
+  :depends-on (ch-asdf ch-bib ch-util clem smarkup)
   :components
   ((:static-file "make-tinaa-docs" :pathname #p"make-tinaa-docs.lisp")
    (:module
@@ -22,7 +23,7 @@
     ((:object-from-file :clem-sexp
                         :pathname #p"clem.sexp")
      (:filtered-object :clem-filtered-sexp
-                       :filters (:lisp :markup-metadata :ref)
+                       :filters (:lisp :smarkup-metadata :ref)
                        :depends-on (:clem-sexp)
                        :input-object :clem-sexp)
      (:object-latex-file :clem-latex
@@ -43,7 +44,7 @@
      (:object-from-file :clem-performance-sexp
                         :pathname #p"clem-performance.sexp")
      (:filtered-object :clem-performance-filtered-sexp
-                       :filters (:lisp :markup-metadata :ref)
+                       :filters (:lisp :smarkup-metadata :ref)
                        :depends-on (:clem-performance-sexp)
                        :input-object :clem-performance-sexp)
      (:object-latex-file :clem-performance-latex
