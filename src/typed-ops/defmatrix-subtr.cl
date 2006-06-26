@@ -97,7 +97,8 @@
   (frob sb32-matrix double-float-matrix double-float-matrix)
   (frob sb32-matrix single-float-matrix single-float-matrix)
   (frob bit-matrix double-float-matrix double-float-matrix)
-  (frob bit-matrix single-float-matrix single-float-matrix))
+  (frob bit-matrix single-float-matrix single-float-matrix)
+  (frob bit-matrix bit-matrix bit-matrix))
 
 (defgeneric mat-subtr-range (m n start endr startc endc &key matrix-class))
 

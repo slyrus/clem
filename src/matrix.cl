@@ -819,25 +819,28 @@ random numbers of the appropriate type between 0 and <limit>."))
   (map-set-val-copy u #'(lambda (x) (apply #'log x (when base base)))))
 
 
-(defgeneric normalize (u &key normin normax))
-(defmethod normalize ((u matrix) &key (normin) (normax) (truncate nil))
+(defgeneric normalize (u &key normin normax copy))
+(defmethod normalize ((u matrix) &key (normin) (normax) (truncate nil) (copy nil))
   (let ((min (min-val u))
 	(max (max-val u))
 	(nmin (if normin normin 0))
-	(nmax (if normax normax 255)))
+	(nmax (if normax normax 255))
+        (u (if copy (mat-copy u) u)))
     (let ((slope (if (= max min)
                      0
                      (/ (- nmax nmin) (- max min)))))
       (map-set-val-fit u #'(lambda (x) (+ nmin (* slope (- x min))))
-		       :truncate truncate))))
+		       :truncate truncate))
+    u))
 
-(defgeneric norm-0-255 (u))
-(defmethod norm-0-255 ((u matrix))
-  (normalize u :normin 0 :normax 255 :truncate t))
 
-(defgeneric norm-0-1 (u))
-(defmethod norm-0-1 ((u matrix))
-  (normalize u :normin 0 :normax 1 :truncate t))
+(defgeneric norm-0-255 (u &key copy))
+(defmethod norm-0-255 ((u matrix) &key copy)
+  (normalize u :normin 0 :normax 255 :copy copy))
+
+(defgeneric norm-0-1 (u &key copy))
+(defmethod norm-0-1 ((u matrix) &key copy)
+  (normalize u :normin 0 :normax 1 :copy copy))
 
 (defgeneric subset-matrix (u startr endr startc endc))
 (defmethod subset-matrix ((u matrix) startr endr startc endc)

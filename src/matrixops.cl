@@ -164,6 +164,18 @@
     (mat-square! yd)
     (mat-sqrt! (mat-add! xd yd))))
 
+(defun graddir (m &key (truncate nil))
+  (let ((xd (x-derivative m :truncate truncate))
+	(yd (y-derivative m :truncate truncate)))
+    (destructuring-bind (ur uc) (dim xd)
+      (dotimes (i ur)
+        (dotimes (j uc)
+          (set-val xd i j
+                   (if (zerop (val yd i j))
+                       (val yd i j)
+                       (atan (/ (val xd i j) (val yd i j))))))))
+    xd))
+
 (defparameter *laplacian-conv-matrix*
   (array->sb8-matrix #2A((0 1 0)(1 -4 1)(0 1 0))))
 
@@ -171,6 +183,21 @@
   (mat-scale
    (discrete-convolve (copy-to-matrix-type m matrix-class) 
                       (copy-to-matrix-type *laplacian-conv-matrix* matrix-class)
+                      :truncate truncate :matrix-class matrix-class)
+   (/ 4)))
+
+(defparameter *laplacian-conv-matrix-2*
+  (array->sb8-matrix #2A((0 0 1 0 0)
+                         (0 0 0 0 0)
+                         (1 0 -4 0 1)
+                         (0 0 0 0 0)
+                         (0 0 1 0 0))))
+
+
+(defun laplacian-2 (m &key (matrix-class 'double-float-matrix) (truncate t))
+  (mat-scale
+   (discrete-convolve (copy-to-matrix-type m matrix-class) 
+                      (copy-to-matrix-type *laplacian-conv-matrix-2* matrix-class)
                       :truncate truncate :matrix-class matrix-class)
    (/ 4)))
 

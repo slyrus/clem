@@ -82,7 +82,7 @@
             (declare (type fixnum i))
             (dotimes (j cols)
               (declare (type fixnum j))
-              (setf acc (+ acc  (mref4 x  i j))))))
+              (setf acc (+ acc  (mref4 x i j))))))
         (print acc)))))
 
   

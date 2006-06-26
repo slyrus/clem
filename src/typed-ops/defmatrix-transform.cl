@@ -46,16 +46,16 @@
                    (dotimes (j nc)
                      (declare (type fixnum j))
                      (setf (aref c 1 0) (coerce j ',transform-element-type))
-		     ;;; the slow(er) way to do this is:
-                     ;;;   (setf (aref d 0 0) ,zero
-                     ;;;         (aref d 1 0) ,zero
-                     ;;;         (aref d 2 0) ,zero)
-		     ;;; (clem::mat-mult3 inv-xfrm coord1 coord2)
-                     ;;;
-		     ;;; but since we don't need the full matrix multiply,
-		     ;;; based on what we know is in the affine
-		     ;;; transformation matrix, we can get away with
-		     ;;; fewer operations (Foley et al., 1996, p. 213)
+;;; the slow(er) way to do this is:
+;;;   (setf (aref d 0 0) ,zero
+;;;         (aref d 1 0) ,zero
+;;;         (aref d 2 0) ,zero)
+;;; (clem::mat-mult3 inv-xfrm coord1 coord2)
+;;;
+;;; but since we don't need the full matrix multiply,
+;;; based on what we know is in the affine
+;;; transformation matrix, we can get away with
+;;; fewer operations (Foley et al., 1996, p. 213)
                      (setf (aref d 1 0) (the ,transform-element-type
                                           (+ (* (aref c 1 0) (aref g 0 0))
                                              (* (aref c 0 0) (aref g 0 1))
@@ -64,9 +64,9 @@
                                           (+ (* (aref c 1 0) (aref g 1 0))
                                              (* (aref c 0 0) (aref g 1 1))
                                              (aref g 1 2))))
-                     ;;; this does nearest neighbor interpolation
-                     ;;; we should also offer a way to do bilinear,
-                     ;;; bicubic, etc... interpolation
+;;; this does nearest neighbor interpolation
+;;; we should also offer a way to do bilinear,
+;;; bicubic, etc... interpolation
                      (case interpolation
                        ((:quadratic)
                         (if (and

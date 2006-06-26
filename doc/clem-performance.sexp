@@ -2,9 +2,9 @@
   #.(progn
       (in-package :clem)
       #.(smarkup::enable-quote-reader-macro)
-      (markup::setup-headings)
+      (smarkup::setup-headings)
       nil)
-  (:markup-metadata
+  (:smarkup-metadata
    (:copyright
     "Copyright 2006, Cyrus Harmon. All Rights Reserved.")
    (:title
@@ -174,10 +174,12 @@
  (:h3 #q{defknown/deftransform/defoptimizer})
  
  (:h1 #q{Benchmarks})
- 
- (:h2 #q{Adding two matrices})
- 
- (:p #q{First, we define some test matrices:})
+
+ (:p #q{We'll start with some simple benchmarks of matrix operations
+ and examine the effect of the various implementation strategies for
+ representing matrices on these operations.})
+
+ (:h2 #q{2-Dimensional Lisp Arrays})
  
  (:lisp
   #q{
@@ -220,5 +222,14 @@
  (:lisp
   #q{(ch-util:time-to-string (bench/add-matrix/aref b1 b2 b3))})
 
-#+nil(:BIBLIOGRAPHY))
+ (:h2 #q{1-Dimensional Lisp Arrays})
+
+ (:h2 #q{A CLOS object holding a reference to a 2-Dimensional Lisp
+ Array})
+
+ (:h2 #q{A CLOS object holding a reference to a 1-Dimensional Lisp
+ Array})
+ 
+
+ #+nil(:BIBLIOGRAPHY))
 

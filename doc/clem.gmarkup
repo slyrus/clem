@@ -47,7 +47,7 @@ performance and memory usage requirements. For example, a
 
 * Defining CLEM Classes and Making CLEM Instances
 
-** Creating CLEM Instances with \code{make-instance}
+** Creating CLEM Instances with make-instance
 
 The following code creates a 16-row by 16-column matrix of type
 \code{double-float-matrix} and assigns it to the dynamic variable
@@ -64,7 +64,7 @@ columns of each matrix. The number of rows and columns can be changed
 by setting the \code{*matrix-print-row-limit*} and
 \code{*matrix-print-col-limit*} variables.
 
-** \code{standard-matrix-class} 
+** standard-matrix-class
 
 ** CLEM Matrix Types
 
@@ -153,5 +153,7 @@ in-place code where the overhead of the method-call to the
 %-method would be too expensive. This convention is not yet
 widely enforced and certainly untested. Hopefully this situation
 will improve.
+
+** Hacking the SBCL compiler to improve performance
 
 \bibliography{}

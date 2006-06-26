@@ -130,15 +130,17 @@
 					   (if ,maxval ,maxval 255)))))
 	 a))
      
-     (defmethod normalize ((u ,type) &key (normin) (normax))
+     (defmethod normalize ((u ,type) &key normin normax copy)
        (let ((min (min-val u))
 	     (max (max-val u))
 	     (nmin (if normin normin (if ,minval ,minval 0)))
-	     (nmax (if normax normax (if ,maxval ,maxval 255))))
+	     (nmax (if normax normax (if ,maxval ,maxval 255)))
+             (u (if copy (mat-copy u) u)))
 	 (let ((slope (if (= max min)
                           0d0
                           (double-float-divide (- nmax nmin)  (- max min)))))
-	   (map-set-val-fit u #'(lambda (x) (+ nmin (* slope (- x min))))))))
+	   (map-set-val-fit u #'(lambda (x) (+ nmin (* slope (- x min))))))
+         u))
 
      ,(cond ((and (find-class 'integer-matrix nil)
                   (member (find-class 'integer-matrix)

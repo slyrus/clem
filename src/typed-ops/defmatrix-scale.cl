@@ -32,6 +32,30 @@
 	 (destructuring-bind (mr mc) (dim m)
 	   (,(ch-util:make-intern (concatenate 'string "mat-scale-range" suffix)) m q 0 (1- mr) 0 (1- mc)))))))
 
+(defmacro def-matrix-scale-fit (type-1 accumulator-type &key suffix)
+  (let ((element-type-1 (element-type (find-class `,type-1))))
+    `(progn
+       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-scale-fit-range" suffix))
+	   ((m ,type-1) q startr endr startc endc)
+         (let ((qconv (coerce q ',element-type-1)))
+           (declare (type ,element-type-1 qconv))
+           (destructuring-bind (mr mc) (dim m)
+             (let ((p (make-instance ',accumulator-type :rows mr :cols mc)))
+               (with-matrix-vals (m ,element-type-1 a)
+                 (do ((i startr (1+ i)))
+                     ((> i endr))
+                   (declare (dynamic-extent i) (type fixnum i))
+                   (do ((j startc (1+ j)))
+                       ((> j endc))
+                     (declare (dynamic-extent j) (type fixnum j))
+                     (set-val-fit p i j (* (aref a i j) qconv)))))
+               p))))
+       
+       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-scale-fit" suffix))
+	   ((m ,type-1) q)
+	 (destructuring-bind (mr mc) (dim m)
+	   (,(ch-util:make-intern (concatenate 'string "mat-scale-fit-range" suffix)) m q 0 (1- mr) 0 (1- mc)))))))
+
 (defmacro def-matrix-scale! (type-1 &key suffix)
   (let ((element-type-1 (element-type (find-class `,type-1))))
     `(progn
@@ -54,10 +78,35 @@
 	 (destructuring-bind (mr mc) (dim m)
 	   (,(ch-util:make-intern (concatenate 'string "mat-scale-range!" suffix)) m q 0 (1- mr) 0 (1- mc)))))))
 
+(defmacro def-matrix-scale-fit! (type-1 &key suffix)
+  (let ((element-type-1 (element-type (find-class `,type-1))))
+    `(progn
+       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-scale-range-fit!" suffix))
+	   ((m ,type-1) q startr endr startc endc)
+         (let ((qconv (coerce q ',element-type-1)))
+           (declare (type ,element-type-1 qconv))
+           (with-matrix-vals (m ,element-type-1 a)
+             (do ((i startr (1+ i)))
+                 ((> i endr))
+               (declare (dynamic-extent i) (type fixnum i))
+               (do ((j startc (1+ j)))
+                   ((> j endc))
+                 (declare (dynamic-extent j) (type fixnum j))
+                 (set-val-fit m i j (* (aref a i j) qconv))))))
+         m)
+       
+       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-scale-fit!" suffix))
+	   ((m ,type-1) q)
+	 (destructuring-bind (mr mc) (dim m)
+	   (,(ch-util:make-intern (concatenate 'string "mat-scale-range-fit!" suffix)) m q 0 (1- mr) 0 (1- mc)))))))
+
+
 (macrolet ((frob (type-1 type-2 &key suffix)
 	     `(progn
 		(def-matrix-scale ,type-1 ,type-2 :suffix ,suffix)
-		(def-matrix-scale! ,type-1 :suffix ,suffix))))
+                (def-matrix-scale-fit ,type-1 ,type-2 :suffix ,suffix)
+		(def-matrix-scale! ,type-1 :suffix ,suffix)
+                (def-matrix-scale-fit! ,type-1 :suffix ,suffix))))
   (frob double-float-matrix double-float-matrix)
   (frob single-float-matrix single-float-matrix)
   (frob ub8-matrix ub8-matrix)
