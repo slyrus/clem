@@ -185,6 +185,23 @@
    #:affine-transformation
    #:make-affine-transformation
 
+   ;; 7-parameter parameterization of an affine transformation
+   #:affine-transformation-7-parameters
+   #:make-affine-transformation-matrix-from-7-parameters
+   #:transformation-parameter
+   #:decf-transformation-parameters
+   #:copy-affine-transformation-7-parameters
+   #:move-affine-transformation-7-parameters
+   #:get-affine-transformation-7-parameters-properties
+
+   #:y-scale
+   #:x-scale
+   #:theta
+   #:y-shift
+   #:x-shift
+   #:y-shear
+   #:x-shear
+
    #:affine-transform
    #:transform-matrix
 

@@ -294,3 +294,99 @@
         (set-affine-transformation-matrix p r)
         r)))
 
+
+(defclass affine-transformation-7-parameters ()
+  ((y-shift :accessor y-shift :initarg :y-shift :initform 0d0 :type 'double-float)
+   (x-shift :accessor x-shift :initarg :x-shift :initform 0d0 :type 'double-float)
+   (theta :accessor theta :initarg :theta :initform 0d0 :type 'double-float)
+   (y-scale :accessor y-scale :initarg :y-scale :initform 0d0 :type 'double-float)
+   (x-scale :accessor x-scale :initarg :x-scale :initform 0d0 :type 'double-float)
+   (y-shear :accessor y-shear :initarg :y-shear :initform 0d0 :type 'double-float)
+   (x-shear :accessor x-shear :initarg :x-shear :initform 0d0 :type 'double-float))
+  (:documentation "a set of parameters for use in
+  (over-) parameterizing an affine transformation by use of seven
+  parameters, x-shift, y-shift, theta, x-scale, y-scale, x-shear,
+  and y-shear."))
+
+(defun make-affine-transformation-matrix-from-7-parameters (transvec)
+  (with-slots (y-shift x-shift theta y-scale x-scale y-shear x-shear) transvec
+    (clem:make-affine-transformation :y-shift y-shift
+                                     :x-shift x-shift
+                                     :theta theta
+                                     :y-scale (exp y-scale)
+                                     :x-scale (exp x-scale)
+                                     :y-shear y-shear
+                                     :x-shear x-shear)))
+
+(declaim (inline transformation-parameter))
+(declaim (ftype (function (affine-transformation-7-parameters fixnum) double-float) transforamtion-parameter))
+
+(defun transformation-parameter (xfrm i)
+  (declare (type fixnum i))
+  (ecase i
+    (0 (/ (the double-float (y-shift xfrm)) 100d0))
+    (1 (/ (the double-float (x-shift xfrm)) 100d0))
+    (2 (theta xfrm))
+    (3 (y-scale xfrm))
+    (4 (x-scale xfrm))
+    (5 (y-shear xfrm))
+    (6 (x-shear xfrm))))
+
+(declaim (ftype (function (double-float clem:affine-transformation fixnum)
+                          clem:affine-transformation) (setf transforamtion-parameter)))
+(declaim (inline (setf transformation-parameter)))
+(defun (setf transformation-parameter) (v xfrm i)
+  (declare (type double-float v)
+           (type fixnum i))
+  (ecase i
+    (0 (setf (y-shift xfrm) (* v 100d0)))
+    (1 (setf (x-shift xfrm) (* v 100d0)))
+    (2 (setf (theta xfrm) v))
+    (3 (setf (y-scale xfrm) v))
+    (4 (setf (x-scale xfrm) v))
+    (5 (setf (y-shear xfrm) v))
+    (6 (setf (x-shear xfrm) v))))
+
+
+(defun decf-transformation-parameters (src delta)
+  (with-slots (y-shift x-shift theta y-scale x-scale y-shear x-shear) src
+    (decf y-shift (y-shift delta))
+    (decf x-shift (x-shift delta))
+    (decf theta (theta delta))
+    (decf y-scale (y-scale delta))
+    (decf x-scale (x-scale delta))
+    (decf y-shear (y-shear delta))
+    (decf x-shear (x-shear delta))
+    src))
+
+(defun copy-affine-transformation-7-parameters (src)
+  (let ((dest (make-instance 'affine-transformation-7-parameters)))
+    (setf (y-shift dest) (y-shift src)
+          (x-shift dest) (x-shift src)
+          (theta dest) (theta src)
+          (y-scale dest) (y-scale src)
+          (x-scale dest) (x-scale src)
+          (y-shear dest) (y-shear src)
+          (x-shear dest) (x-shear src))
+    dest))
+
+(defun move-affine-transformation-7-parameters (src dest)
+  (setf (y-shift dest) (y-shift src)
+        (x-shift dest) (x-shift src)
+        (theta dest) (theta src)
+        (y-scale dest) (y-scale src)
+        (x-scale dest) (x-scale src)
+        (y-shear dest) (y-shear src)
+        (x-shear dest) (x-shear src))
+  dest)
+
+(defun get-affine-transformation-7-parameters-properties (transvec)
+  (with-slots (y-shift x-shift theta y-scale x-scale y-shear x-shear)
+      transvec
+    (list :y-shift y-shift
+          :x-shift x-shift
+          :theta theta
+          :y-scale y-scale
+          :x-scale x-scale
+          :y-shear y-shear
+          :x-shear x-shear)))
