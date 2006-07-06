@@ -36,122 +36,122 @@
      " offers a rich, dynamic environment for programming and
 data analysis. Common Lisp contains a powerful object system, the
 Common Lisp Object System (CLOS)"
-     (:BIBCITE "keene89object")
+     (:bibcite "keene89object")
      ", and most modern implementations support a protocol for
 the generation not just of new classes and objects, but to extend
 the object system itself using the Meta-object Protocol"
-     (:BIBCITE "kiczales91art")
+     (:bibcite "kiczales91art")
      ".")
 
- (:P "CLEM uses CLOS and the Meta-object protocol (MOP) to define a"
-     (:CODE "standard-matrix-class")
+ (:p "CLEM uses CLOS and the Meta-object protocol (MOP) to define a"
+     (:code "standard-matrix-class")
      " that serves as the metaclass for classes that represent
 matrices with elements of specific types. The typed matrices can
 represent matrices containing values of specific types in the
 Common Lisp type system, starting with type "
-     (:CODE "t")
+     (:code "t")
      " as the most general data type, and becoming more restrictive by using more specific types such"
-     (:CODE "double-float")
+     (:code "double-float")
      ", "
-     (:CODE "fixnum")
+     (:code "fixnum")
      ", or "
-     (:CODE "(unsigned-byte 8)")
+     (:code "(unsigned-byte 8)")
      ". By using the most specific type that can represent the values of a given matrix, the lisp system can optimize for better performance and memory usage requirements. For example, a"
-     (:CODE "bit-matrix")
+     (:code "bit-matrix")
      " will use 1 bit per matrix element, rather than 32-bits on 32-bit systems for a "
-     (:CODE "t-matrix")
+     (:code "t-matrix")
      ".")
 
- (:H1 "Defining CLEM Classes and Making CLEM Instances")
+ (:h1 "Defining CLEM Classes and Making CLEM Instances")
 
- (:H2 "Creating CLEM Instances with make-instance")
+ (:h2 "Creating CLEM Instances with make-instance")
 
- (:P "The following code creates a 16-row by 16-column matrix of type"
-     (:CODE "double-float-matrix")
+ (:p "The following code creates a 16-row by 16-column matrix of type"
+     (:code "double-float-matrix")
      " and assigns it to the dynamic variable"
-     (:CODE "*m1*")
+     (:code "*m1*")
      ".")
- (:LISP 
+ (:lisp 
   "(defparameter *m1*
  (make-instance 'clem:double-float-matrix :rows 16 :cols 16))"
   "*m1*")
 
- (:P "The default is to only show the first 7 and the last rows
+ (:p "The default is to only show the first 7 and the last rows
  and columns of each matrix. The number of rows and columns can
  be changed by setting the "
-     (:CODE "*matrix-print-row-limit*")
+     (:code "*matrix-print-row-limit*")
      " and"
-     (:CODE "*matrix-print-col-limit*")
+     (:code "*matrix-print-col-limit*")
      " variables.")
 
- (:H2 "standard-matrix-class")
- (:H2 "CLEM Matrix Types")
+ (:h2 "standard-matrix-class")
+ (:h2 "CLEM Matrix Types")
 
- (:H3 "Number matrices")
+ (:h3 "Number matrices")
 
- (:P "The most general class of numerical matrix is the number matrix.")
+ (:p "The most general class of numerical matrix is the number matrix.")
 
- (:H3 "Integer Matrices")
+ (:h3 "Integer Matrices")
 
- (:H3 "Floating-point Matrices")
+ (:h3 "Floating-point Matrices")
 
- (:H3 "Complex-value Matrices")
+ (:h3 "Complex-value Matrices")
 
- (:H1 "Working with CLEM Matrices")
+ (:h1 "Working with CLEM Matrices")
 
- (:H2 "Matrix Dimensions and Values")
+ (:h2 "Matrix Dimensions and Values")
 
- (:H2 "Typed matrix operations")
+ (:h2 "Typed matrix operations")
 
- (:H2 "Matrix Copying")
+ (:h2 "Matrix Copying")
 
- (:H2 "matrix-move")
+ (:h2 "matrix-move")
 
- (:H1 "Matrix Arithmetic")
+ (:h1 "Matrix Arithmetic")
 
- (:H2 "Matrix Addition and Subtraction")
+ (:h2 "Matrix Addition and Subtraction")
 
- (:H2 "Matrix Multiplication")
+ (:h2 "Matrix Multiplication")
 
- (:H2 "Hadamard Product")
+ (:h2 "Hadamard Product")
 
- (:H2 "Scalar Arithmetic")
+ (:h2 "Scalar Arithmetic")
 
- (:H2 "Other Mathematical Functions")
+ (:h2 "Other Mathematical Functions")
 
- (:P "Discuss mat-log, mat-abs, min, and max.")
+ (:p "Discuss mat-log, mat-abs, min, and max.")
 
- (:H1 "Matrix Operations")
+ (:h1 "Matrix Operations")
 
- (:H2 "Matrix Inversion")
+ (:h2 "Matrix Inversion")
 
- (:H2 "Matrix Normalization")
+ (:h2 "Matrix Normalization")
 
- (:H2 "Discrete Convolution")
+ (:h2 "Discrete Convolution")
 
- (:H3 "Derivatives")
+ (:h3 "Derivatives")
 
- (:H3 "Gradient Magnitude")
+ (:h3 "Gradient Magnitude")
 
- (:H3 "Gaussian Blur")
+ (:h3 "Gaussian Blur")
 
- (:H2 "Affine Transformations")
+ (:h2 "Affine Transformations")
 
- (:H3 "Interpolation")
+ (:h3 "Interpolation")
 
- (:H2 "Morphological Operations")
+ (:h2 "Morphological Operations")
 
- (:H3 "Dilation and Erosion")
+ (:h3 "Dilation and Erosion")
 
- (:H3 "Variance")
+ (:h3 "Variance")
 
- (:H3 "Thresholding")
+ (:h3 "Thresholding")
 
- (:H1 "CLEM Implementation Details")
+ (:h1 "CLEM Implementation Details")
 
- (:H2 "Type-specific matrix functions")
+ (:h2 "Type-specific matrix functions")
 
- (:P "The general strategy has been to 1) make things work and
+ (:p "The general strategy has been to 1) make things work and
  then make them work quickly.  To this end, I have been writing
  functions for matrix operations in a general manner first and
  then recoding type-specific versions to make certain operations
@@ -159,7 +159,7 @@ Common Lisp type system, starting with type "
  type-specific functions and methods for matrix operations that
  go much faster than the general versions.")
 
- (:P "The convention is that a generic function such as sum-range
+ (:p "The convention is that a generic function such as sum-range
  will have a generic version that works with all matrices and
  type specific versions thaqt work with specific matrices. g In
  order to support these functions there may be internal methods,
@@ -172,6 +172,6 @@ Common Lisp type system, starting with type "
  widely enforced and certainly untested. Hopefully this situation
  will improve.")
 
- (:H2 "Hacking the SBCL compiler to improve performance")
+ (:h2 "Hacking the SBCL compiler to improve performance")
 
- (:BIBLIOGRAPHY))
+ (:bibliography))
