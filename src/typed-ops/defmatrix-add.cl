@@ -74,6 +74,7 @@
   
   (frob ub8-matrix ub8-matrix ub8-matrix)
   (frob ub16-matrix ub16-matrix ub16-matrix)
+  (frob ub32-matrix ub8-matrix ub32-matrix)
   (frob ub32-matrix ub32-matrix ub32-matrix)
   
   (frob ub8-matrix bit-matrix ub8-matrix)
