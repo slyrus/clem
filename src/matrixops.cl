@@ -362,3 +362,45 @@
           (setf (mref comp i j) (- maxval (mref u i j)))))
       comp)))
   
+(defun standard-deviation (&rest matrices)
+  (flet ((square (q)
+           (* q q)))
+    (when matrices
+      (let ((x (make-instance 'double-float-matrix
+                              :rows (rows (car matrices))
+                              :cols (cols (car matrices))))
+            (sd (make-instance 'double-float-matrix
+                               :rows (rows (car matrices))
+                               :cols (cols (car matrices))))
+            (n (length matrices)))
+        (dotimes (i (rows sd))
+          (dotimes (j (cols sd))
+            (loop for m in matrices
+               do
+               (incf (mref x i j) (mref m i j)))))
+        (mat-scale! x (/ n))
+        (dotimes (i (rows sd))
+          (dotimes (j (cols sd))
+            (loop for m in matrices
+               do
+                 (incf (mref sd i j) (square (- (mref m i j) (mref x i j)))))))
+        (mat-scale! sd (/ (1- n)))
+        (mat-sqrt sd)))))
+
+
+(defun matrix-means (&rest matrices)
+  (cond ((null matrices) nil)
+        ((= (length matrices) 1) (car matrices))
+        (t
+         (when matrices
+           (let ((x (make-instance 'double-float-matrix
+                                   :rows (rows (car matrices))
+                                   :cols (cols (car matrices))))
+                 (n (length matrices)))
+             (dotimes (i (rows x))
+               (dotimes (j (cols x))
+                 (loop for m in matrices
+                    do
+                    (incf (mref x i j) (mref m i j)))))
+             (mat-scale! x (/ n))
+             x)))))
