@@ -237,5 +237,8 @@
 
    ;; matrix looping operator
    #:mloop
+
+   #:matrix-means
+   #:matrix-medians
    ))
 

@@ -36,11 +36,11 @@
      " offers a rich, dynamic environment for programming and
 data analysis. Common Lisp contains a powerful object system, the
 Common Lisp Object System (CLOS)"
-     (:bibcite "keene89object")
+     (:bibcite "keene1989object")
      ", and most modern implementations support a protocol for
 the generation not just of new classes and objects, but to extend
 the object system itself using the Meta-object Protocol"
-     (:bibcite "kiczales91art")
+     (:bibcite "kiczales1991art")
      ".")
 
  (:p "CLEM uses CLOS and the Meta-object protocol (MOP) to define a"

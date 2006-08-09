@@ -404,3 +404,21 @@
                     (incf (mref x i j) (mref m i j)))))
              (mat-scale! x (/ n))
              x)))))
+
+(defun matrix-medians (&rest matrices)
+  (cond ((null matrices) nil)
+        ((= (length matrices) 1) (car matrices))
+        (t
+         (when matrices
+           (let ((x (make-instance 'double-float-matrix
+                                   :rows (rows (car matrices))
+                                   :cols (cols (car matrices)))))
+             (dotimes (i (rows x))
+               (dotimes (j (cols x))
+                 (loop for m in matrices
+                    with l
+                    do (push (mref m i j) l)
+                    finally (setf (mref x i j)
+                                  (coerce (ch-util::median l)
+                                          'double-float)))))
+             x)))))
