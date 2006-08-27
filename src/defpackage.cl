@@ -21,6 +21,7 @@
    #:set-val
    #:mref
    
+   #:mat-equal
    #:print-range
    #:print-matrix
    #:transpose

@@ -64,6 +64,7 @@
        (:clem-cl-source-file "defmatrix-minmax")
        (:clem-cl-source-file "defmatrix-move")
        (:clem-cl-source-file "defmatrix-add")
+       (:clem-cl-source-file "defmatrix-equal")
        (:clem-cl-source-file "defmatrix-subtr")
        (:clem-cl-source-file "defmatrix-sum")
        (:clem-cl-source-file "defmatrix-scale")

@@ -405,7 +405,7 @@
              (mat-scale! x (/ n))
              x)))))
 
-(defun matrix-medians (&rest matrices)
+(defun matrix-medians (matrices)
   (cond ((null matrices) nil)
         ((= (length matrices) 1) (car matrices))
         (t
@@ -422,3 +422,13 @@
                                   (coerce (ch-util::median l)
                                           'double-float)))))
              x)))))
+
+(defgeneric matrix-l2-distance (b0 b1))
+
+(defmethod matrix-l2-distance ((b0 matrix) (b1 matrix))
+  (let ((n (* (clem:rows b0) (clem:cols b0))))
+    (coerce (/ (clem:sum
+                (clem:mat-square
+                 (clem::copy-to-double-float-matrix (clem:m- b0 b1))))
+               n)
+            'double-float)))

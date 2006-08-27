@@ -171,14 +171,17 @@
                                   (t
                                    (setf (aref b i j) background)))))
                             (setf (aref b i j) background)))
-                       (t
+                       ((nil :nearest-neighbor)
                         (let ((oldx (the fixnum (truncate (+ (aref d 0 0) ,half))))
                               (oldy (the fixnum (truncate (+ (aref d 1 0) ,half)))))
                           (declare (type fixnum oldx oldy))
                           (if (and (< -1 oldx mr)
                                    (< -1 oldy mc))
                               (setf (aref b i j) (aref a oldx oldy))
-                              (setf (aref b i j) background))))))))))
+                              (setf (aref b i j) background))))
+                       (t (error 'matrix-argument-error
+                                 :format-control "Unknown interpolation type: ~A"
+                                 :format-arguments (list  interpolation)))))))))
 	   n)))))
 
 (macrolet ((frob (type-1 type-2 type-3)
