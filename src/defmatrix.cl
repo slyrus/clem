@@ -37,6 +37,16 @@
 	 (declare (dynamic-extent ,j) (type fixnum ,j))
 	 ,@body))))
 
+(defmacro with-typed-map-range (m element-type startr endr startc endc (a i j) &body body)
+  `(with-typed-matrix-vals (,m ,element-type ,a)
+     (do ((,i ,startr (1+ ,i)))
+	 ((> ,i ,endr))
+       (declare (dynamic-extent ,i) (type fixnum ,i))
+       (do ((,j ,startc (1+ ,j)))
+	   ((> ,j ,endc))
+	 (declare (dynamic-extent ,j) (type fixnum ,j))
+	 ,@body))))
+
 (defmacro with-matrix-range-do (matrix-class m n p
                                 startr endr startc endc (a b c i j) &body body)
   (let ((mat-class (if (typep matrix-class 'class)

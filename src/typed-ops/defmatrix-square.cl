@@ -10,9 +10,11 @@
   (let ((element-type (element-type (find-class `,matrix-type))))
     `(progn
       (defmethod mat-square! ((u ,matrix-type))
+        (declare (optimize (speed 3)
+                           (safety 0)))
         (destructuring-bind (rows cols) (mapcar #'1- (dim u))
           (declare (type fixnum rows cols))
-          (with-map-range u ,element-type 0 rows 0 cols (a i j)
+          (with-typed-map-range u ,element-type 0 rows 0 cols (a i j)
             (let ((val (aref a i j)))
               (declare (type ,element-type val))
               (setf (aref a i j) (* val val)))))

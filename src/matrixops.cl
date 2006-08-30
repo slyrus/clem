@@ -423,12 +423,26 @@
                                           'double-float)))))
              x)))))
 
-(defgeneric matrix-l2-distance (b0 b1))
+(defgeneric matrix-l2-distance (b0 b1 &key dest))
 
-(defmethod matrix-l2-distance ((b0 matrix) (b1 matrix))
-  (let ((n (* (clem:rows b0) (clem:cols b0))))
-    (coerce (/ (clem:sum
-                (clem:mat-square
-                 (clem::copy-to-double-float-matrix (clem:m- b0 b1))))
-               n)
-            'double-float)))
+;; we could probably make this faster by passing in a double-float-matrix that we
+;; could use as a temporary destination matrix
+(defmethod matrix-l2-distance ((b0 matrix) (b1 matrix) &key dest)
+  (declare (optimize (speed 3)
+                     (safety 0)))
+  (let ((n (the fixnum (* (the fixnum (clem:rows b0)) (the fixnum (clem:cols b0))))))
+    (declare (type fixnum n))
+    (/
+     ;; if we have a destination matrix, use it, otherwise we need to allocate one
+     (the double-float
+       (if dest
+           (clem:sum
+            (clem:mat-square!
+             (progn
+               (clem::matrix-move b0 dest)
+               (clem:mat-subtr! dest b1)
+               dest)))
+           (clem:sum
+            (clem:mat-square
+             (clem::copy-to-double-float-matrix (clem:m- b0 b1))))))
+     n)))

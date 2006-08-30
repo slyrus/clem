@@ -15,8 +15,10 @@
        (defmethod matrix-move-range ((m ,type-1) (n ,type-2)
                                      startr1 endr1 startc1 endc1
                                      startr2 endr2 startc2 endc2)
-	 (with-matrix-vals (m ,element-type-1 a)
-	   (with-matrix-vals (n ,element-type-2 b)
+         (declare (optimize (speed 3)
+                            (safety 0)))
+	 (with-typed-matrix-vals (m ,element-type-1 a)
+	   (with-typed-matrix-vals (n ,element-type-2 b)
 	     (do ((i startr1 (1+ i))
                   (k startr2 (1+ k)))
 		 ((> i endr1)

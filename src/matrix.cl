@@ -910,6 +910,13 @@ random numbers of the appropriate type between 0 and <limit>."))
 		     (incf k)))))))))
     m))
 
+(defgeneric matrix->list (m))
+(defmethod  matrix->list ((m matrix))
+  (destructuring-bind (mr mc) (dim m)
+    (loop for i below mr
+       append (loop for j below mc
+                   collect (mref m i j)))))
+
 (defgeneric mat-trim (m k))
 (defmethod mat-trim ((m matrix) k)
   (destructuring-bind (mr mc) (dim m)
