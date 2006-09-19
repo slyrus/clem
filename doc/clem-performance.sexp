@@ -63,6 +63,45 @@
  
  (:h3 #q{Boxed and Unboxed Representation of Lisp Data Objects})
 
+ (:p #q{Boxed representations of lisp values are generally stored
+ as tagged data objects where the tags serve to identify the type
+ of the particular object. Unboxed representations, on the other
+ hand, are merely represented by the data values themselves,
+ without any identifying metadata being stored with the
+ value. Obviously, the language environment needs to know, or to
+ be able to determine, the type of a particular data value. For
+ boxed values, the language environment can rely on the fact that
+ the type information is stored with the data value directly. For
+ unboxed values, the language system must keep track of the value
+ stored in a particular directly. The main advantage of using
+ unboxed datatypes is that the language environment, or compiled
+ code it produces, does not have to bother extracting the type
+ information from the boxed value and extracting the data as
+ appropriate. However, this has the disadvantage that the type of
+ data is then fixed to be that represented by the unboxed
+ type. Often, hybrid representations are used in structures such
+ as an array, where the array itself will be a dynamically typed,
+ boxed object while the values of the array will be unboxed
+ values placed in an a particular region of memory. By using
+ unboxed values for the elements of the array, the code can
+ directly access these values without the overhead of "unboxing"
+ the data. Boxed memory access often allocates memory,
+ or "conses" in lisp parlance, as a storage area is needed to
+ hold the unboxed value. In summary, sing boxed datatypes introduces
+ (at least) two important areas where work has to be done by the
+ language environment to access the data, the allocation of temporary
+ to store the resulting values that will be unboxed from the data, and
+ additional work on the part of the code to unbox the data in the
+ first place.})
+
+ (:p #q{For these reasons, it is higly desirable for CLEM to use
+ unboxed data where possibly. In the inner loop of a matrix
+ operation, for instance, accessing a boxed data type can
+ introduce substantial performance penalties. Therefore, CLEM has gone
+ to great lengths to provide matrix representations that yield unboxed
+ values and operations that can operate on these values with
+ allocation of a minimum amount of memory.})
+ 
  (:h3 #q{Avoiding Unneccessary Memory Allocation}) 
  
  (:h1 #q{CLEM Design Goals})
@@ -119,6 +158,12 @@
      arrays puts both the burden of and the flexibility of
      computing array indices on the matrix package.})
 
+ (:h3 #q{Extensible arrays?})
+
+ (#p #q{Christophe Rhodes has recently introduced a protocol for
+ extensible sequences to SBCL. Might a protocol for a similar
+ extensible array be useful here?})
+ 
  (:h3 #q{What About Lists?})
 
  (:p #q{Lists are convenient for representing matrices in that

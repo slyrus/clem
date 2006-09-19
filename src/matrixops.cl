@@ -259,7 +259,7 @@
 			((> ucol uendc))
 		      (setf acc (funcall f acc (val u urow ucol) (val v vrow vcol)))))
 ;		      (setf acc (max acc (* (val u urow ucol) (val v vrow vcol))))))
-		  (set-val z i j acc)))))
+		  (set-val-fit z i j acc)))))
 	  z)))))
 
 (defun separable-morphological-op (m h f)
