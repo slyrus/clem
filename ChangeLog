@@ -1,3 +1,116 @@
+2006-12-11  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* bootstrap.cl, src/defmatrix.cl, src/defpackage.cl, src/transform.cl, version.lisp-expr:
+	clem 0.2.6
+	 * spacing fixes
+	 * fix maxvalue in defmatrix.cl
+	 * add clem-user package
+	 * types for affine-transformation-7-parameters need to be unquoted
+
+2006-09-19  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/typed-ops/defmatrix-binary-op.cl, src/typed-ops/defmatrix-scale.cl, doc/clem-performance.sexp, src/matrixops.cl, version.lisp-expr:
+	clem 0.2.5
+	 * added some comments about boxed and unboxed representation of lisp
+	   data objects
+	 * Added a question about extensible arrays
+	 * set-val - set-val-fit in dilate (or was it erode?)
+	 * added mbitnor
+	 * added some more type inference in defmatrix-scale
+
+2006-08-30  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/defmatrix.cl, src/matrix.cl, src/matrixops.cl, src/typed-ops/defmatrix-move.cl, src/typed-ops/defmatrix-square.cl, version.lisp-expr:
+	clem 0.2.4
+	  * added with-typed-map-range macro
+	  * added matrix->list
+	  * added destination optional argument for matrix-l2-distance
+	   (performance optimization)
+	 * trying to make matrix-move and mat-square faster
+
+2006-08-27  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* clem.asd, src/defpackage.cl, src/matrixops.cl, src/transform.cl, src/typed-ops/defmatrix-equal.cl, src/typed-ops/defmatrix-transform.cl, version.lisp-expr:
+	clem 0.2.3
+	* add defmatrix-equal file with mat-equal operation
+	* matrix-medians takes a list of matrices, not &rest matrices
+	* added matrix-l2-distance
+	* added docstring about interpolation types
+
+2006-08-09  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* doc/clem.sexp, make-dist.sh, src/defpackage.cl, src/matrixops.cl, test/scratch.cl, version.lisp-expr:
+	clem 0.2.2
+	  * use asdf-package:package-system instead of ch-util:make-dist in make-dist.sh
+	  * fix references
+	  * add and export matrix-means and matrix-medians
+	  * add enable-bracket-reader-macro to scratch file
+
+2006-07-29  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/metaclasses.cl, version.lisp-expr: clem 0.1.10.7-20060729
+	  * added finalize-inheritance call in initialize-instance
+	    and reinitialize-instance methods for standard-matrix-class
+	    instances.
+
+	* src/matrixops.cl, version.lisp-expr: clem 0.1.10.6-20060729
+	  * added standard-deviation and matrix-means
+
+2006-07-17  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/typed-ops/defmatrix-add.cl, version.lisp-expr:
+	clem 0.1.10.5-20060716
+	  * added an add function for ub32 and ub8
+
+2006-07-06  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* doc/clem.sexp: lowercase tags
+
+	* src/matrix.cl, version.lisp-expr: clem 0.1.10.4-20060705
+	  * added mat-scalar-op methods that take numbers
+	  * added mat-subtr ops where one arg is a number, so m- works with
+	    numbers now
+
+2006-06-29  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/defpackage.cl, src/transform.cl, version.lisp-expr:
+	CLEM 0.1.10.3-20060629
+	   * added affine-transformation-7-parameters and associated functions
+
+2006-06-26  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* NEWS, doc/clem-performance.sexp, doc/clem.gmarkup, src/defmatrix.cl, src/matrix.cl, src/matrixops.cl, src/transform.cl, src/typed-ops/defmatrix-scale.cl, src/typed-ops/defmatrix-subtr.cl, src/typed-ops/defmatrix-transform.cl, test/bench-matrix-2.cl, test/bench-matrix.cl, version.lisp-expr:
+	* smarkup changes
+	* normalize now takes a copy parameter
+	* added graddir for computing the gradient direction
+	* added laplacian-2 with a different matrix
+	* removed the 7-parameter :initargs from affine-transformation
+	* stopped trying to keep a 7-parameter representation in six with the matrix
+	  representation of an affine transformation
+	* affine transforamtion scaling is no longer exponential
+	* added mat-mult/scale/add/subtr/hprod methods for affine-transfromations
+	  (but perhaps these can go away now?)
+	* added mat-scale-fit and friends
+	* added some more types for defmatrix-subtr
+	* comment indentation
+	* benchmarks
+
+2006-06-09  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* clem-doc.asd: * gigamonkeys markup -> smarkup
+
+	* clem.asd: * Added ChangeLog to the asdf
+
+	* NEWS: * update NEWS
+
+	* ChangeLog: * update ChangeLog
+
+	* doc/clem.sexp: * now works with smarkup instead of gigamonkeys markup
+
+	* src/matrixops.cl: * comment out dilate-orig and erode-orig
+	* added defgenerics for threshold binary-threshold and
+	  complement-matrix
+
 2006-06-04  Cyrus Harmon  <cyrus@bobobeach.com>
 
 	* TODO, clem-doc.asd, doc/clem-performance.sexp, doc/clem.sexp, doc/simple.css, make-tinaa-docs.lisp, src/defpackage.cl, src/early-matrix.cl, src/matrix.cl, version.lisp-expr:
