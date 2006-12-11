@@ -243,3 +243,6 @@
    #:matrix-medians
    ))
 
+(defpackage :clem-user
+  (:use #:cl #:clem))
+

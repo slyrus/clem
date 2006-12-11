@@ -303,13 +303,13 @@
 
 
 (defclass affine-transformation-7-parameters ()
-  ((y-shift :accessor y-shift :initarg :y-shift :initform 0d0 :type 'double-float)
-   (x-shift :accessor x-shift :initarg :x-shift :initform 0d0 :type 'double-float)
-   (theta :accessor theta :initarg :theta :initform 0d0 :type 'double-float)
-   (y-scale :accessor y-scale :initarg :y-scale :initform 0d0 :type 'double-float)
-   (x-scale :accessor x-scale :initarg :x-scale :initform 0d0 :type 'double-float)
-   (y-shear :accessor y-shear :initarg :y-shear :initform 0d0 :type 'double-float)
-   (x-shear :accessor x-shear :initarg :x-shear :initform 0d0 :type 'double-float))
+  ((y-shift :accessor y-shift :initarg :y-shift :initform 0d0 :type double-float)
+   (x-shift :accessor x-shift :initarg :x-shift :initform 0d0 :type double-float)
+   (theta :accessor theta :initarg :theta :initform 0d0 :type double-float)
+   (y-scale :accessor y-scale :initarg :y-scale :initform 0d0 :type double-float)
+   (x-scale :accessor x-scale :initarg :x-scale :initform 0d0 :type double-float)
+   (y-shear :accessor y-shear :initarg :y-shear :initform 0d0 :type double-float)
+   (x-shear :accessor x-shear :initarg :x-shear :initform 0d0 :type double-float))
   (:documentation "a set of parameters for use in
   (over-) parameterizing an affine transformation by use of seven
   parameters, x-shift, y-shift, theta, x-scale, y-scale, x-shear,

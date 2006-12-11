@@ -133,18 +133,22 @@
      (defmethod
          ,(ch-util:make-intern (concatenate 'string "random-" (symbol-name type)))
          (rows cols &key (max nil))
-       (let ((a (make-instance ',type :rows rows :cols cols)))
-	 (map-set-val-fit a #'(lambda (x) (declare (ignore x))
-				      (random
-				       (if max (coerce max ',element-type)
-					   (if ,maxval ,maxval 255)))))
+       (let ((a (make-instance ',type :rows rows :cols cols))
+             (maxvalue (if max 
+                           max
+                           ,(if maxval maxval 255))))
+         (map-set-val-fit a #'(lambda (x) (declare (ignore x))
+                                      ,(if (subtypep element-type 'integer)                                             
+                                           `(coerce (random (1+ maxvalue)) ',element-type)
+                                           `(random (coerce maxvalue ',element-type))))
+                          :truncate nil)
 	 a))
      
      (defmethod normalize ((u ,type) &key normin normax copy)
        (let ((min (min-val u))
 	     (max (max-val u))
-	     (nmin (if normin normin (if ,minval ,minval 0)))
-	     (nmax (if normax normax (if ,maxval ,maxval 255)))
+	     (nmin (if normin normin ,(if minval minval 0)))
+	     (nmax (if normax normax ,(if maxval maxval 255)))
              (u (if copy (mat-copy u) u)))
 	 (let ((slope (if (= max min)
                           0d0
