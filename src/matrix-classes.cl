@@ -35,11 +35,11 @@
   :element-type number
   :accumulator-type number)
 
-(defmatrixclass real-matrix (t-matrix)
+(defmatrixclass real-matrix (number-matrix)
   :element-type real
   :accumulator-type real)
 
-(defmatrixclass complex-matrix (t-matrix)
+(defmatrixclass complex-matrix (number-matrix)
   :element-type complex
   :accumulator-type complex)
 
