@@ -36,26 +36,22 @@
    (:module
     :src
     :components
-    ((:clem-cl-source-file "defpackage")
-     (:clem-cl-source-file "metaclasses" :depends-on ("defpackage"))
-     (:clem-cl-source-file "early-matrix" :depends-on ("defpackage" "metaclasses"))
-     (:clem-cl-source-file "matrix-classes" :depends-on ("defpackage" "metaclasses" "early-matrix"))
-     (:clem-cl-source-file "matrix" :depends-on ("matrix-classes"))
-     (:clem-cl-source-file "print" :depends-on ("matrix"))
-     (:clem-cl-source-file "typed-matrix" :depends-on ("defpackage" "matrix"))
-     (:clem-cl-source-file "generics" :depends-on ("defpackage" "matrix"))
-     (:clem-cl-source-file "mloop" :depends-on ("defpackage" "matrix"))
-     (:clem-cl-source-file "defmatrix" :depends-on ("typed-matrix"))
-     (:clem-cl-source-file "defmatrix-types" :depends-on ("defmatrix"))
-     (:clem-cl-source-file "scalar" :depends-on ("matrix"))
-     (:clem-cl-source-file "scalar-types" :depends-on ("defmatrix" "scalar"))
-     (:clem-cl-source-file "typed-matrix-utils" :depends-on ("typed-matrix" "generics"))
-     (:clem-cl-source-file "base-vector" :depends-on ("matrix"))
-     (:clem-cl-source-file "row-vector" :depends-on ("matrix" "base-vector"))
-     (:clem-cl-source-file "col-vector" :depends-on ("matrix" "base-vector"))
-     (:clem-cl-source-file "matrixops" :depends-on ("typed-matrix-utils"))
-     (:clem-cl-source-file "interpolation" :depends-on ("matrix" "defmatrix-types"))
-     (:clem-cl-source-file "transform" :depends-on ("matrix" "defmatrix-types" "interpolation"))
+    ((:cl-source-file "defpackage")
+     (:cl-source-file "metaclasses" :depends-on ("defpackage"))
+     (:cl-source-file "early-matrix" :depends-on ("defpackage" "metaclasses"))
+     (:cl-source-file "matrix-classes" :depends-on ("defpackage" "metaclasses" "early-matrix"))
+     (:cl-source-file "matrix" :depends-on ("matrix-classes"))
+     (:cl-source-file "print" :depends-on ("matrix"))
+     (:cl-source-file "typed-matrix" :depends-on ("defpackage" "matrix"))
+     (:cl-source-file "mloop" :depends-on ("defpackage" "matrix"))
+     (:cl-source-file "defmatrix" :depends-on ("typed-matrix"))
+     (:cl-source-file "defmatrix-types" :depends-on ("defmatrix"))
+     (:cl-source-file "scalar" :depends-on ("matrix"))
+     (:cl-source-file "typed-matrix-utils" :depends-on ("typed-matrix"))
+     (:cl-source-file "vector" :depends-on ("matrix"))
+     (:cl-source-file "matrixops" :depends-on ("typed-matrix-utils"))
+     (:cl-source-file "interpolation" :depends-on ("matrix" "defmatrix-types"))
+     (:cl-source-file "transform" :depends-on ("matrix" "defmatrix-types" "interpolation"))
      (:module
       :typed-ops
       :components
@@ -79,9 +75,9 @@
        (:clem-cl-source-file "defmatrix-subset-matrix")
        (:clem-cl-source-file "defmatrix-convolve" :depends-on ("defmatrix-sum")))
       :depends-on ("defmatrix-types"
-                   "generics"
+                   "matrix"
                    "mloop"
-                   "scalar-types"
+                   "scalar"
                    "interpolation"
                    "matrixops"
                    "typed-matrix-utils"))))
