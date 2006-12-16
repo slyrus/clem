@@ -31,8 +31,74 @@
 
 (in-package :clem)
 
-(defun list-if (x)
-  (if x (list x) x))
+;;; matrix protocol
+
+(defgeneric dim (m)
+  (:documentation "Returns a two-element list containg the number of
+  rows and columns in the matrix."))
+
+(defgeneric rows (m)
+  (:documentation "Returns the number of rows in the matrix."))
+
+(defgeneric cols (m)
+  (:documentation "Returns the number of columns in the matrix."))
+
+(defgeneric val (m i j)
+  (:documentation "Returns the value of the element in the ith row of
+  the jth column of the matrix m."))
+
+;;; This is totally bogys. Why do we have both mref and val? I'm
+;;; assuming that val should go away!
+(defgeneric mref (m i j)
+  (:documentation "Returns the value of the element in the ith row of
+  the jth column of the matrix m."))
+
+(defgeneric (setf mref) (v m row col)
+  (:documentation "Set the value of the specified element at row row
+  and col col of matrix m to be v."))
+
+(defgeneric move-element (m i1 j1 n i2 j2)
+  (:documentation "Copy the contents of the element at row i1, column
+  j1, in matrix m to the element at row i2, column j2, in matrix n."))
+
+(defgeneric set-val (m i j v &key coerce)
+  (:documentation "Sets the value of the element at row i, column j of
+  matrix m to v."))
+
+(defgeneric set-val (m i j v &key coerce))
+
+;;; arithmetic functions
+
+(defgeneric m+ (&rest matrices)
+  (:documentation "Element-wise addition of matrices. All matrices
+  must be of the same dimensions. Returns a matrix of the same size as
+  each matrix in matrices, whoses elements are the some of the
+  corresponding elements from each matrix in matrices."))
+
+(defgeneric m- (&rest matrices)
+  (:documentation "When passed a single matrix, returns a new
+  matrix of the same dimensions as matrix whose elemnts are the
+  result of perforing a unary minus (or sign inversion) on each
+  element in the matrix. When passed more than one matrix,
+  performs element-wise subtraction of each matrix after the
+  first from the first matrix and returns a new matrix containing
+  these values."))
+
+(defgeneric m* (&rest matrices)
+  (:documentation "General purpose matrix multiplication
+  operator. If one argument is supplied, returns that matrix. If
+  two arguments are supplied, if both are matrices, performs a
+  matrix multiplication equivalent to multiplying the first
+  matrix by the second matrix. if one argument is a matrix and
+  the other a number, m* scales the matrix by the numeric
+  argument. If more than two arguments are supplied, the first
+  two arguments are treated as in the two argument case and the
+  results are then multiplied by the remaining arguments such
+  that (m* m1 m2 m3) == (m* (m* m1 m2) m3)."))
+
+(defgeneric m.* (&rest matrices)
+  (:documentation "Hadamard multiplication operator. Performs an
+  element-wise multiplication of the elements in each matrix."))
 
 ;;; Miscellaneous class utilities
     
@@ -48,7 +114,7 @@
     (let ((mpl (compute-class-precedence-list c))
 	  (mc (find-class 'matrix)))
       (mapcan #'(lambda (x)
-		  (if (subclassp x mc) (list-if x)))
+		  (if (subclassp x mc) (when x (list x))))
               mpl)
       )))
 
@@ -57,6 +123,8 @@
     (car (apply #'ch-util:closest-common-ancestor
                 (mapcar #'(lambda (x) (matrix-precedence-list (class-of x)))
                         (cons m1 mr))))))
+
+;;; gory implementation details follow
 
 (defgeneric fit (m val))
 (defmethod fit ((m matrix) val)
@@ -68,25 +136,15 @@
   (declare (ignore m))
   val)
 
-(defgeneric dim (m))
 (defmethod dim ((m matrix)) (array-dimensions (matrix-vals m)))
 
-(defgeneric dim1 (m index))
-(defmethod dim1 ((m matrix) (index fixnum)) (array-dimension (matrix-vals m) index))
-
-(defgeneric rows (m))
 (defmethod rows ((m matrix)) (the fixnum (array-dimension (matrix-vals m) 0)))
 
-(defgeneric cols (m))
 (defmethod cols ((m matrix)) (the fixnum (array-dimension (matrix-vals m) 1)))
 
-(defgeneric val (m i j))
 (defmethod val ((m matrix) i j) (aref (matrix-vals m) i j))
 
-(defgeneric mref (m i j))
 (defmethod mref ((m matrix) i j) (aref (matrix-vals m) i j))
-
-(defgeneric (setf mref) (v m row col))
 
 ;;; rvref treats the matrix as a row-vector (that is a
 ;;; 1 x n matrix). we should throw an error if this is not the case.
@@ -102,11 +160,10 @@
 (defgeneric cvref (cv i))
 (defmethod cvref ((cv matrix) i) (aref (matrix-vals cv) i 1))
 
-(defgeneric move-element (m i1 j1 n i2 j2))
+
 (defmethod move-element ((m matrix) i1 j1 (n matrix) i2 j2)
   (setf (mref n i2 j2) (mref m i1 j1)))
 
-(defgeneric set-val (m i j v &key coerce))
 (declaim (inline set-val))
 (defmethod set-val ((m matrix) i j v &key (coerce t))
   (setf (aref (matrix-vals m) i j)
@@ -118,39 +175,6 @@
   (setf (mref m i j) (if truncate (truncate v) v)))
 
 
-(defparameter *print-matrix-newlines* t)
-(defparameter *print-matrix-float-format* nil)
-
-(defgeneric print-range (m startr endr startc endc &optional stream))
-(defmethod print-range ((m matrix)
-			(startr fixnum) (endr fixnum)
-			(startc fixnum) (endc fixnum)
-                        &optional (stream t))
-  (let ((val-format-spec (if *print-matrix-float-format*
-                             *print-matrix-float-format*
-                             (val-format (class-of m)))))
-    (format stream "[")
-    (do ((i startr (1+ i)))
-        ((> i endr))
-      (unless (= i startr)
-        (princ "; " stream)
-        (if *print-matrix-newlines*
-            (progn
-              (format stream "~&~1,0T"))))
-      (do ((j startc (1+ j)))
-          ((> j endc))
-        (format stream (if (= j startc)
-                      val-format-spec
-                      (concatenate 'string " " val-format-spec)) (val m i j))))
-    (format stream "]")))
-
-(defgeneric print-matrix (m))
-(defmethod print-matrix ((m matrix))
-  (destructuring-bind (endr endc) (mapcar #'1- (dim m))
-    (print-range m 0 endr 0 endc))
-  m)
-
-(defgeneric transpose (m))
 (defmethod transpose ((m matrix))
   (destructuring-bind (rows cols) (dim m)
     (let ((tr (make-instance (class-of m) :rows cols :cols rows)))
@@ -176,8 +200,6 @@
                  :format-control
                  "Incompatible matrix dimensions in mat-mult (~S x ~S) * (~S x ~S)."
                  :format-arguments (list ar ac br bc))))))
-
-
 
 (declaim (inline inferior))
 (defun inferior (a b)
@@ -266,7 +288,6 @@
             (setf (aref cvals i j)
                   (+ (aref avals i j) (aref bvals i j)))))))))
 
-
 (declaim (inline mat-add!-inline))
 (defun mat-add!-inline (a b)
   (destructuring-bind (m n) (dim a)
@@ -278,8 +299,6 @@
             (declare (type fixnum j))
             (setf (aref avals i j)
                   (+ (aref avals i j) (aref bvals i j))))))))
-
-       
 
 (defgeneric mat-subtr (a b &key matrix-class))
 (defmethod mat-subtr ((a matrix) (b matrix) &key matrix-class)
@@ -926,70 +945,30 @@ random numbers of the appropriate type between 0 and <limit>."))
 ;;;;
 ;;;; convenience arithmetic functions
 
-(defgeneric m+ (&rest matrices))
 (defmethod m+ (&rest matrices)
   (reduce #'mat-add matrices))
 
-(defgeneric m- (&rest matrices))
 (defmethod m- (&rest matrices)
   (if (cdr matrices)
       (reduce #'mat-subtr matrices)
       (mat-scale (car matrices) -1)))
 
-(defgeneric m* (&rest matrices))
 (defmethod m* (&rest matrices)
-  (reduce #'(lambda (x y)
-              (if (typep y 'matrix)
-                  (mat-mult x y)
-                  (mat-scale x y)))
-          matrices))
+  (reduce
+   #'(lambda (x y)
+       (cond ((and (typep y 'matrix)
+                   (typep x 'matrix))
+              (mat-mult x y))
+             ((and (typep x 'matrix)
+                   (numberp y))
+              (mat-scale x y))
+             ((and (numberp x)
+                   (typep y 'matrix))
+              (mat-scale y x))
+             (t (error 'matrix-argument-error
+                       :cause "at least one argument must be a MATRIX."))))
+   matrices))
 
-(defgeneric m.* (&rest matrices))
 (defmethod m.* (&rest matrices)
   (reduce #'mat-hprod matrices))
 
-;;;;
-;;;; print-object and friends
-
-(defparameter *matrix-print* t)
-(defparameter *matrix-print-row-limit* 8)
-(defparameter *matrix-print-col-limit* 8)
-
-(defun print-matrix-line (obj stream val-format-spec i startc endc lastcol)
-  (do ((j startc (1+ j)))
-      ((> j endc))
-    (format stream (if (= j startc)
-                       val-format-spec
-                       (concatenate 'string " " val-format-spec)) (val obj i j)))
-  (cond ((>= lastcol (1- *matrix-print-col-limit*))
-         (if (= lastcol (1- *matrix-print-col-limit*))
-             (format stream (concatenate 'string " " val-format-spec) (val obj i lastcol))
-             (format stream (concatenate 'string " ... " val-format-spec) (val obj i lastcol))))))
-
-(defmethod print-object ((obj matrix) stream)
-  (print-unreadable-object (obj stream :type t :identity (not *matrix-print*))
-    (when *matrix-print*
-      (let ((startr 0) (endr (min (1- (rows obj)) (- *matrix-print-row-limit* 2)))
-            (startc 0) (endc (min (1- (cols obj)) (- *matrix-print-col-limit* 2))))
-        (let ((val-format-spec (if *print-matrix-float-format*
-                                   *print-matrix-float-format*
-                                   (val-format (class-of obj))))
-              (lastrow (1- (rows obj)))
-              (lastcol (1- (cols obj))))
-          (format stream "[")
-          (do ((i startr (1+ i)))
-              ((> i endr))
-            (unless (= i startr)
-              (princ "; " stream)
-              (if *print-matrix-newlines*
-                  (progn
-                    (format stream "~&~1,0T"))))
-            (print-matrix-line obj stream val-format-spec i startc endc lastcol)) 
-          (cond ((>= lastrow (1- *matrix-print-row-limit*))
-                 (if (= lastrow (1- *matrix-print-row-limit*))
-                     (format stream (concatenate 'string ";~&~1,0T"))
-                     (format stream (concatenate 'string ";~& ... ~&~1,0T")))
-                 (print-matrix-line obj stream val-format-spec lastrow startc endc lastcol)))
-          (format stream "]"))))))
-
-            

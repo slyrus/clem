@@ -10,7 +10,12 @@
 
 (define-condition matrix-error (simple-error matrix-condition) ())
 
-(define-condition matrix-argument-error (matrix-error) ())
+(define-condition matrix-argument-error (matrix-error)
+  ((cause :reader matrix-argument-error-cause
+          :initarg :cause :initform ""))
+  (:report (lambda (condition stream)
+             (format stream "Error invalid arguments (~S)"
+                     (matrix-argument-error-cause condition)))))
 
 (deftype index-type ()
   '(integer 0 #.(1- array-dimension-limit)))
