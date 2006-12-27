@@ -39,14 +39,13 @@
 that can be used to externalize matrices."
   (make-load-form-saving-slots matrix :environment env))
 
-(defgeneric allocate-matrix-vals (object &key rows cols adjustable initial-element))
+(defgeneric allocate-matrix-vals (object &key adjustable initial-element &allow-other-keys))
 (defmethod allocate-matrix-vals ((object matrix) &key rows cols adjustable (initial-element 0))
   (setf (slot-value object 'm)
 	(make-array (list rows cols)
 		    :adjustable adjustable
 		    :initial-element (coerce initial-element (element-type (class-of object)))
-		    :element-type (element-type (class-of object))
-		    )))
+		    :element-type (element-type (class-of object)))))
   
 (defmethod shared-initialize :after
     ((object matrix) slot-names &rest initargs &key rows cols adjustable initial-element)

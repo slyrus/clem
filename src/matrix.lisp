@@ -202,6 +202,7 @@
 
 (defmethod cols ((m matrix)) (the fixnum (array-dimension (matrix-vals m) 1)))
 
+(declaim (inline set-val))
 (defmethod val ((m matrix) i j) (aref (matrix-vals m) i j))
 
 (defmethod mref ((m matrix) i j) (aref (matrix-vals m) i j))
@@ -237,10 +238,35 @@
 
 (defmethod transpose ((m matrix))
   (destructuring-bind (rows cols) (dim m)
+    (declare (type fixnum rows cols))
     (let ((tr (make-instance (class-of m) :rows cols :cols rows)))
       (dotimes (i rows)
+        (declare (type fixnum i))
 	(dotimes (j cols)
+          (declare (type fixnum j))
 	  (set-val tr j i (val m i j))))
+      tr)))
+
+(defmethod transpose ((m double-float-matrix))
+  (destructuring-bind (rows cols) (dim m)
+    (declare (type fixnum rows cols))
+    (let ((tr (make-instance 'double-float-matrix :rows cols :cols rows)))
+      (with-typed-matrix-accessor (m double-float macc)
+        (with-typed-matrix-accessor (tr double-float tracc)
+          (dotimes (i rows)
+            (dotimes (j cols)
+              (setf (tracc j i) (macc i j))))))
+      tr)))
+
+(defmethod transpose ((m double-float-matrix))
+  (destructuring-bind (rows cols) (dim m)
+    (declare (type fixnum rows cols))
+    (let ((tr (make-instance 'double-float-matrix :rows cols :cols rows)))
+      (with-typed-mref (m double-float)
+        (with-typed-mref (tr double-float)
+          (dotimes (i rows)
+            (dotimes (j cols)
+              (setf (mref tr j i) (mref m i j))))))
       tr)))
 
 (defgeneric mat-mult (a b))

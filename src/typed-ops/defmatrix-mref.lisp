@@ -46,6 +46,7 @@
   (frob complex-matrix)
   (frob bit-matrix))
 
+#+nil
 (define-compiler-macro mref (m row col)
   (typecase m
     (double-float-matrix

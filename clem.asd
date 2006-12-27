@@ -2,27 +2,6 @@
 (defpackage #:clem-system (:use #:asdf #:cl))
 (in-package #:clem-system)
 
-;;;;
-;;;; The following section customizes asdf to work with filenames
-;;;; with a .cl extension and to put fasl files in a separate
-;;;; directory.
-;;;;
-;;;; To enable this behvior, use asdf component type
-;;;;  :clem-cl-source-file
-;;;;
-(defclass clem-cl-source-file (cl-source-file) ())
-
-(defmethod source-file-type ((c clem-cl-source-file) (s module)) "cl")
-
-(defparameter *fasl-directory*
-  (make-pathname :directory '(:relative #+sbcl "sbcl-fasl"
-			      #+openmcl "openmcl-fasl"
-			      #-(or sbcl openmcl) "fasl")))
-
-(defmethod asdf::output-files ((operation compile-op) (c clem-cl-source-file))
-  (list (merge-pathnames *fasl-directory*
-			 (compile-file-pathname (component-pathname c)))))
-
 (defsystem :clem
   :name "clem"
   :author "Cyrus Harmon <ch-lisp@bobobeach.com>"
@@ -81,7 +60,7 @@
                    "interpolation"
                    "matrixops"
                    "typed-matrix-utils"))))
-   (:static-file "bootstrap" :pathname #p"bootstrap.cl")
+   (:static-file "bootstrap" :pathname #p"bootstrap.lisp")
    (:static-file "COPYRIGHT")
    (:static-file "NEWS")
    (:static-file "ChangeLog")

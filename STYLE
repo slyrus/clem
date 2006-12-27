@@ -1,0 +1,40 @@
+
+This document describes style conventions for CLEM.
+Cyrus Harmon
+Sat Dec 16 15:17:39 2006
+
+================================================
+Tiered interfaces
+
+It is becoming clear to me that we need something of a tiered set of
+interfaces for CLEM. The highest level interface would be what users
+of CLEM would be expected to use. It is perhaps worth considering
+making a special package for these symbols. Alternatively, we could
+export only this layer. However, it's likely that we will want to
+export both high- and lower-level symbols, and to keep them separate,
+we might consider placing them in multiple packages.
+
+================================================
+High-level functions
+
+* m+
+* m-
+
+================================================
+Destructive vs. non-destructive functions
+
+Currently we have functions like mat-log and mat-log! where mat-log is
+the non-destructive version that returns its results in a newly consed
+matrix while mat-log! takes the log of the elements of the matrix in
+place and returns that matrix.
+
+alternatives:
+
+1. !
+
+mat-log vs. mat-log! (scheme-style)
+mat-log vs. nmat-log (lisp-style)
+(mat-log :in-place t)
+(mat-log :copy nil)
+
+
