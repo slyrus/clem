@@ -23,8 +23,7 @@
 (declaim (inline matrix-vals))
 (defclass matrix ()
   ((m :accessor matrix-vals)
-   (rows :accessor matrix-rows :initarg :rows :initform 1 :type fixnum)
-   (cols :accessor matrix-cols :initarg :cols :initform 1 :type fixnum)
+   (dimensions :accessor matrix-dimensions :initarg :dimensions :initform '(1) :type (or list null))
    (initial-element :accessor initial-element :initarg :initial-element :initform 0d0)
    (adjustable :accessor adjustable :initarg :adjustable :initform nil)
    (resizeable :accessor resizable :initform nil))
@@ -40,20 +39,21 @@ that can be used to externalize matrices."
   (make-load-form-saving-slots matrix :environment env))
 
 (defgeneric allocate-matrix-vals (object &key adjustable initial-element &allow-other-keys))
-(defmethod allocate-matrix-vals ((object matrix) &key rows cols adjustable (initial-element 0))
+(defmethod allocate-matrix-vals ((object matrix) &key (dimensions '(1)) adjustable (initial-element 0))
   (setf (slot-value object 'm)
-	(make-array (list rows cols)
+	(make-array dimensions
 		    :adjustable adjustable
 		    :initial-element (coerce initial-element (element-type (class-of object)))
 		    :element-type (element-type (class-of object)))))
   
 (defmethod shared-initialize :after
-    ((object matrix) slot-names &rest initargs &key rows cols adjustable initial-element)
-  (declare (ignore slot-names initargs rows cols adjustable initial-element))
+    ((object matrix) slot-names &rest initargs &key dimensions rows cols adjustable initial-element)
+  (declare (ignore slot-names initargs dimensions adjustable initial-element))
   (apply #'allocate-matrix-vals object
          (append
-          (list :rows (slot-value object 'rows))
-          (list :cols (slot-value object 'cols))
+          (if (and rows cols)
+              (list :dimensions (list rows cols))
+              (list :dimensions (slot-value object 'dimensions)))
           (list :adjustable (slot-value object 'adjustable))
           (when (slot-value object 'initial-element)
             (list :initial-element (slot-value object 'initial-element))))))

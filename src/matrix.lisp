@@ -198,9 +198,9 @@
 
 (defmethod dim ((m matrix)) (array-dimensions (matrix-vals m)))
 
-(defmethod rows ((m matrix)) (the fixnum (array-dimension (matrix-vals m) 0)))
+(defmethod rows ((m matrix)) (array-dimension (matrix-vals m) 0))
 
-(defmethod cols ((m matrix)) (the fixnum (array-dimension (matrix-vals m) 1)))
+(defmethod cols ((m matrix)) (array-dimension (matrix-vals m) 1))
 
 (declaim (inline set-val))
 (defmethod val ((m matrix) i j) (aref (matrix-vals m) i j))
