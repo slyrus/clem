@@ -107,6 +107,10 @@ Common Lisp type system, starting with type "
 
  (:h2 "matrix-move")
 
+ (:h1 "High Level Interface (Level 1)")
+
+ (:h1 "Low Level Interface (Level 0)")
+  
  (:h1 "Matrix Arithmetic")
 
  (:h2 "Matrix Addition and Subtraction")

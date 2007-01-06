@@ -6,17 +6,56 @@
 
 (in-package :clem)
 
+;;; fallback version for when we don't have type information
+
+(defmethod matrix-move ((m matrix) (n matrix) &key constrain)
+  (if (= (matrix-total-size m)
+         (matrix-total-size n))
+      (if constrain
+          (let ((min (minval (class-of n)))
+                (max (maxval (class-of n))))
+            (dotimes (i (matrix-total-size m))
+              (setf (row-major-mref n i)
+                    (constrain min (row-major-mref m i) max))))
+          (dotimes (i (matrix-total-size m))
+            (setf (row-major-mref n i)
+                  (row-major-mref m i))))
+      (error 'matrix-argument-error
+             :format-control
+             "Incompatible matrix dimensions in matrix-move ~S => ~S."
+             :format-arguments (list (matrix-dimensions m)
+                                     (matrix-dimensions n)))))
+
+(defmethod matrix-move ((m matrix) (n integer-matrix) &key constrain)
+  (if (= (matrix-total-size m)
+         (matrix-total-size n))
+      (if constrain
+          (let ((min (minval (class-of n)))
+                (max (maxval (class-of n))))
+            (dotimes (i (matrix-total-size m))
+              (setf (row-major-mref n i)
+                    (constrain min (truncate (row-major-mref m i)) max))))
+          (dotimes (i (matrix-total-size m))
+            (setf (row-major-mref n i)
+                  (truncate (row-major-mref m i)))))
+      (error 'matrix-argument-error
+             :format-control
+             "Incompatible matrix dimensions in matrix-move ~S => ~S."
+             :format-arguments (list (matrix-dimensions m)
+                                     (matrix-dimensions n)))))
+
 (defmacro def-matrix-move (type-1 type-2)
   (let ((element-type-1 (element-type (find-class `,type-1)))
 	(element-type-2 (element-type (find-class `,type-2)))
 	(min (minval (find-class `,type-2)))
 	(max (maxval (find-class `,type-2))))
     `(progn
-       (defmethod matrix-move-range ((m ,type-1) (n ,type-2)
-                                     startr1 endr1 startc1 endc1
-                                     startr2 endr2 startc2 endc2)
-         (declare (optimize (speed 3)
-                            (safety 0)))
+       (defmethod matrix-move-range-2d ((m ,type-1) (n ,type-2)
+                                        startr1 endr1 startc1 endc1
+                                        startr2 endr2 startc2 endc2)
+         (declare (optimize (speed 3) (safety 0))
+                  (type fixnum startr1 endr1 startc1 endc1
+                        startr2 endr2 startc2 endc2))
 	 (with-typed-matrix-vals (m ,element-type-1 a)
 	   (with-typed-matrix-vals (n ,element-type-2 b)
 	     (do ((i startr1 (1+ i))
@@ -34,9 +73,9 @@
 			(aref a i j)
 			,element-type-1 ,element-type-2))))))
 	 n)
-       (defmethod matrix-move-range-constrain ((m ,type-1) (n ,type-2) 
-                                               startr1 endr1 startc1 endc1
-                                               startr2 endr2 startc2 endc2)
+       (defmethod matrix-move-range-2d-constrain ((m ,type-1) (n ,type-2) 
+                                                  startr1 endr1 startc1 endc1
+                                                  startr2 endr2 startc2 endc2)
 	 (with-matrix-vals (m ,element-type-1 a)
 	   (with-matrix-vals (n ,element-type-2 b)
 	     (do ((i startr1 (1+ i))
@@ -57,13 +96,13 @@
        (defmethod matrix-move ((m ,type-1) (n ,type-2) &key constrain)
 	 (destructuring-bind (mr mc) (dim m)
 	   (cond (constrain
-		  (matrix-move-range-constrain m n
-                                               0 (1- mr) 0 (1- mc)
-                                               0 (1- mr) 0 (1- mc)))
+		  (matrix-move-range-2d-constrain m n
+                                                  0 (1- mr) 0 (1- mc)
+                                                  0 (1- mr) 0 (1- mc)))
 		 (t
-		  (matrix-move-range m n
-                                     0 (1- mr) 0 (1- mc)
-                                     0 (1- mr) 0 (1- mc)))))))))
+		  (matrix-move-range-2d m n
+                                        0 (1- mr) 0 (1- mc)
+                                        0 (1- mr) 0 (1- mc)))))))))
 
 (macrolet ((frob (type-1 type-2)
 	     `(progn

@@ -118,3 +118,4 @@
     (format t "~&~A of ~A tests passed" (ch-util:test-run-passed run) (ch-util:test-run-tests run))
     ))
 
+(defparameter m2 (make-instance 'double-float-matrix :dimensions '(1000 1000)))

@@ -34,8 +34,8 @@
 ;;; matrix protocol
 
 (defgeneric dim (m)
-  (:documentation "Returns a two-element list containg the number of
-  rows and columns in the matrix."))
+  (:documentation "Returns a list containg the number of
+  elments in each dimension of the matrix."))
 
 (defgeneric rows (m)
   (:documentation "Returns the number of rows in the matrix."))
@@ -49,13 +49,21 @@
 
 ;;; This is totally bogys. Why do we have both mref and val? I'm
 ;;; assuming that val should go away!
-(defgeneric mref (m i j)
+#+nil
+(defgeneric mref (m &rest indices)
   (:documentation "Returns the value of the element in the ith row of
   the jth column of the matrix m."))
 
-(defgeneric (setf mref) (v m row col)
+#+nil
+(defgeneric (setf mref) (v m &rest indices)
   (:documentation "Set the value of the specified element at row row
   and col col of matrix m to be v."))
+
+#+nil
+(defgeneric row-major-mref (m index))
+
+#+nil
+(defgeneric (setf row-major-mref) (v m index))
 
 (defgeneric move-element (m i1 j1 n i2 j2)
   (:documentation "Copy the contents of the element at row i1, column
@@ -102,10 +110,10 @@
 
 ;;; lower-level matrix operations
 
-(defgeneric matrix-move-range (m n startr1 endr1 startc1 endc1
+(defgeneric matrix-move-range-2d (m n startr1 endr1 startc1 endc1
                                  startr2 endr2 startc2 endc2))
 
-(defgeneric matrix-move-range-constrain
+(defgeneric matrix-move-range-2d-constrain
     (m n startr1 endr1 startc1 endc1
        startr2 endr2 startc2 endc2))
 
@@ -196,16 +204,25 @@
   (declare (ignore m))
   val)
 
-(defmethod dim ((m matrix)) (array-dimensions (matrix-vals m)))
+(defmethod dim ((m matrix)) (matrix-dimensions m))
 
-(defmethod rows ((m matrix)) (array-dimension (matrix-vals m) 0))
+(defmethod rows ((m matrix))
+  (let ((vals (matrix-vals m)))
+    (if (and vals
+             (> (length (array-dimensions vals)) 0))
+        (array-dimension vals 0)
+        1)))
 
-(defmethod cols ((m matrix)) (array-dimension (matrix-vals m) 1))
+(defmethod cols ((m matrix))
+  (let ((vals (matrix-vals m)))
+    (if (and vals
+             (> (length (array-dimensions vals)) 1))
+        (array-dimension vals 1)
+        1)))
 
 (declaim (inline set-val))
 (defmethod val ((m matrix) i j) (aref (matrix-vals m) i j))
 
-(defmethod mref ((m matrix) i j) (aref (matrix-vals m) i j))
 
 ;;; rvref treats the matrix as a row-vector (that is a
 ;;; 1 x n matrix). we should throw an error if this is not the case.
@@ -225,7 +242,6 @@
 (defmethod move-element ((m matrix) i1 j1 (n matrix) i2 j2)
   (setf (mref n i2 j2) (mref m i1 j1)))
 
-(declaim (inline set-val))
 (defmethod set-val ((m matrix) i j v &key (coerce t))
   (setf (aref (matrix-vals m) i j)
 	(if coerce
@@ -245,17 +261,6 @@
 	(dotimes (j cols)
           (declare (type fixnum j))
 	  (set-val tr j i (val m i j))))
-      tr)))
-
-(defmethod transpose ((m double-float-matrix))
-  (destructuring-bind (rows cols) (dim m)
-    (declare (type fixnum rows cols))
-    (let ((tr (make-instance 'double-float-matrix :rows cols :cols rows)))
-      (with-typed-matrix-accessor (m double-float macc)
-        (with-typed-matrix-accessor (tr double-float tracc)
-          (dotimes (i rows)
-            (dotimes (j cols)
-              (setf (tracc j i) (macc i j))))))
       tr)))
 
 (defmethod transpose ((m double-float-matrix))
@@ -358,33 +363,6 @@
 (defgeneric mat-add (a b))
 (defmethod mat-add ((a matrix) (b matrix))
   (mat-scalar-op a b #'+))
-
-(declaim (inline mat-add-inline))
-
-(defun mat-add-inline (a b)
-  (destructuring-bind (m n) (dim a)
-    (let ((c (mat-copy-proto a)))
-      (let ((avals (matrix-vals a))
-            (bvals (matrix-vals b))
-            (cvals (matrix-vals c)))
-        (dotimes (i m c)
-          (declare (type fixnum i))
-          (dotimes (j n)
-            (declare (type fixnum j))
-            (setf (aref cvals i j)
-                  (+ (aref avals i j) (aref bvals i j)))))))))
-
-(declaim (inline mat-add!-inline))
-(defun mat-add!-inline (a b)
-  (destructuring-bind (m n) (dim a)
-      (let ((avals (matrix-vals a))
-            (bvals (matrix-vals b)))
-        (dotimes (i m a)
-          (declare (type fixnum i))
-          (dotimes (j n)
-            (declare (type fixnum j))
-            (setf (aref avals i j)
-                  (+ (aref avals i j) (aref bvals i j))))))))
 
 (defgeneric mat-subtr (a b &key matrix-class))
 (defmethod mat-subtr ((a matrix) (b matrix) &key matrix-class)

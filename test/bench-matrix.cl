@@ -28,8 +28,8 @@
 	 (val x i j))))))
 
 (defun matrix-bench-3 ()
-  (let* ((x (random-fixnum-matrix 512 512 :max 255))
-	 (y (random-fixnum-matrix 5 5 :max 255)))
+  (let* ((x (random-double-float-matrix 512 512 :max 255d0))
+	 (y (random-double-float-matrix 5 5 :max 255d0)))
     (time
      (let ((conv (discrete-convolve x y :truncate t)))))))
 

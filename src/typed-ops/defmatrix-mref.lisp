@@ -1,7 +1,7 @@
 
 (in-package :clem)
 
-(declaim (inline mref))
+#+nil (declaim (inline mref))
   
 (defmacro def-matrix-mref (type)
   (let ((element-type (element-type (find-class `,type)))
@@ -21,14 +21,16 @@
        (defun (setf ,fast-mref-symbol) (v m row col)
 	 (with-typed-matrix-vals (m ,element-type a)
 	   (setf (aref a row col) v)))
-       
-       (defmethod mref ((m ,type) (row fixnum) (col fixnum))
+
+       #+nil
+       (defmethod mref ((m ,type) &rest indices)
 	 (with-typed-matrix-vals (m ,element-type a)
-	   (aref a row col)))
-       
-       (defmethod (setf mref) (v (m ,type) (row fixnum) (col fixnum))
+	   (apply #'aref a indices)))
+
+       #+nil
+       (defmethod (setf mref) (v (m ,type) &rest indices)
 	 (with-typed-matrix-vals (m ,element-type a)
-	   (setf (aref a row col) v))))))
+	   (setf (apply #'aref a indices) v))))))
 
 (macrolet ((frob (type)
 	     `(def-matrix-mref ,type)))

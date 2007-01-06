@@ -23,16 +23,6 @@
                     `(aref ,',vals ,@args)))
          ,@body))))
 
-(defmacro with-typed-mref ((m element-type) &body body &environment env)
-  (let ((vals (gensym)))
-    `(let ((,vals (matrix-vals ,m)))
-       (declare (type (simple-array ,element-type *) ,vals))
-       (macrolet ((mref (mat &rest args)
-                    (if (eql ',m mat)
-                        `(aref ,',vals ,@args)
-                        `,(macroexpand `(mref ,',m ,@args) ,env))))
-         ,@body))))
-
 (defmacro with-untyped-matrix-vals ((m element-type a) &body body)
   (declare (ignore element-type))
   `(let ((,a (matrix-vals ,m)))
@@ -88,10 +78,12 @@
 			  (accumulator-type 'double-float)
 			  minval maxval)
   `(progn
+     #+nil
      (defmethod mref ((m ,type) (row fixnum) (col fixnum))
        (with-typed-matrix-vals (m ,element-type a)
 	 (aref a row col)))
 
+     #+nil
      (defmethod (setf mref) (v (m ,type) (row fixnum) (col fixnum))
        (with-typed-matrix-vals (m ,element-type a)
 	 (setf (aref a row col) v)))
