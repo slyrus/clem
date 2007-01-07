@@ -28,8 +28,8 @@
 ;;;
 ;;;
 
-
 (in-package :clem)
+
 
 ;;; matrix protocol
 
@@ -49,20 +49,16 @@
 
 ;;; This is totally bogys. Why do we have both mref and val? I'm
 ;;; assuming that val should go away!
-#+nil
 (defgeneric mref (m &rest indices)
   (:documentation "Returns the value of the element in the ith row of
   the jth column of the matrix m."))
 
-#+nil
 (defgeneric (setf mref) (v m &rest indices)
   (:documentation "Set the value of the specified element at row row
   and col col of matrix m to be v."))
 
-#+nil
 (defgeneric row-major-mref (m index))
 
-#+nil
 (defgeneric (setf row-major-mref) (v m index))
 
 (defgeneric move-element (m i1 j1 n i2 j2)
@@ -74,6 +70,8 @@
   matrix m to v."))
 
 (defgeneric set-val (m i j v &key coerce))
+
+;;;; level-1 interface
 
 ;;; arithmetic functions
 
@@ -108,7 +106,69 @@
   (:documentation "Hadamard multiplication operator. Performs an
   element-wise multiplication of the elements in each matrix."))
 
-;;; lower-level matrix operations
+;;; logical functions
+
+(defgeneric mlognot (m &key in-place)
+  (:documentation "Performs element-wise logical negation of the
+  matrix m. If in-place is nil, returns a new matrix with the
+  resulting values, otherwise, destructively modifies matrix
+  m."))
+
+(defgeneric mlognot-range (m startr endr startc endc &key in-place))
+
+(defgeneric mlogand-range (m1 m2 startr endr startc endc &key in-place))
+(defgeneric mlogand (m1 m2 &key in-place))
+
+(defgeneric mlogior-range (m1 m2 startr endr startc endc &key in-place))
+(defgeneric mlogior (m1 m2 &key in-place))
+
+(defgeneric mlogxor-range (m1 m2 startr endr startc endc &key in-place))
+(defgeneric mlogxor (m1 m2 &key in-place))
+
+;;; FIXME!! fix bitnor
+(defgeneric mbitnor-range (m1 m2 startr endr startc endc))
+(defgeneric mbitnor (m1 m2))
+
+;;; extrema (min and max)
+
+(defgeneric min-range (m startr endr startc endc))
+(defgeneric max-range (m startr endr startc endc))
+(defgeneric sum-range (m startr endr startc endc))
+(defgeneric min-val (m))
+(defgeneric max-val (m))
+
+;;; exponential functions
+
+(defgeneric mat-square (u))
+(defgeneric mat-square! (u))
+(defgeneric mat-sqrt (u))
+(defgeneric mat-sqrt! (u))
+
+;;; sum
+
+(defgeneric sum (m))
+(defgeneric sum-cols (m &key matrix-class))
+(defgeneric sum-rows (m &key matrix-class))
+(defgeneric sum-square-range (m startr endr startc endc))
+(defgeneric sum-square (m))
+
+;;; statistics
+
+(defgeneric mean-range (m startr endr startc endc))
+(defgeneric mean (m))
+(defgeneric variance-range (m startr endr startc endc))
+(defgeneric variance (m))
+(defgeneric sample-variance-range (m startr endr startc endc))
+(defgeneric sample-variance (m))
+
+
+;;; normalization
+
+(defgeneric normalize (u &key normin normax copy))
+(defgeneric norm-0-255 (u &key copy))
+(defgeneric norm-0-1 (u &key copy))
+
+;;;; level-0 interface
 
 (defgeneric matrix-move-range-2d (m n startr1 endr1 startc1 endc1
                                  startr2 endr2 startc2 endc2))
@@ -124,13 +184,13 @@
 
 ;;; log generic functions
 
-(defgeneric mat-log-range (m startr endr startc endc &optional base))
+(defgeneric mlog-range (m startr endr startc endc &optional base))
 
-(defgeneric mat-log-range! (m startr endr startc endc &optional base))
+(defgeneric mlog-range! (m startr endr startc endc &optional base))
 
-(defgeneric mat-log (m &optional base))
+(defgeneric mlog (m &optional base))
 
-(defgeneric mat-log! (m &optional base))
+(defgeneric mlog! (m &optional base))
 
 ;;; hadamard product
 
@@ -152,9 +212,11 @@
 
 ;;; abs
 
-(defgeneric mat-abs-range (m startr endr startc endc))
+(defgeneric mabs (u))
 
-(defgeneric mat-abs-range! (m startr endr startc endc))
+(defgeneric mabs-range (m startr endr startc endc))
+
+(defgeneric mabs-range! (m startr endr startc endc))
 
 ;;; transformation
 
@@ -193,6 +255,10 @@
                         (cons m1 mr))))))
 
 ;;; gory implementation details follow
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; coerce/fit
 
 (defgeneric fit (m val))
 (defmethod fit ((m matrix) val)
@@ -762,190 +828,12 @@ random numbers of the appropriate type between 0 and <limit>."))
     (map-set-val a #'(lambda (x) (declare (ignore x)) (random limit)))
     a))
 
-(defgeneric min-range (m startr endr startc endc))
-(defmethod min-range ((m matrix) (startr fixnum) (endr fixnum) (startc fixnum) (endc fixnum))
-  (declare (dynamic-extent startr endr startc endc)
-	   (fixnum startr endr startc endc))
-  (let ((retval (val m startr startc)))
-    (map-range m startr endr startc endc
-	       #'(lambda (v i j)
-		   (declare (ignore i j))
-		   (setf retval (min retval v))))
-    retval))
-
-(defgeneric max-range (m startr endr startc endc))
-(defmethod max-range ((m matrix) (startr fixnum) (endr fixnum) (startc fixnum) (endc fixnum))
-  (let ((retval (val m startr startc)))
-    (map-range m startr endr startc endc
-	       #'(lambda (v i j)
-		   (declare (ignore i j))
-		   (setf retval (max retval v))))
-    retval))
-
-(defgeneric sum-range (m startr endr startc endc))
-(defmethod sum-range ((m matrix) (startr fixnum) (endr fixnum) (startc fixnum) (endc fixnum))
-  (declare (dynamic-extent startr endr startc endc)
-	   (fixnum startr endr startc endc))
-  (let ((acc 0))
-    (map-range m startr endr startc endc
-	       #'(lambda (v i j)
-		   (declare (ignore i j))
-		   (incf acc v)))
-    acc))
-
-(defgeneric sum (m))
-(defmethod sum ((m matrix))
-  (destructuring-bind (mr mc) (dim m)
-    (sum-range m 0 (- mr 1) 0 (- mc 1))))
-
-(defgeneric sum-cols (m &key matrix-class))
-(defmethod sum-cols ((m matrix) &key (matrix-class (class-of m)))
-  (let ((mr (rows m)) (mc (cols m)))
-    (let ((n (make-instance matrix-class :rows 1 :cols mc)))
-      (dotimes (i mr)
-        (dotimes (j mc)
-          (incf (mref n 0 j) (mref m i j))))
-      n)))
-
-(defgeneric sum-rows (m &key matrix-class))
-(defmethod sum-rows ((m matrix) &key (matrix-class (class-of m)))
-  (let ((mr (rows m)) (mc (cols m)))
-    (let ((n (make-instance matrix-class :rows mr :cols 1)))
-      (dotimes (i mr)
-        (dotimes (j mc)
-          (incf (mref n i 0) (mref m i j))))
-      n)))
-
-(defgeneric sum-square-range (m startr endr startc endc))
-(defmethod sum-square-range ((m matrix) (startr fixnum) (endr fixnum) (startc fixnum) (endc fixnum))
-  (declare (dynamic-extent startr endr startc endc)
-	   (fixnum startr endr startc endc))
-  (let ((acc 0))
-    (map-range m startr endr startc endc
-	       #'(lambda (v i j)
-		   (declare (ignore i j))
-		   (incf acc (* v v))))
-    acc))
-
-(defgeneric sum-square (m))
-(defmethod sum-square ((m matrix))
-  (destructuring-bind (mr mc) (dim m)
-    (sum-square-range m 0 (- mr 1) 0 (- mc 1))))
 
 (defun count-range (startr endr startc endc)
   (* (1+ (- endr startr)) (1+ (- endc startc))))  
 
 (defun double-float-divide (&rest args)
   (apply #'/ (mapcar #'(lambda (x) (coerce x 'double-float)) args)))
-
-(defgeneric mean-range (m startr endr startc endc))
-(defmethod mean-range ((m matrix) startr endr startc endc)
-  (double-float-divide (sum-range m startr endr startc endc)
-		(count-range startr endr startc endc)))
-
-(defgeneric mean (m))
-(defmethod mean ((m matrix))
-  (destructuring-bind (mr mc) (dim m)
-    (mean-range m 0 (- mr 1) 0 (- mc 1))))
-
-(defgeneric variance-range (m startr endr startc endc))
-(defmethod variance-range ((m matrix) startr endr startc endc)
-  (declare (dynamic-extent startr endr startc endc)
-	   (fixnum startr endr startc endc))
-  (let ((mu (mean-range m startr endr startc endc)))
-    (let ((musq (* mu mu)))
-      (let ((ssr (sum-square-range m startr endr startc endc)))
-	(let ((cr (count-range startr endr startc endc)))
-	  (declare (fixnum cr))
-	  (- (double-float-divide ssr cr)
-	     musq))))))
-
-(defgeneric variance (m))
-(defmethod variance ((m matrix))
-  (destructuring-bind (mr mc) (dim m)
-    (variance-range m 0 (- mr 1) 0 (- mc 1))))
-
-(defgeneric sample-variance-range (m startr endr startc endc))
-(defmethod sample-variance-range ((m matrix) startr endr startc endc)
-  (let* ((acc 0)
-	 (mu (mean-range m startr endr startc endc))
-	 (musq (* mu mu)))
-    (map-range m startr endr startc endc
-	       #'(lambda (v i j)
-		   (declare (ignore i j))
-		   (incf acc (- (* v v) musq))))
-    (double-float-divide acc (1- (count-range startr endr startc endc)))))
-
-(defgeneric sample-variance (m))
-(defmethod sample-variance ((m matrix))
-  (destructuring-bind (mr mc) (dim m)
-    (sample-variance-range m 0 (- mr 1) 0 (- mc 1))))
-
-(defgeneric min-val (m))
-(defmethod min-val ((m matrix))
-  (let ((minval (val m 0 0)))
-    (let ((d (dim m)))
-      (dotimes (i (first d))
-	(dotimes (j (second d))
-	  (setf minval (min minval (val m i j))))))
-    minval))
-
-(defgeneric max-val (m))
-(defmethod max-val ((m matrix))
-  (let ((maxval (val m 0 0)))
-    (let ((d (dim m)))
-      (dotimes (i (first d))
-	(dotimes (j (second d))
-	  (setf maxval (max maxval (val m i j))))))
-    maxval))
-
-(defgeneric mat-square (u))
-(defmethod mat-square ((u matrix))
-  (map-set-val-copy u #'(lambda (x) (* x x))))
-
-(defgeneric mat-square! (u))
-(defmethod mat-square! ((u matrix))
-  (map-set-val u #'(lambda (x) (* x x))))
-
-(defgeneric mat-sqrt (u))
-(defmethod mat-sqrt ((u matrix))
-  (map-set-val-copy u #'(lambda (x) (sqrt x))))
-
-(defgeneric mat-sqrt! (u))
-(defmethod mat-sqrt! ((u matrix))
-  (map-set-val u #'(lambda (x) (sqrt x))))
-
-(defgeneric mat-abs (u))
-(defmethod mat-abs ((u matrix))
-  (map-set-val-copy u #'(lambda (x) (abs x))))
-
-(defgeneric mat-log (u &optional base))
-(defmethod mat-log ((u matrix) &optional base)
-  (map-set-val-copy u #'(lambda (x) (apply #'log x (when base base)))))
-
-
-(defgeneric normalize (u &key normin normax copy))
-(defmethod normalize ((u matrix) &key (normin) (normax) (truncate nil) (copy nil))
-  (let ((min (min-val u))
-	(max (max-val u))
-	(nmin (if normin normin 0))
-	(nmax (if normax normax 255))
-        (u (if copy (mat-copy u) u)))
-    (let ((slope (if (= max min)
-                     0
-                     (/ (- nmax nmin) (- max min)))))
-      (map-set-val-fit u #'(lambda (x) (+ nmin (* slope (- x min))))
-		       :truncate truncate))
-    u))
-
-
-(defgeneric norm-0-255 (u &key copy))
-(defmethod norm-0-255 ((u matrix) &key copy)
-  (normalize u :normin 0 :normax 255 :copy copy))
-
-(defgeneric norm-0-1 (u &key copy))
-(defmethod norm-0-1 ((u matrix) &key copy)
-  (normalize u :normin 0 :normax 1 :copy copy))
 
 (defgeneric subset-matrix (u startr endr startc endc))
 (defmethod subset-matrix ((u matrix) startr endr startc endc)
@@ -1005,34 +893,4 @@ random numbers of the appropriate type between 0 and <limit>."))
   (destructuring-bind (mr mc) (dim m)
     (subset-matrix m k (- mr k 1) k (- mc k 1))))
 
-
-;;;;
-;;;; convenience arithmetic functions
-
-(defmethod m+ (&rest matrices)
-  (reduce #'mat-add matrices))
-
-(defmethod m- (&rest matrices)
-  (if (cdr matrices)
-      (reduce #'mat-subtr matrices)
-      (mat-scale (car matrices) -1)))
-
-(defmethod m* (&rest matrices)
-  (reduce
-   #'(lambda (x y)
-       (cond ((and (typep y 'matrix)
-                   (typep x 'matrix))
-              (mat-mult x y))
-             ((and (typep x 'matrix)
-                   (numberp y))
-              (mat-scale x y))
-             ((and (numberp x)
-                   (typep y 'matrix))
-              (mat-scale y x))
-             (t (error 'matrix-argument-error
-                       :cause "at least one argument must be a MATRIX."))))
-   matrices))
-
-(defmethod m.* (&rest matrices)
-  (reduce #'mat-hprod matrices))
 

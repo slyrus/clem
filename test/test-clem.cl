@@ -103,6 +103,13 @@
       ))
   t)
 
+(defun matrix-test-12 ()
+  (let ((m (array->ub8-matrix #2A((1 2 3)(4 5 6)(7 2 8)))))
+    (print (mref m 0 0))
+    (setf (mref m 0 0) 32)
+    (print (mref m 0 0)))
+  t)
+
 (defun run-tests ()
   (let ((run (ch-util:make-test-run)))
     (ch-util:run-test #'matrix-test-1 "matrix-test-1" run)
