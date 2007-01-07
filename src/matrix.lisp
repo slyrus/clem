@@ -1,31 +1,31 @@
-;;; -*- Mode: lisp; outline-regexp: ";;;;;*"; indent-tabs-mode: nil -*-;;;
+;;; matrix.lisp
 ;;;
-;;; file: matrix.lisp
-;;; author: cyrus harmon
+;;; Copyright (c) 2004-2006 Cyrus Harmon (ch-lisp@bobobeach.com)
+;;; All rights reserved.
 ;;;
-
+;;; Redistribution and use in source and binary forms, with or without
+;;; modification, are permitted provided that the following conditions
+;;; are met:
 ;;;
-;;; This file contains the core of the matrix common-lisp class.
-;;; This class represents matrices, vectors and scalars, somewhat.
-
+;;;   * Redistributions of source code must retain the above copyright
+;;;     notice, this list of conditions and the following disclaimer.
 ;;;
-;;; 2004-06-17 - Need to decouple the notion of the shape of the matrix
-;;;              e.g. matrix, col-vec, row-vec from the type of the
-;;;              matrix or we're going to have n^2 kinds of matrices
-;;;              we'll need to make
+;;;   * Redistributions in binary form must reproduce the above
+;;;     copyright notice, this list of conditions and the following
+;;;     disclaimer in the documentation and/or other materials
+;;;     provided with the distribution.
 ;;;
-
-;;; 2004-05-08 - Scrap that last thought. I'm going to make 2-d
-;;;              arrays work and assume that the compiler is smarter
-;;;              then I am in making reasonable 2-d arrays.
-;;;
-;;; 2004-04-23 - The big problem with this, so far, is
-;;;              that my LISP implementation seems to use a lot of
-;;;              memory to access 2-d arrays. It seems better With
-;;;              one-d arrays, so I'm going to try to change this all
-;;;              to simple arrays of simple arrays and see if things
-;;;              get better.
-;;;
+;;; THIS SOFTWARE IS PROVIDED BY THE AUTHOR 'AS IS' AND ANY EXPRESSED
+;;; OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+;;; WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+;;; ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+;;; DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+;;; DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+;;; GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+;;; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+;;; WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+;;; NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+;;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ;;;
 
 (in-package :clem)
@@ -204,11 +204,8 @@
 
 ;;; add
 
-(defgeneric mat-add-range (m n startr endr startc endc))
-
-(defgeneric mat-add-range! (m n startr endr startc endc))
-
-(defgeneric mat-add! (m n))
+(defgeneric mat-add (a b &key in-place))
+(defgeneric mat-add-range (m n startr endr startc endc &key in-place))
 
 ;;; abs
 
@@ -426,10 +423,6 @@
         (dotimes (j n)
           (set-val c i j (funcall op (val a i j) b)))))))
 	
-(defgeneric mat-add (a b))
-(defmethod mat-add ((a matrix) (b matrix))
-  (mat-scalar-op a b #'+))
-
 (defgeneric mat-subtr (a b &key matrix-class))
 (defmethod mat-subtr ((a matrix) (b matrix) &key matrix-class)
   (declare (ignore matrix-class))
@@ -861,6 +854,7 @@ random numbers of the appropriate type between 0 and <limit>."))
 (defgeneric array->matrix (a &key matrix-class))
 (defmethod array->matrix ((a array) &key (matrix-class 'matrix))
   (let ((d (array-dimensions a))
+        (element-type (element-type (find-class matrix-class)))
 	(m))
     (cond ((= (length d) 2)
 	   (destructuring-bind (ar ac) d
@@ -878,7 +872,14 @@ random numbers of the appropriate type between 0 and <limit>."))
 		 (dotimes (i ar)
 		   (dotimes (j ac)
 		     (set-val m i j (aref a i j) :coerce t)
-		     (incf k)))))))))
+		     (incf k))))))))
+          ((> (length d) 0)
+           (setf m (make-instance matrix-class :dimensions d))
+           (loop for i from 0 below (matrix-total-size m)
+              do (setf (row-major-mref m i)
+                       (coerce 
+                        (row-major-aref a i)
+                        element-type)))))
     m))
 
 (defgeneric matrix->list (m))

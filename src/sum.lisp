@@ -2,10 +2,13 @@
 (in-package :clem)
 
 ;;; slow fallback methods
+;;; FIXME NEED FAST METHODS!!
 
 (defmethod sum ((m matrix))
-  (destructuring-bind (mr mc) (dim m)
-    (sum-range m 0 (- mr 1) 0 (- mc 1))))
+  (let ((acc 0))
+    (loop for i from 0 below (matrix-total-size m)
+       do (incf acc (row-major-mref m i)))
+    acc))
 
 (defmethod sum-cols ((m matrix) &key (matrix-class (class-of m)))
   (let ((mr (rows m)) (mc (cols m)))
@@ -62,6 +65,43 @@
          (declare (dynamic-extent j) (type fixnum j))
          (setf acc (+ acc (aref a i j)))))
      acc))
+
+(macrolet ((frob-sum (matrix-type accumulator-type)
+             (let ((element-type (element-type (find-class matrix-type))))
+               `(progn
+                  (defmethod sum ((m ,matrix-type))
+                    (let ((acc (coerce 0 ',accumulator-type)))
+                      (declare (type ,accumulator-type acc))
+                      (with-typed-mref (m ,element-type)
+                        (loop for i from 0 below (matrix-total-size m)
+                           do (incf acc (row-major-mref m i))))
+                      acc))
+
+                  (defmethod sum-square ((m ,matrix-type))
+                    (let ((acc (coerce 0 ',accumulator-type)))
+                      (declare (type ,accumulator-type acc))
+                      (with-typed-mref (m ,element-type)
+                        (loop for i from 0 below (matrix-total-size m)
+                           do (incf acc
+                                    (* (row-major-mref m i)
+                                       (row-major-mref m i)))))
+                      acc))))))
+  (frob-sum double-float-matrix double-float)
+  (frob-sum single-float-matrix single-float)
+
+  (frob-sum ub8-matrix (unsigned-byte 32))
+  (frob-sum ub16-matrix (unsigned-byte 32))
+  (frob-sum ub32-matrix (unsigned-byte 32))
+
+  (frob-sum sb8-matrix (signed-byte 32))
+  (frob-sum sb16-matrix (signed-byte 32))
+  (frob-sum sb32-matrix (signed-byte 32))
+
+  (frob-sum fixnum-matrix (signed-byte 32))
+  (frob-sum bit-matrix (signed-byte 32))
+  (frob-sum integer-matrix integer)
+  (frob-sum real-matrix real)
+  (frob-sum number-matrix number))
 
 (macrolet
     ((frob-sum-range (matrix-type accumulator-type)

@@ -1,55 +1,71 @@
-;;; -*- Mode: lisp; outline-regexp: ";;;;;*"; indent-tabs-mode: nil -*-;;;
+;;; add.lisp
+;;; macros, functions and methods for matrix addition
 ;;;
-;;; file: defmatrix-add.cl
-;;; author: cyrus harmon
+;;; Copyright (c) 2004-2006 Cyrus Harmon (ch-lisp@bobobeach.com)
+;;; All rights reserved.
+;;;
+;;; Redistribution and use in source and binary forms, with or without
+;;; modification, are permitted provided that the following conditions
+;;; are met:
+;;;
+;;;   * Redistributions of source code must retain the above copyright
+;;;     notice, this list of conditions and the following disclaimer.
+;;;
+;;;   * Redistributions in binary form must reproduce the above
+;;;     copyright notice, this list of conditions and the following
+;;;     disclaimer in the documentation and/or other materials
+;;;     provided with the distribution.
+;;;
+;;; THIS SOFTWARE IS PROVIDED BY THE AUTHOR 'AS IS' AND ANY EXPRESSED
+;;; OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+;;; WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+;;; ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+;;; DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+;;; DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+;;; GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+;;; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+;;; WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+;;; NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+;;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ;;;
 
 (in-package :clem)
 
-(defmacro def-matrix-add (type-1 type-2 accumulator-type &key suffix)
+;;; slow version
+(defmethod mat-add ((a matrix) (b matrix) &key in-place)
+  (if in-place
+      (error "not yet supported")
+      (mat-scalar-op a b #'+)))
+
+;;; faster version
+(defmacro def-matrix-add-range (type-1 type-2 accumulator-type &key suffix)
   (let ((element-type-1 (element-type (find-class `,type-1)))
 	(element-type-2 (element-type (find-class `,type-2)))
 	(accumulator-element-type (element-type (find-class `,accumulator-type))))
     `(progn
        (defmethod ,(ch-util:make-intern (concatenate 'string "mat-add-range" suffix))
-	   ((m ,type-1) (n ,type-2) startr endr startc endc)
+	   ((m ,type-1) (n ,type-2) startr endr startc endc &key in-place)
 	 (destructuring-bind (mr mc) (dim m)
-	   (let ((p (make-instance ',accumulator-type :rows mr :cols mc)))
-             (clem::mloop-range (((m ,element-type-1 a)
-                                  (n ,element-type-2 b)
-                                  (p ,accumulator-element-type c))
-                                 startr endr startc endc i j)
-               (setf (aref c i j) (+ (aref a i j) (aref b i j))))
-	     p)))
-       
-       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-add" suffix))
-	   ((m ,type-1) (n ,type-2))
-	 (destructuring-bind (mr mc) (dim m)
-	   (,(ch-util:make-intern (concatenate 'string "mat-add-range" suffix)) m n 0 (1- mr) 0 (1- mc)))))))
-
-(defmacro def-matrix-add! (type-1 type-2 accumulator-type &key suffix)
-  (declare (ignore accumulator-type))
-  (let ((element-type-1 (element-type (find-class `,type-1)))
-	(element-type-2 (element-type (find-class `,type-2))))
-    `(progn
-       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-add-range!" suffix))
-	   ((m ,type-1) (n ,type-2) startr endr startc endc)
-         (clem::mloop-range (((m ,element-type-1 a)
-                              (n ,element-type-2 b))
-                             startr endr startc endc i j)
-           (setf (aref a i j) (+ (aref a i j) (aref b i j))))
-         m)
-       
-       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-add!" suffix))
-	   ((m ,type-1) (n ,type-2))
-	 (destructuring-bind (mr mc) (dim m)
-	   (,(ch-util:make-intern (concatenate 'string "mat-add-range!" suffix)) m n 0 (1- mr) 0 (1- mc)))))))
+           (if in-place
+               (progn
+                 (clem::mloop-range (((m ,element-type-1 a)
+                                      (n ,element-type-2 b))
+                                     startr endr startc endc i j)
+                   (setf (aref a i j) (+ (aref a i j) (aref b i j))))
+                 m)
+               (let ((p (make-instance ',accumulator-type :rows mr :cols mc)))
+                 (clem::mloop-range (((m ,element-type-1 a)
+                                      (n ,element-type-2 b)
+                                      (p ,accumulator-element-type c))
+                                     startr endr startc endc i j)
+                   (setf (aref c i j) (+ (aref a i j) (aref b i j))))
+                 p)))))))
 
 
 (macrolet ((frob (type-1 type-2 type-3 &key suffix)
 	     `(progn
-		(def-matrix-add ,type-1 ,type-2 ,type-3 :suffix ,suffix)
-		(def-matrix-add! ,type-1 ,type-2 ,type-3 :suffix ,suffix))))
+                (def-binary-op "mat-add" + ,type-1 ,type-2 ,type-3)
+		(def-matrix-add-range ,type-1 ,type-2 ,type-3 :suffix ,suffix))))
   
   (frob double-float-matrix double-float-matrix double-float-matrix)
   (frob double-float-matrix single-float-matrix double-float-matrix)
@@ -136,56 +152,52 @@
 	(accumulator-element-type (element-type (find-class `,accumulator-type))))
     `(progn
        (defmethod ,(ch-util:make-intern (concatenate 'string "mat-add-range" suffix))
-	   ((m ,type-1) (n ,type-2) startr endr startc endc)
+	   ((m ,type-1) (n ,type-2) startr endr startc endc &key in-place)
          (declare (type ,type-2 n))
 	 (destructuring-bind (mr mc) (dim m)
-	   (let ((p (make-instance ',accumulator-type :rows mr :cols mc)))
-	     (with-typed-mref (m ,element-type-1)
-               (with-typed-mref (p ,accumulator-element-type)
+           (if in-place
+               (with-typed-mref (m ,element-type-1)
                  (do ((i startr (1+ i)))
                      ((> i endr))
                    (declare (dynamic-extent i) (type fixnum i))
                    (do ((j startc (1+ j)))
                        ((> j endc))
                      (declare (dynamic-extent j) (type fixnum j))
-                     (setf (mref p i j)
-                           (+ (mref m i j) n))))))
-	     p)))
+                     (setf (mref m i j)
+                           (+ (mref m i j) n))))
+                 m)
+               (let ((p (make-instance ',accumulator-type :rows mr :cols mc)))
+                 (with-typed-mref (m ,element-type-1)
+                   (with-typed-mref (p ,accumulator-element-type)
+                     (do ((i startr (1+ i)))
+                         ((> i endr))
+                       (declare (dynamic-extent i) (type fixnum i))
+                       (do ((j startc (1+ j)))
+                           ((> j endc))
+                         (declare (dynamic-extent j) (type fixnum j))
+                         (setf (mref p i j)
+                               (+ (mref m i j) n))))))
+                 p))))
        
        (defmethod ,(ch-util:make-intern (concatenate 'string "mat-add" suffix))
-	   ((m ,type-1) (n ,type-2))
-	 (destructuring-bind (mr mc) (dim m)
-	   (,(ch-util:make-intern (concatenate 'string "mat-add-range" suffix)) m n 0 (1- mr) 0 (1- mc)))))))
-       
-(defmacro def-matrix-add-number! (type-1 type-2 accumulator-type &key suffix)
-  (declare (ignore accumulator-type))
-  (let ((element-type-1 (element-type (find-class `,type-1))))
-    `(progn
-       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-add-range!" suffix))
-	   ((m ,type-1) (n ,type-2) startr endr startc endc)
-         (declare (type ,type-2 n))
-	 (with-typed-mref (m ,element-type-1)
-	     (do ((i startr (1+ i)))
-		 ((> i endr))
-	       (declare (dynamic-extent i) (type fixnum i))
-	       (do ((j startc (1+ j)))
-		   ((> j endc))
-		 (declare (dynamic-extent j) (type fixnum j))
-		 (setf (mref m i j)
-		       (+ (mref m i j) n)))))
-         m)
-       
-       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-add!" suffix))
-	   ((m ,type-1) (n ,type-2))
-	 (destructuring-bind (mr mc) (dim m)
-	   (,(ch-util:make-intern (concatenate 'string "mat-add-range!" suffix)) m n 0 (1- mr) 0 (1- mc))))
-       
-       )))
+	   ((m ,type-1) (n ,type-2) &key in-place)
+         (if in-place
+             (with-typed-mref (m ,element-type-1)
+               (loop for i from 0 below (matrix-total-size m)
+                  do (setf (row-major-mref m i)
+                           (+ (row-major-mref m i) n)))
+               m)
+             (let ((p (make-instance ',accumulator-type :dimensions (matrix-dimensions m))))
+               (with-typed-mref (m ,element-type-1)
+                 (with-typed-mref (p ,accumulator-element-type)
+                   (loop for i from 0 below (matrix-total-size m)
+                      do (setf (row-major-mref p i)
+                               (+ (row-major-mref m i) n)))))
+               p))))))
 
 (macrolet ((frob (type-1 type-2 type-3 &key suffix)
 	     `(progn
-		(def-matrix-add-number ,type-1 ,type-2 ,type-3 :suffix ,suffix)
-		(def-matrix-add-number! ,type-1 ,type-2 ,type-3 :suffix ,suffix))))
+		(def-matrix-add-number ,type-1 ,type-2 ,type-3 :suffix ,suffix))))
   (frob double-float-matrix double-float double-float-matrix)
   (frob double-float-matrix single-float double-float-matrix)
   (frob double-float-matrix integer double-float-matrix)
@@ -206,60 +218,58 @@
 	(accumulator-element-type (element-type (find-class `,accumulator-type))))
     `(progn
        (defmethod ,(ch-util:make-intern (concatenate 'string "mat-add-range" suffix))
-	   ((m ,type-1) (n ,type-2) startr endr startc endc)
+	   ((m ,type-1) (n ,type-2) startr endr startc endc &key in-place)
          (declare (type ,type-2 n))
          (let ((val (clem::scalar-val n)))
            (declare (type ,element-type-2 val))
            (destructuring-bind (mr mc) (dim m)
-             (let ((p (make-instance ',accumulator-type :rows mr :cols mc)))
-               (with-typed-mref (m ,element-type-1)
-                 (with-typed-mref (p ,accumulator-element-type)
-                   (do ((i startr (1+ i)))
-                       ((> i endr))
-                     (declare (dynamic-extent i) (type fixnum i))
-                     (do ((j startc (1+ j)))
-                         ((> j endc))
-                       (declare (dynamic-extent j) (type fixnum j))
-                       (setf (mref p i j)
-                             (+ (mref m i j) val))))))
-               p))))
+             (if in-place
+                 (progn
+                   (with-typed-mref (m ,element-type-1)
+                     (do ((i startr (1+ i)))
+                         ((> i endr))
+                       (declare (dynamic-extent i) (type fixnum i))
+                       (do ((j startc (1+ j)))
+                           ((> j endc))
+                         (declare (dynamic-extent j) (type fixnum j))
+                         (setf (mref m i j)
+                               (+ (mref m i j) val)))))
+                   m)
+                 (let ((p (make-instance ',accumulator-type :rows mr :cols mc)))
+                   (with-typed-mref (m ,element-type-1)
+                     (with-typed-mref (p ,accumulator-element-type)
+                       (do ((i startr (1+ i)))
+                           ((> i endr))
+                         (declare (dynamic-extent i) (type fixnum i))
+                         (do ((j startc (1+ j)))
+                             ((> j endc))
+                           (declare (dynamic-extent j) (type fixnum j))
+                           (setf (mref p i j)
+                                 (+ (mref m i j) val))))))
+                   p)))))
          
        (defmethod ,(ch-util:make-intern (concatenate 'string "mat-add" suffix))
-	   ((m ,type-1) (n ,type-2))
-	 (destructuring-bind (mr mc) (dim m)
-	   (,(ch-util:make-intern (concatenate 'string "mat-add-range" suffix)) m n 0 (1- mr) 0 (1- mc)))))))
-
-(defmacro def-matrix-add-scalar! (type-1 type-2 accumulator-type &key suffix)
-  (declare (ignore accumulator-type))
-  (let ((element-type-1 (element-type (find-class `,type-1)))
-        (element-type-2 (element-type (find-class `,type-2))))
-    `(progn
-       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-add-range!" suffix))
-	   ((m ,type-1) (n ,type-2) startr endr startc endc)
-         (declare (type ,type-2 n))
+	   ((m ,type-1) (n ,type-2) &key in-place)
          (let ((val (clem::scalar-val n)))
            (declare (type ,element-type-2 val))
-           (with-typed-mref (m ,element-type-1)
-             (do ((i startr (1+ i)))
-                 ((> i endr))
-               (declare (dynamic-extent i) (type fixnum i))
-               (do ((j startc (1+ j)))
-                   ((> j endc))
-                 (declare (dynamic-extent j) (type fixnum j))
-                 (setf (mref m i j)
-                       (+ (mref m i j) val))))))
-         m)
-       
-       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-add!" suffix))
-	   ((m ,type-1) (n ,type-2))
-	 (destructuring-bind (mr mc) (dim m)
-	   (,(ch-util:make-intern (concatenate 'string "mat-add-range!" suffix)) m n 0 (1- mr) 0 (1- mc))))
-       )))
+           (if in-place
+               (with-typed-mref (m ,element-type-1)
+                 (loop for i from 0 below (matrix-total-size m)
+                    do (setf (row-major-mref m i)
+                             (+ (row-major-mref m i) val)))
+                 m)
+               (let ((p (make-instance ',accumulator-type :dimensions (matrix-dimensions m))))
+                 (with-typed-mref (m ,element-type-1)
+                   (with-typed-mref (p ,accumulator-element-type)
+                     (loop for i from 0 below (matrix-total-size m)
+                        do (setf (row-major-mref p i)
+                                 (+ (row-major-mref m i) val)))))
+                 p)))
+	 ))))
 
 (macrolet ((frob (type-1 type-2 type-3 &key suffix)
 	     `(progn
-                (def-matrix-add-scalar ,type-1 ,type-2 ,type-3 :suffix ,suffix)
-		(def-matrix-add-scalar! ,type-1 ,type-2 ,type-3 :suffix ,suffix))))
+                (def-matrix-add-scalar ,type-1 ,type-2 ,type-3 :suffix ,suffix))))
   
   (frob ub8-matrix bit-scalar ub8-matrix)
   (frob ub8-matrix sb8-scalar ub8-matrix)

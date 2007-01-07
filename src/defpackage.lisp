@@ -177,11 +177,13 @@
    #:real-matrix
    #:array->real-matrix
    #:random-real-matrix
-
+   
    #:complex-matrix
    #:array->complex-matrix
    #:random-complex-matrix
 
+   #:number-matrix
+   
    ;;; affine transformation stuff
    #:affine-transformation
    #:make-affine-transformation

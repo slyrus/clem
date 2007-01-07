@@ -34,7 +34,7 @@
      (:cl-source-file "interpolation" :depends-on ("matrix" "defmatrix-types"))
      (:cl-source-file "transform" :depends-on ("matrix" "defmatrix-types" "interpolation"))
      (:cl-source-file "extrema" :depends-on ("matrix" "defmatrix-types"))
-     (:cl-source-file "add" :depends-on ("matrix" "defmatrix-types"))
+     (:cl-source-file "add" :depends-on ("matrix" "defmatrix-types" "scalar" "mloop" "mref" "vector" "typed-matrix-utils"))
      (:cl-source-file "subtr" :depends-on ("matrix" "defmatrix-types"))
      (:cl-source-file "move" :depends-on ("matrix" "defmatrix-types"))
      (:cl-source-file "sum" :depends-on ("matrix" "defmatrix-types"))

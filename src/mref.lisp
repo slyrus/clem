@@ -1,3 +1,33 @@
+;;; mref.lisp
+;;; macros, functions and methods for matrix element access
+;;;
+;;; Copyright (c) 2004-2006 Cyrus Harmon (ch-lisp@bobobeach.com)
+;;; All rights reserved.
+;;;
+;;; Redistribution and use in source and binary forms, with or without
+;;; modification, are permitted provided that the following conditions
+;;; are met:
+;;;
+;;;   * Redistributions of source code must retain the above copyright
+;;;     notice, this list of conditions and the following disclaimer.
+;;;
+;;;   * Redistributions in binary form must reproduce the above
+;;;     copyright notice, this list of conditions and the following
+;;;     disclaimer in the documentation and/or other materials
+;;;     provided with the distribution.
+;;;
+;;; THIS SOFTWARE IS PROVIDED BY THE AUTHOR 'AS IS' AND ANY EXPRESSED
+;;; OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+;;; WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+;;; ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+;;; DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+;;; DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+;;; GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+;;; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+;;; WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+;;; NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+;;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+;;;
 
 (in-package :clem)
 
@@ -63,29 +93,22 @@
 ;;; #lisp for the revised macro.
 ;;;
 
-(defconstant +var-alist-sym+ (gensym))
+(define-symbol-macro .mref-expanders. nil)
 
 (defmacro with-typed-mref ((z element-type) &body body &environment env)
   (let ((vals (gensym "MATRIX-")))
     `(let ((,vals (matrix-vals ,z)))
        (declare (type (simple-array ,element-type *) ,vals))
-       , (multiple-value-bind (val-alist expanded-p)
-             (macroexpand-1 +var-alist-sym+ env)
-           (if expanded-p
-               ;; no need or the MREF macrolet, it already exists
-               `(symbol-macrolet ((,+var-alist-sym+
-                                   ,(acons z vals val-alist)))
-                  ,@body)
-               ;; first contour
-               `(symbol-macrolet ((,+var-alist-sym+ ,(acons z vals ())))
-                  (macrolet ((mref (mat &rest args &environment env)
-                               (let ((vals (cdr (assoc mat (macroexpand-1 ',+var-alist-sym+ env)))))
-                                 `(aref ,vals ,@args)))
-                             (row-major-mref (mat &rest args &environment env)
-                               (let ((vals (cdr (assoc mat (macroexpand-1 ',+var-alist-sym+ env)))))
-                                 `(row-major-aref ,vals ,@args))))
-                    ,@body)))))))
-
+       (symbol-macrolet
+           ((.mref-expanders. ,(acons z vals (macroexpand-1 '.mref-expanders. env))))
+         (macrolet
+             ((mref (mat &rest args &environment env)
+                (let ((vals (cdr (assoc mat (macroexpand-1 '.mref-expanders. env)))))
+                  `(aref ,vals ,@args)))
+              (row-major-mref (mat &rest args &environment env)
+                (let ((vals (cdr (assoc mat (macroexpand-1 '.mref-expanders. env)))))
+                  `(row-major-aref ,vals ,@args))))
+           ,@body)))))
 
 (defmacro matrix-total-size (matrix)
   `(array-total-size (matrix-vals ,matrix)))
