@@ -10,31 +10,6 @@
 
 (in-package :clem)
 
-(defmacro with-typed-matrix-vals ((m element-type a) &body body)
-  `(let ((,a (matrix-vals ,m)))
-     (declare (type (simple-array ,element-type (* *)) ,a))
-     ,@body))
-
-(defmacro with-typed-matrix-accessor ((m element-type ref) &body body)
-  (let ((vals (gensym)))
-    `(let ((,vals (matrix-vals ,m)))
-       (declare (type (simple-array ,element-type *) ,vals))
-       (macrolet ((,ref (&rest args)
-                    `(aref ,',vals ,@args)))
-         ,@body))))
-
-(defmacro with-untyped-matrix-vals ((m element-type a) &body body)
-  (declare (ignore element-type))
-  `(let ((,a (matrix-vals ,m)))
-     ,@body))
-
-(defmacro with-matrix-vals ((m element-type a) &body body)
-  `(if (equal ',element-type (element-type (class-of ,m)))
-       (with-typed-matrix-vals (,m ,element-type ,a)
-	 ,@body)
-       (with-untyped-matrix-vals (,m ,element-type ,a)
-	 ,@body)))
-	 
 (defmacro with-map-range (m element-type startr endr startc endc (a i j) &body body)
   `(with-matrix-vals (,m ,element-type ,a)
      (do ((,i ,startr (1+ ,i)))

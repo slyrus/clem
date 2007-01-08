@@ -716,40 +716,41 @@
     (set-val m r i (car l))))
 
 (defgeneric set-col (m c values))
+
 (defmethod set-col ((m matrix) c values)
   (do
-      ((l values (cdr l))
-       (i 0 (+ i 1)))
-      ((not l))
+   ((l values (cdr l))
+    (i 0 (+ i 1)))
+   ((not l))
     (set-val m i c (car l))))
 
 (defgeneric get-row-list (m r &optional start))
+
 (defmethod get-row-list ((m matrix) r &optional (start 0))
   (cond
-   ((< start (second (dim m)))
-    (cons (val m r start)
-	  (get-row-list m r (+ 1 start))))
-   (t nil)))
+    ((< start (second (dim m)))
+     (cons (val m r start)
+           (get-row-list m r (+ 1 start))))
+    (t nil)))
 
 (defgeneric get-col-list (m c &optional start))
+
 (defmethod get-col-list ((m matrix) c &optional (start 0))
   (cond
-   ((< start (first (dim m)))
-    (cons (val m start c)
-	  (get-col-list m c (+ 1 start))))
-   (t nil)))
+    ((< start (first (dim m)))
+     (cons (val m start c)
+           (get-col-list m c (+ 1 start))))
+    (t nil)))
 
 (defgeneric map-set-val (a f))
-(defmethod map-set-val ((a matrix) f)
-  (destructuring-bind (m n) (dim a)
-    (declare (dynamic-extent m n) (fixnum m n))
-    (dotimes (i m)
-      (declare (dynamic-extent i) (fixnum i))
-      (dotimes (j n)
-        (declare (dynamic-extent j) (fixnum j))
-	(set-val a i j (funcall f (val a i j))))))
-  a)
 
+(defmethod map-set-val ((m matrix) f)
+  (loop for i from 0 below (matrix-total-size m)
+     do (setf (row-major-mref m i)
+              (funcall f (row-major-mref m i))))
+  m)
+
+;;; FIXME THIS IS BROKEN!
 (defgeneric map-set-val-fit (a f &key truncate))
 (defmethod map-set-val-fit ((a matrix) f &key (truncate t))
   (destructuring-bind (m n) (dim a)

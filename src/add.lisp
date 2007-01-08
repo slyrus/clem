@@ -115,9 +115,10 @@
   (frob complex-matrix integer-matrix complex-matrix)
   (frob complex-matrix real-matrix complex-matrix))
 
-(macrolet ((frob (type-1 type-2 type-3 &key suffix)
+
+(macrolet ((frob (type-1 type-2 type-3)
 	     `(progn
-		(def-matrix-add ,type-1 ,type-2 ,type-3 :suffix ,suffix))))
+                (def-binary-op "mat-add" + ,type-1 ,type-2 ,type-3 :allow-in-place nil))))
   (frob single-float-matrix double-float-matrix double-float-matrix)
 
   (frob bit-matrix bit-matrix ub32-matrix)
@@ -147,7 +148,7 @@
   (frob bit-matrix single-float-matrix single-float-matrix))
 
 
-(defmacro def-matrix-add-number (type-1 type-2 accumulator-type &key suffix)
+(defmacro def-matrix-add-number (type-1 type-2 accumulator-type &key suffix (allow-in-place t))
   (let ((element-type-1 (element-type (find-class `,type-1)))
 	(accumulator-element-type (element-type (find-class `,accumulator-type))))
     `(progn
@@ -156,16 +157,21 @@
          (declare (type ,type-2 n))
 	 (destructuring-bind (mr mc) (dim m)
            (if in-place
-               (with-typed-mref (m ,element-type-1)
-                 (do ((i startr (1+ i)))
-                     ((> i endr))
-                   (declare (dynamic-extent i) (type fixnum i))
-                   (do ((j startc (1+ j)))
-                       ((> j endc))
-                     (declare (dynamic-extent j) (type fixnum j))
-                     (setf (mref m i j)
-                           (+ (mref m i j) n))))
-                 m)
+               ,(if allow-in-place
+                    `(with-typed-mref (m ,element-type-1)
+                      (do ((i startr (1+ i)))
+                          ((> i endr))
+                        (declare (dynamic-extent i) (type fixnum i))
+                        (do ((j startc (1+ j)))
+                            ((> j endc))
+                          (declare (dynamic-extent j) (type fixnum j))
+                          (setf (mref m i j)
+                                (+ (mref m i j) n))))
+                      m)
+                    `(error 'matrix-argument-error
+                            :format-control
+                            "in-place operation not allowed (~S of ~S and ~S"
+                            :format-arguments (list '+ ',type-1 ',type-2)))
                (let ((p (make-instance ',accumulator-type :rows mr :cols mc)))
                  (with-typed-mref (m ,element-type-1)
                    (with-typed-mref (p ,accumulator-element-type)
@@ -182,11 +188,16 @@
        (defmethod ,(ch-util:make-intern (concatenate 'string "mat-add" suffix))
 	   ((m ,type-1) (n ,type-2) &key in-place)
          (if in-place
-             (with-typed-mref (m ,element-type-1)
-               (loop for i from 0 below (matrix-total-size m)
-                  do (setf (row-major-mref m i)
-                           (+ (row-major-mref m i) n)))
-               m)
+             ,(if allow-in-place
+                  `(with-typed-mref (m ,element-type-1)
+                     (loop for i from 0 below (matrix-total-size m)
+                        do (setf (row-major-mref m i)
+                                 (+ (row-major-mref m i) n)))
+                     m)
+                  `(error 'matrix-argument-error
+                          :format-control
+                          "in-place operation not allowed (~S of ~S and ~S"
+                          :format-arguments (list '+ ',type-1 ',type-2)))
              (let ((p (make-instance ',accumulator-type :dimensions (matrix-dimensions m))))
                (with-typed-mref (m ,element-type-1)
                  (with-typed-mref (p ,accumulator-element-type)
@@ -206,7 +217,7 @@
 
 (macrolet ((frob (type-1 type-2 type-3 &key suffix)
 	     `(progn
-		(def-matrix-add-number ,type-1 ,type-2 ,type-3 :suffix ,suffix))))
+		(def-matrix-add-number ,type-1 ,type-2 ,type-3 :suffix ,suffix :allow-in-place nil))))
 
   (frob ub8-matrix integer integer-matrix)
   (frob ub8-matrix double-float double-float-matrix)

@@ -40,20 +40,11 @@
 (defmethod (setf mref) (v (m matrix) &rest indices)
   (setf (apply #'aref (matrix-vals m) indices) v))
 
-(define-compiler-macro mref (matrix &rest indices)
-  `(aref (matrix-vals ,matrix) ,@indices))
-
-(define-compiler-macro (setf mref) (v matrix &rest indices)
-  `(setf (aref (matrix-vals ,matrix) ,@indices) ,v))
-
 (defmethod row-major-mref ((m matrix) index)
   (row-major-aref (matrix-vals m) index))
 
-(define-compiler-macro row-major-mref (matrix &rest indices)
-  `(row-major-aref (matrix-vals ,matrix) ,@indices))
-
-(define-compiler-macro (setf row-major-mref) (v matrix &rest indices)
-  `(setf (row-major-aref (matrix-vals ,matrix) ,@indices) ,v))
+(defmethod (setf row-major-mref) (v (m matrix) index)
+  (setf (row-major-aref (matrix-vals m) index) v))
 
 ;;; with-typed-mref establishes variables for the matrix-vals of the
 ;;; matrix and local macros that shadow mref and 
@@ -93,10 +84,17 @@
 ;;; #lisp for the revised macro.
 ;;;
 
+;;; define a local symbol-macro that is initially bound to nil. This
+;;; will hold an alist of matrices and their corresponding matrix-vals
 (define-symbol-macro .mref-expanders. nil)
 
+;;; 1. gensym a symbol to hold the result of (matrix-vals ,z)
+;;; 2. declare the type of this array
+;;; 3. (do a "shadowing") symbol-macrolet .mref-expanders. with the matrix and vals
+;;;    consed on to the front of the list
+;;; 4. 
 (defmacro with-typed-mref ((z element-type) &body body &environment env)
-  (let ((vals (gensym "MATRIX-")))
+  (let ((vals (gensym "MATRIX-VALS-")))
     `(let ((,vals (matrix-vals ,z)))
        (declare (type (simple-array ,element-type *) ,vals))
        (symbol-macrolet
@@ -104,10 +102,14 @@
          (macrolet
              ((mref (mat &rest args &environment env)
                 (let ((vals (cdr (assoc mat (macroexpand-1 '.mref-expanders. env)))))
-                  `(aref ,vals ,@args)))
+                  (if vals
+                      `(aref ,vals ,@args)
+                      `(aref (matrix-vals ,mat) ,@args))))
               (row-major-mref (mat &rest args &environment env)
                 (let ((vals (cdr (assoc mat (macroexpand-1 '.mref-expanders. env)))))
-                  `(row-major-aref ,vals ,@args))))
+                  (if vals
+                      `(row-major-aref ,vals ,@args)
+                      `(row-major-aref (matrix-vals ,mat) ,@args)))))
            ,@body)))))
 
 (defmacro matrix-total-size (matrix)
@@ -116,3 +118,49 @@
 (defmacro matrix-dimensions (matrix)
   `(array-dimensions (matrix-vals ,matrix)))
 
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Old approahes to getting fast performance from matrices
+
+
+;;; old approach 1: use with-typed-matrix-vals whereby we bind a
+;;; (user-specified) local-variable to the matrix-vals of the array
+;;; and the user accesses the matrix data via aref of this symbol.
+(defmacro with-typed-matrix-vals ((m element-type a) &body body)
+  `(let ((,a (matrix-vals ,m)))
+     (declare (type (simple-array ,element-type (* *)) ,a))
+     ,@body))
+
+;;; as an analog to with-typed-matrix-vals, we'd like to be able to
+;;; use the same code for both typed and untyped matrices, therefore
+;;; we define with-untyped-matrix-vals.
+(defmacro with-untyped-matrix-vals ((m element-type a) &body body)
+  (declare (ignore element-type))
+  `(let ((,a (matrix-vals ,m)))
+     ,@body))
+
+;;; with-matrix-vals is supposed to choose between
+;;; with-typed-matrix-vals and with-untyped-matrix-vals if 1) we know
+;;; the type of the array and 2) it matches the element type of the
+;;; matrix class.
+(defmacro with-matrix-vals ((m element-type a) &body body)
+  `(if (equal ',element-type (element-type (class-of ,m)))
+       (with-typed-matrix-vals (,m ,element-type ,a)
+	 ,@body)
+       (with-untyped-matrix-vals (,m ,element-type ,a)
+	 ,@body)))
+	 
+;;; old approach 2: like with-typed-matrix-vals, but instead of
+;;; specifying a symbol to hold the matrix-vals, we gensym that symbol
+;;; and instead the users passes in the name of an accessor, which is
+;;; then macrolet-ed to perform the aref of the gensym-ed symbol,
+;;; which gets bound to the matrix-vals prior to exectuing the body.
+;;;
+(defmacro with-typed-matrix-accessor ((m element-type ref) &body body)
+  (let ((vals (gensym)))
+    `(let ((,vals (matrix-vals ,m)))
+       (declare (type (simple-array ,element-type *) ,vals))
+       (macrolet ((,ref (&rest args)
+                    `(aref ,',vals ,@args)))
+         ,@body))))

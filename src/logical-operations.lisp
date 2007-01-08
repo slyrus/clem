@@ -1,56 +1,63 @@
-;;; -*- Mode: lisp; outline-regexp: ";;;;;*"; indent-tabs-mode: nil -*-;;;
+;;; logical-operations.lop
+;;; mlogand, mlogior, mlogxor, mlognot and mbitnor
 ;;;
-;;; file: defmatrix-binary-op.cl
-;;; author: cyrus harmon
+;;; Copyright (c) 2004-2006 Cyrus Harmon (ch-lisp@bobobeach.com)
+;;; All rights reserved.
+;;;
+;;; Redistribution and use in source and binary forms, with or without
+;;; modification, are permitted provided that the following conditions
+;;; are met:
+;;;
+;;;   * Redistributions of source code must retain the above copyright
+;;;     notice, this list of conditions and the following disclaimer.
+;;;
+;;;   * Redistributions in binary form must reproduce the above
+;;;     copyright notice, this list of conditions and the following
+;;;     disclaimer in the documentation and/or other materials
+;;;     provided with the distribution.
+;;;
+;;; THIS SOFTWARE IS PROVIDED BY THE AUTHOR 'AS IS' AND ANY EXPRESSED
+;;; OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+;;; WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+;;; ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+;;; DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+;;; DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+;;; GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+;;; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+;;; WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+;;; NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+;;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ;;;
 
 (in-package :clem)
 
-(macrolet ((frob (name op type-1 type-2 type-3 &key suffix)
-	     `(progn
-		(def-binary-op ,name ,op ,type-1 ,type-2 ,type-3 :suffix ,suffix))))
-  ;; matand
-  (frob "mlogand" logand bit-matrix bit-matrix bit-matrix)
-  (frob "mlogand" logand ub8-matrix ub8-matrix ub8-matrix)
-  (frob "mlogand" logand ub16-matrix ub16-matrix ub16-matrix)
-  (frob "mlogand" logand ub32-matrix ub32-matrix ub32-matrix)
-  (frob "mlogand" logand integer-matrix integer-matrix integer-matrix))
+;;; mlogand
+(def-binary-op "mlogand" logand bit-matrix bit-matrix bit-matrix)
+(def-binary-op "mlogand" logand ub8-matrix ub8-matrix ub8-matrix)
+(def-binary-op "mlogand" logand ub16-matrix ub16-matrix ub16-matrix)
+(def-binary-op "mlogand" logand ub32-matrix ub32-matrix ub32-matrix)
+(def-binary-op "mlogand" logand integer-matrix integer-matrix integer-matrix)
 
+;;; mlogior
+(def-binary-op "mlogior" logior bit-matrix bit-matrix bit-matrix)
+(def-binary-op "mlogior" logior ub8-matrix ub8-matrix ub8-matrix)
+(def-binary-op "mlogior" logior ub16-matrix ub16-matrix ub16-matrix)
+(def-binary-op "mlogior" logior ub32-matrix ub32-matrix ub32-matrix)
+(def-binary-op "mlogior" logior integer-matrix integer-matrix integer-matrix)
 
+;;; mlogxor
+(def-binary-op "mlogxor" logxor bit-matrix bit-matrix bit-matrix)
+(def-binary-op "mlogxor" logxor ub8-matrix ub8-matrix ub8-matrix)
+(def-binary-op "mlogxor" logxor ub16-matrix ub16-matrix ub16-matrix)
+(def-binary-op "mlogxor" logxor ub32-matrix ub32-matrix ub32-matrix)
+(def-binary-op "mlogxor" logxor integer-matrix integer-matrix integer-matrix)
 
-(macrolet ((frob (name op type-1 type-2 type-3 &key suffix)
-	     `(progn
-		(def-binary-op ,name ,op ,type-1 ,type-2 ,type-3 :suffix ,suffix))))
-  ;; matand
-  (frob "mlogand" logand bit-matrix bit-matrix bit-matrix)
-  (frob "mlogand" logand ub8-matrix ub8-matrix ub8-matrix)
-  (frob "mlogand" logand ub16-matrix ub16-matrix ub16-matrix)
-  (frob "mlogand" logand ub32-matrix ub32-matrix ub32-matrix)
-  (frob "mlogand" logand integer-matrix integer-matrix integer-matrix)
-  
-  ;; matior
-  (frob "mlogior" logior bit-matrix bit-matrix bit-matrix)
-  (frob "mlogior" logior ub8-matrix ub8-matrix ub8-matrix)
-  (frob "mlogior" logior ub16-matrix ub16-matrix ub16-matrix)
-  (frob "mlogior" logior ub32-matrix ub32-matrix ub32-matrix)
-  (frob "mlogior" logior integer-matrix integer-matrix integer-matrix)
-  
-  ;; matxor
-  (frob "mlogxor" logxor bit-matrix bit-matrix bit-matrix)
-  (frob "mlogxor" logxor ub8-matrix ub8-matrix ub8-matrix)
-  (frob "mlogxor" logxor ub16-matrix ub16-matrix ub16-matrix)
-  (frob "mlogxor" logxor ub32-matrix ub32-matrix ub32-matrix)
-  (frob "mlogxor" logxor integer-matrix integer-matrix integer-matrix))
-
-(macrolet ((frob (name op type-1 type-2 &key suffix)
-	     `(progn
-		(def-unary-op ,name ,op ,type-1 ,type-2 :suffix ,suffix))))
-  ;; mlognot
-  (frob "mlognot" lognot integer-matrix integer-matrix)
-  (frob "mlognot" lognot fixnum-matrix fixnum-matrix)
-  (frob "mlognot" lognot sb8-matrix sb8-matrix)
-  (frob "mlognot" lognot sb16-matrix sb16-matrix)
-  (frob "mlognot" lognot sb32-matrix sb32-matrix))
+;;; mlognot
+(def-unary-op "mlognot" lognot integer-matrix integer-matrix)
+(def-unary-op "mlognot" lognot fixnum-matrix fixnum-matrix)
+(def-unary-op "mlognot" lognot sb8-matrix sb8-matrix)
+(def-unary-op "mlognot" lognot sb16-matrix sb16-matrix)
+(def-unary-op "mlognot" lognot sb32-matrix sb32-matrix)
 
 (defmacro defmbitnor (name type-1 type-2 accumulator-type &key suffix)
   (let ((class-1 (find-class `,type-1))

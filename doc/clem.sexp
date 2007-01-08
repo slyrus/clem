@@ -22,12 +22,13 @@
   "(setf smarkup::*baseline-skip* \"14pt\")"
   "(setf smarkup::*par-skip* \"0pt\")")
  
- (:h1 "Abstract")
+ (:span
+  (:h1 "Abstract")
  
- (:p "CLEM is an open-source Common Lisp library for the
+  (:p "CLEM is an open-source Common Lisp library for the
  representation and manipulation of matrices. CLEM is designed to
  be a flexible and extensible system for the representation of
- arbitrary 2-dimensional matrices.")
+ arbitrary 2-dimensional matrices."))
  
  (:h1 "Introduction")
 
@@ -56,12 +57,35 @@ Common Lisp type system, starting with type "
      (:code "fixnum")
      ", or "
      (:code "(unsigned-byte 8)")
-     ". By using the most specific type that can represent the values of a given matrix, the lisp system can optimize for better performance and memory usage requirements. For example, a"
+     ". By using the most specific type that can represent the values of a given matrix, the lisp system can optimize for better performance and memory usage requirements. For example, a "
      (:code "bit-matrix")
      " will use 1 bit per matrix element, rather than 32-bits on 32-bit systems for a "
      (:code "t-matrix")
      ".")
 
+ (:h2 "Matrix Types")
+
+ (:h2 "Matrix Representation")
+
+ (:p "Common Lisp provides a rich built-in array type which serves as
+ the storage for CLEM matrices. Given that Common Lisp has built-in
+ arrays, why do we need CLEM and what value is provided by creating a
+ set of classses around arrays? First, the Common Lisp arrays have a
+ limited set of operations defined on them. While there is a built-in
+ (scalar) addition operator, there is no built-in way to perform an
+ element-wise addition of two arrays. CLEM addresses these by defining
+ a set of generic functions that operate on matrices that provide a
+ number of commonly used matrix operations such as matrix
+ arithmetic. Second, there is no way to define methods on arrays based
+ on their element types. Therefore, we define subclasses of matrix
+ whose underlying arrays are specialized to distinct types. We can
+ then define methods to operate specifically on these subclasses,
+ affording the opportunity to treat, say, floating point and integer
+ matrices differently and to provide declarations to the compiler
+ based on the array element type, which can, in Common Lisp
+ implementations with sufficiently smart compilers, lead to much
+ improved performance.")
+ 
  (:h1 "Defining CLEM Classes and Making CLEM Instances")
 
  (:h2 "Creating CLEM Instances with make-instance")
@@ -107,10 +131,6 @@ Common Lisp type system, starting with type "
 
  (:h2 "matrix-move")
 
- (:h1 "High Level Interface (Level 1)")
-
- (:h1 "Low Level Interface (Level 0)")
-  
  (:h1 "Matrix Arithmetic")
 
  (:h2 "Matrix Addition and Subtraction")

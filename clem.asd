@@ -25,7 +25,7 @@
      (:cl-source-file "print" :depends-on ("matrix"))
      (:cl-source-file "typed-matrix" :depends-on ("defpackage" "matrix"))
      (:cl-source-file "mloop" :depends-on ("defpackage" "matrix"))
-     (:cl-source-file "defmatrix" :depends-on ("typed-matrix"))
+     (:cl-source-file "defmatrix" :depends-on ("typed-matrix" "mref"))
      (:cl-source-file "defmatrix-types" :depends-on ("defmatrix"))
      (:cl-source-file "scalar" :depends-on ("matrix"))
      (:cl-source-file "typed-matrix-utils" :depends-on ("typed-matrix"))

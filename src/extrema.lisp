@@ -52,19 +52,15 @@
     retval))
 
 (defmethod min-val ((m matrix))
-  (let ((minval (val m 0 0)))
-    (let ((d (dim m)))
-      (dotimes (i (first d))
-	(dotimes (j (second d))
-	  (setf minval (min minval (val m i j))))))
+  (let ((minval (row-major-mref m 0)))
+    (loop for i from 0 below (matrix-total-size m)
+       do (setf minval (min minval (row-major-mref m i))))
     minval))
 
 (defmethod max-val ((m matrix))
-  (let ((maxval (val m 0 0)))
-    (let ((d (dim m)))
-      (dotimes (i (first d))
-	(dotimes (j (second d))
-	  (setf maxval (max maxval (val m i j))))))
+  (let ((maxval (row-major-mref m 0)))
+    (loop for i from 0 below (matrix-total-size m)
+       do (setf maxval (max maxval (row-major-mref m i))))
     maxval))
 
 ;;; fast functions
