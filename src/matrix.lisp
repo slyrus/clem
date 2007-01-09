@@ -423,18 +423,7 @@
         (dotimes (j n)
           (set-val c i j (funcall op (val a i j) b)))))))
 	
-(defgeneric mat-subtr (a b &key matrix-class))
-(defmethod mat-subtr ((a matrix) (b matrix) &key matrix-class)
-  (declare (ignore matrix-class))
-  (mat-scalar-op a b #'-))
-
-(defmethod mat-subtr ((a number) (b matrix) &key matrix-class)
-  (declare (ignore matrix-class))
-  (mat-scalar-op a b #'-))
-
-(defmethod mat-subtr ((a matrix) (b number) &key matrix-class)
-  (declare (ignore matrix-class))
-  (mat-scalar-op a b #'-))
+(defgeneric mat-subtr (a b &key in-place result-type))
 
 (defgeneric swap-rows (a k l))
 (defmethod swap-rows ((a matrix) k l)

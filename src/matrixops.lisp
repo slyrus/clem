@@ -162,7 +162,7 @@
 	(yd (y-derivative m :truncate truncate)))
     (mat-square! xd)
     (mat-square! yd)
-    (mat-sqrt! (mat-add! xd yd))))
+    (mat-sqrt! (mat-add xd yd :in-place t))))
 
 (defun graddir (m &key (truncate nil))
   (let ((xd (x-derivative m :truncate truncate))
@@ -440,7 +440,7 @@
             (clem:mat-square!
              (progn
                (clem::matrix-move b0 dest)
-               (clem:mat-subtr! dest b1)
+               (clem:mat-subtr dest b1 :in-place t)
                dest)))
            (clem:sum
             (clem:mat-square

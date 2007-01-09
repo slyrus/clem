@@ -32,8 +32,7 @@
 (in-package :clem)
 
 (defclass affine-transformation (double-float-matrix)
-  ((rows :accessor matrix-rows :initarg :rows :initform 3)
-   (cols :accessor matrix-cols :initarg :cols :initform 3))
+  ((dimensions :initarg :dimensions :initform '(3 3) :type (or list null)))
   (:metaclass standard-matrix-class)
   (:documentation "a matrix that represents an affine-transformation"))
 
@@ -309,9 +308,9 @@
 
 (defmethod mat-subtr :around
     ((m affine-transformation)
-     n &key matrix-class)
+     n &key in-place (result-type 'clem::affine-transformation))
   (declare (ignorable matrix-class))
-  (let ((p (make-instance 'clem::affine-transformation))
+  (let ((p (make-instance result-type))
         (r (call-next-method)))
     (set-affine-transformation-matrix p r)))
 

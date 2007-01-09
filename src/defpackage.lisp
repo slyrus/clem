@@ -30,9 +30,7 @@
    #:mat-hprod!
    #:mat-copy-into
    #:mat-add
-   #:mat-add!
    #:mat-subtr
-   #:mat-subtr!
    #:swap-rows
    #:swap-cols
    #:map-col
@@ -218,11 +216,11 @@
    #:mat-scale-range
    #:mat-abs
    #:mat-abs-range
-   #:mat-log
-   #:mat-log-range
+   #:mlog
+   #:mlog-range
 
    #:matrix-move
-   #:matrix-move-range
+   #:matrix-move-range-2d
    
    ;;; typed matrix operations
 
@@ -234,7 +232,6 @@
    ;;; logical operations
 
    #:mlogior
-   #:mlogior!
    #:mlogand
    #:mlogxor
 
