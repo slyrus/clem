@@ -170,7 +170,7 @@
                       m)
                     `(error 'matrix-argument-error
                             :format-control
-                            "in-place operation not allowed (~S of ~S and ~S"
+                            "in-place operation not allowed (~S of ~S and ~S)"
                             :format-arguments (list '+ ',type-1 ',type-2)))
                (let ((p (make-instance ',accumulator-type :rows mr :cols mc)))
                  (with-typed-mref (m ,element-type-1)
