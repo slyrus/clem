@@ -22,7 +22,7 @@
                     `(,var (clem::matrix-vals ,matrix))))
          ,@(loop for type in types and var in vars
               collect
-                `(declare (type (simple-array ,type (* *)) ,var)))
+                `(declare (type (simple-array ,type *) ,var)))
          (dotimes (,i ,m)
            (declare (type fixnum ,i))
            (dotimes (,j ,n)
@@ -37,7 +37,7 @@
                   `(,var (clem::matrix-vals ,matrix))))
        ,@(loop for type in types and var in vars
             collect
-              `(declare (type (simple-array ,type (* *)) ,var)))
+              `(declare (type (simple-array ,type *) ,var)))
        (do ((,i ,startr (1+ ,i)))
            ((> ,i ,endr))
          (declare (type fixnum ,i))

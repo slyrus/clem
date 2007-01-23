@@ -73,8 +73,8 @@
 (defmacro def-matrix-move (type-1 type-2)
   (let ((element-type-1 (element-type (find-class `,type-1)))
 	(element-type-2 (element-type (find-class `,type-2)))
-	(min (minval (find-class `,type-2)))
-	(max (maxval (find-class `,type-2))))
+        (min (minval (find-class `,type-2)))
+        (max (maxval (find-class `,type-2))))
     `(progn
        (defmethod matrix-move-range-2d ((m ,type-1) (n ,type-2)
                                         startr1 endr1 startc1 endc1
@@ -82,56 +82,56 @@
          (declare (optimize (speed 3) (safety 0))
                   (type fixnum startr1 endr1 startc1 endc1
                         startr2 endr2 startc2 endc2))
-	 (with-typed-matrix-vals (m ,element-type-1 a)
-	   (with-typed-matrix-vals (n ,element-type-2 b)
-	     (do ((i startr1 (1+ i))
+         (with-typed-matrix-vals (m ,element-type-1 a)
+           (with-typed-matrix-vals (n ,element-type-2 b)
+             (do ((i startr1 (1+ i))
                   (k startr2 (1+ k)))
-		 ((and (>= i endr1) (>= k endr2)))
-	       (declare (dynamic-extent i k) (type fixnum i k))
-	       (do ((j startc1 (1+ j))
+                 ((or (>= i endr1) (>= k endr2)))
+               (declare (dynamic-extent i k) (type fixnum i k))
+               (do ((j startc1 (1+ j))
                     (l startc2 (1+ l)))
-		   ((and (>= j endc1) (>= l endc2)))
-		 (declare (dynamic-extent j l) (type fixnum j l))
-		 (setf (aref b k l)
-		       (maybe-truncate
-			(aref a i j)
-			,element-type-1 ,element-type-2))))))
-	 n)
+                   ((or (>= j endc1) (>= l endc2)))
+                 (declare (dynamic-extent j l) (type fixnum j l))
+                 (setf (aref b k l)
+                       (maybe-truncate
+                        (aref a i j)
+                        ,element-type-1 ,element-type-2))))))
+         n)
 
        (defmethod matrix-move-range-2d-constrain ((m ,type-1) (n ,type-2) 
                                                   startr1 endr1 startc1 endc1
                                                   startr2 endr2 startc2 endc2)
-	 (with-matrix-vals (m ,element-type-1 a)
-	   (with-matrix-vals (n ,element-type-2 b)
-	     (do ((i startr1 (1+ i))
+         (with-matrix-vals (m ,element-type-1 a)
+           (with-matrix-vals (n ,element-type-2 b)
+             (do ((i startr1 (1+ i))
                   (k startr2 (1+ k)))
-		 ((and (>= i endr1) (>= k endr2)))
-	       (declare (dynamic-extent i k) (type fixnum i k))
-	       (do ((j startc1 (1+ j))
+                 ((or (>= i endr1) (>= k endr2)))
+               (declare (dynamic-extent i k) (type fixnum i k))
+               (do ((j startc1 (1+ j))
                     (l startc2 (1+ l)))
-		   ((and (>= j endc1) (>= l endc2)))
-		 (declare (dynamic-extent j l) (type fixnum j l))
-		 (setf (aref b k l) ,(if (eql element-type-1 element-type-2)
-					 `(constrain ,min (aref a i j) ,max)
-					 `(maybe-truncate (constrain ,min (aref a i j) ,max)
-							  ,element-type-1 ,element-type-2)))))))
-	 n)
+                   ((or (>= j endc1) (>= l endc2)))
+                 (declare (dynamic-extent j l) (type fixnum j l))
+                 (setf (aref b k l) ,(if (eql element-type-1 element-type-2)
+                                         `(constrain ,min (aref a i j) ,max)
+                                         `(maybe-truncate (constrain ,min (aref a i j) ,max)
+                                                          ,element-type-1 ,element-type-2)))))))
+         n)
 
        (defmethod matrix-move ((m ,type-1) (n ,type-2) &key constrain)
-	 (destructuring-bind (mr mc) (dim m)
-	   (cond (constrain
-		  (matrix-move-range-2d-constrain m n
-                                                  0 (1- mr) 0 (1- mc)
-                                                  0 (1- mr) 0 (1- mc)))
-		 (t
-		  (matrix-move-range-2d m n
-                                        0 (1- mr) 0 (1- mc)
-                                        0 (1- mr) 0 (1- mc)))))))))
+         (destructuring-bind (mr mc) (dim m)
+           (cond (constrain
+                  (matrix-move-range-2d-constrain m n
+                                                  0 mr 0 mc
+                                                  0 mr 0 mc))
+                 (t
+                  (matrix-move-range-2d m n
+                                        0 mr 0 mc
+                                        0 mr 0 mc))))))))
 
 (macrolet ((frob (type-1 type-2)
-	     `(progn
-		(def-move-element ,type-1 ,type-2)
-		(def-matrix-move ,type-1 ,type-2))))
+             `(progn
+                (def-move-element ,type-1 ,type-2)
+                (def-matrix-move ,type-1 ,type-2))))
   
   (frob double-float-matrix double-float-matrix)
   (frob double-float-matrix single-float-matrix)
@@ -176,9 +176,9 @@
   (frob sb32-matrix ub16-matrix))
 
 (macrolet ((frob (type-1 type-2)
-	     `(progn
-		(def-move-element ,type-1 ,type-2)
-		(def-matrix-move ,type-1 ,type-2))))
+             `(progn
+                (def-move-element ,type-1 ,type-2)
+                (def-matrix-move ,type-1 ,type-2))))
 
   (frob single-float-matrix double-float-matrix)
 
@@ -213,9 +213,9 @@
   (frob bit-matrix sb32-matrix))
 
 (macrolet ((frob (type-1 type-2)
-	     `(progn
-		(def-move-element ,type-1 ,type-2)
-		(def-matrix-move ,type-1 ,type-2))))
+             `(progn
+                (def-move-element ,type-1 ,type-2)
+                (def-matrix-move ,type-1 ,type-2))))
 
   (frob complex-matrix real-matrix)
   (frob complex-matrix complex-matrix)

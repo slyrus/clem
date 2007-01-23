@@ -129,7 +129,7 @@
 ;;; and the user accesses the matrix data via aref of this symbol.
 (defmacro with-typed-matrix-vals ((m element-type a) &body body)
   `(let ((,a (matrix-vals ,m)))
-     (declare (type (simple-array ,element-type (* *)) ,a))
+     (declare (type (simple-array ,element-type *) ,a))
      ,@body))
 
 ;;; as an analog to with-typed-matrix-vals, we'd like to be able to

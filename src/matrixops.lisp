@@ -195,7 +195,7 @@
 
 
 (defun laplacian-2 (m &key (matrix-class 'double-float-matrix) (truncate t))
-  (mat-scale
+  (mat-scale!
    (discrete-convolve (copy-to-matrix-type m matrix-class) 
                       (copy-to-matrix-type *laplacian-conv-matrix-2* matrix-class)
                       :truncate truncate :matrix-class matrix-class)
