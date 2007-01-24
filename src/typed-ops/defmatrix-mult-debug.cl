@@ -8,7 +8,7 @@
 		 nstartr nendr nstartc nendc)
 	   (dynamic-extent mstartr mendr mstartc mendc
 			   nstartr nendr nstartc nendc)
-	   (type (simple-array double-float (* *)) a b c)
+	   (type (simple-array double-float *) a b c)
 	   (optimize (speed 3) (safety 0)))
   (when (eql (- mendc mstartc) (- nendr nstartr))
     (let ((ai 0) (ci 0) (atemp 0d0) (ctemp 0d0))
@@ -40,7 +40,7 @@
 		 nstartr nendr nstartc nendc)
 	   (dynamic-extent mstartr mendr mstartc mendc
 			   nstartr nendr nstartc nendc)
-	   (type (simple-array single-float (* *)) a b c)
+	   (type (simple-array single-float *) a b c)
 	   (optimize (speed 3) (safety 0)))
   (when (eql (- mendc mstartc) (- nendr nstartr))
     (let ((ai 0) (ci 0) (atemp 0s0) (ctemp 0s0))
@@ -88,9 +88,9 @@
 	(let ((a (clem::matrix-vals m))
 	      (b (clem::matrix-vals n))
 	      (c (clem::matrix-vals p)))
-	  (declare (type (simple-array double-float (* *)) a))
-	  (declare (type (simple-array double-float (* *)) b))
-	  (declare (type (simple-array double-float (* *)) c))
+	  (declare (type (simple-array double-float *) a))
+	  (declare (type (simple-array double-float *) b))
+	  (declare (type (simple-array double-float *) c))
 	  
 	  (do ((k 0 (1+ k)))
 	      ((> k mc))
@@ -109,7 +109,7 @@
 		      nstartr nendr nstartc nendc)
   (declare (type fixnum mstartr mendr mstartc mendc
 		 nstartr nendr nstartc nendc)
-	   (type (simple-array double-float (* *)) a b c)
+	   (type (simple-array double-float *) a b c)
 	   (optimize (speed 3) (safety 0)))
   (when (eql (- mendc mstartc) (- nendr nstartr))
     (let ((acc 0d0))
@@ -132,7 +132,7 @@
 		       nstartr nendr nstartc nendc)
   (declare (type fixnum mstartr mendr mstartc mendc
 		 nstartr nendr nstartc nendc)
-	   (type (simple-array double-float (* *)) a b c)
+	   (type (simple-array double-float *) a b c)
 	   (optimize (speed 3) (safety 0) (space 0)))
   (when (eql (- mendc mstartc) (- nendr nstartr))
     (let ((atemp 0d0))
@@ -154,7 +154,7 @@
 		      nstartr nendr nstartc nendc)
   (declare (type fixnum mstartr mendr mstartc mendc
 		 nstartr nendr nstartc nendc)
-	   (type (simple-array double-float (* *)) a b c)
+	   (type (simple-array double-float *) a b c)
 	   (optimize (speed 3) (safety 0) (space 0)))
   (when (eql (- mendc mstartc) (- nendr nstartr))
     (let ((ci 0) (atemp 0d0))
@@ -182,7 +182,7 @@
 				   nstartr nendr nstartc nendc)
   (declare (type fixnum mstartr mendr mstartc mendc
 		 nstartr nendr nstartc nendc)
-	   (type (simple-array double-float (* *)) a b c)
+	   (type (simple-array double-float *) a b c)
 	   (optimize (speed 3) (safety 0)))
   (if (and (> (- mendr mstartr) *max-block-size*)
 	   (> (- mendc mstartc) *max-block-size*)
