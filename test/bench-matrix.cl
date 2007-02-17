@@ -1,6 +1,17 @@
 
 (in-package :clem-test)
 
+
+(defmacro with-benchmark (&body body)
+  (let ((start-var (gensym))
+        (end-var (gensym)))
+    `(let ((,start-var (get-internal-run-time)))
+       (values
+        (multiple-value-list
+         (progn ,@body))
+        (let ((,end-var (get-internal-run-time)))
+          (- ,end-var ,start-var))))))
+
 (defun matrix-bench-1 ()
   (let ((x (random-matrix 256 256 :matrix-class 'double-float-matrix :limit 255d0)))
     (print-range x 0 3 0 3)
@@ -247,4 +258,5 @@
   (matrix-bench-4)
   ;;  (matrix-bench-5)
   t)
+
 
