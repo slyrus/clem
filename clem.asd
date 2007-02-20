@@ -36,6 +36,7 @@
      (:cl-source-file "extrema" :depends-on ("matrix" "defmatrix-types"))
      (:cl-source-file "add" :depends-on ("matrix" "defmatrix-types" "scalar" "mloop" "mref" "vector" "typed-matrix-utils"))
      (:cl-source-file "subtr" :depends-on ("matrix" "defmatrix-types"))
+     (:cl-source-file "scale" :depends-on ("matrix" "defmatrix-types"))
      (:cl-source-file "move" :depends-on ("matrix" "defmatrix-types"))
      (:cl-source-file "sum" :depends-on ("matrix" "defmatrix-types"))
      (:cl-source-file "arithmetic" :depends-on ("matrix" "defmatrix-types"))
@@ -58,7 +59,6 @@
       :typed-ops
       :components
       ((:cl-source-file "defmatrix-equal")
-       (:cl-source-file "defmatrix-scale")
        (:cl-source-file "defmatrix-hprod")
        (:cl-source-file "defmatrix-mult")
        (:cl-source-file "defmatrix-mult-block")

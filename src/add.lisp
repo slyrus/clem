@@ -93,6 +93,11 @@
   (frob ub32-matrix ub8-matrix ub32-matrix)
   (frob ub32-matrix ub32-matrix ub32-matrix)
   
+  (frob sb8-matrix sb8-matrix sb16-matrix)
+  (frob sb16-matrix sb16-matrix sb32-matrix)
+  (frob sb32-matrix sb8-matrix sb32-matrix)
+  (frob sb32-matrix sb32-matrix sb32-matrix)
+  
   (frob ub8-matrix bit-matrix ub8-matrix)
   (frob ub16-matrix bit-matrix ub16-matrix)
   (frob ub32-matrix bit-matrix ub32-matrix)

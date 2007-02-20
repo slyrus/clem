@@ -53,25 +53,30 @@
   :accumulator-type integer
   :val-format "~d")
 
+(defmatrixclass unsigned-byte-matrix (integer-matrix)
+  :element-type (unsigned-byte *)
+  :accumulator-type (unsigned-byte *)
+  :val-format "~d")
+
 (defmatrixclass bit-matrix (integer-matrix) :element-type (unsigned-byte 1)
                :accumulator-type (signed-byte 32)
                :minval 0
                :maxval 1
                :val-format "~b")
 
-(defmatrixclass ub8-matrix (integer-matrix)
+(defmatrixclass ub8-matrix (unsigned-byte-matrix)
   :element-type (unsigned-byte 8)
   :accumulator-type (unsigned-byte 32)
   :minval 0
   :maxval #.(- (expt 2 8) 1))
 
-(defmatrixclass ub16-matrix (integer-matrix)
+(defmatrixclass ub16-matrix (unsigned-byte-matrix)
   :element-type (unsigned-byte 16)
   :accumulator-type (unsigned-byte 32)
   :minval 0
   :maxval #.(- (expt 2 16) 1))
 
-(defmatrixclass ub32-matrix (integer-matrix)
+(defmatrixclass ub32-matrix (unsigned-byte-matrix)
   :element-type (unsigned-byte 32)
   :accumulator-type (unsigned-byte 32)
   :minval 0

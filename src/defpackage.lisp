@@ -124,7 +124,7 @@
    #:array->sb8-matrix
    #:random-sb8-matrix
 
-   
+   #:unsigned-byte-matrix
    #:ub8-matrix
    #:ub8-scalar
    #:array->ub8-matrix
@@ -212,7 +212,6 @@
    #:subset-matrix
 
    #:mat-scale
-   #:mat-scale!
    #:mat-scale-range
    #:mat-abs
    #:mat-abs-range

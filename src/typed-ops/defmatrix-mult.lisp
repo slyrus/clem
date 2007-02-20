@@ -20,7 +20,7 @@
 
        #+sbcl
        (defmethod ,(ch-util:make-intern (concatenate 'string "mat-mult3" suffix))
-	   ((m ,type-1) (n ,type-1) (p ,type-1))
+	   ((m ,type-1) (n ,type-2) (p ,accumulator-type))
 	 (declare (optimize (speed 3) (safety 0)))
 	 (let ((a (displace-to-1d-array m))
 	       (b (displace-to-1d-array n))
@@ -116,8 +116,8 @@
   (frob ub8-matrix ub8-matrix ub8-matrix)
   (frob ub16-matrix ub16-matrix ub16-matrix)
   (frob ub32-matrix ub32-matrix ub32-matrix)
-  (frob sb8-matrix sb8-matrix sb8-matrix)
-  (frob sb16-matrix sb16-matrix sb16-matrix)
+  (frob sb8-matrix sb8-matrix sb32-matrix)
+  (frob sb16-matrix sb16-matrix sb32-matrix)
   (frob sb32-matrix sb32-matrix sb32-matrix)
   (frob fixnum-matrix fixnum-matrix fixnum-matrix)
   (frob bit-matrix bit-matrix bit-matrix))

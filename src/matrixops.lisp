@@ -195,11 +195,12 @@
 
 
 (defun laplacian-2 (m &key (matrix-class 'double-float-matrix) (truncate t))
-  (mat-scale!
+  (mat-scale
    (discrete-convolve (copy-to-matrix-type m matrix-class) 
                       (copy-to-matrix-type *laplacian-conv-matrix-2* matrix-class)
                       :truncate truncate :matrix-class matrix-class)
-   (/ 4)))
+   (/ 4)
+   :in-place t))
 
 
 (defun variance-window (a &key (k 2))
@@ -378,13 +379,13 @@
             (loop for m in matrices
                do
                (incf (mref x i j) (mref m i j)))))
-        (mat-scale! x (/ n))
+        (mat-scale x (/ n) :in-place t)
         (dotimes (i (rows sd))
           (dotimes (j (cols sd))
             (loop for m in matrices
                do
                  (incf (mref sd i j) (square (- (mref m i j) (mref x i j)))))))
-        (mat-scale! sd (/ (1- n)))
+        (mat-scale sd (/ (1- n)) :in-place t)
         (mat-sqrt sd)))))
 
 
@@ -402,7 +403,7 @@
                  (loop for m in matrices
                     do
                     (incf (mref x i j) (mref m i j)))))
-             (mat-scale! x (/ n))
+             (mat-scale x (/ n) :in-place t)
              x)))))
 
 (defun matrix-medians (matrices)
