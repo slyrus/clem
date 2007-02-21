@@ -50,6 +50,10 @@
     :element-type float
     :accumulator-type float)
 
+(defmatrixfuncs unsigned-byte-matrix
+    :element-type unsigned-byte
+    :accumulator-type unsigned-byte)
+
 (defmatrixfuncs integer-matrix
     :element-type integer
     :accumulator-type integer)

@@ -294,12 +294,6 @@
           p)
         r)))
 
-(defmethod mat-scale ((m affine-transformation)
-                     n)
-  (let ((p (make-instance 'clem::affine-transformation))
-        (r (call-next-method)))
-    (set-affine-transformation-matrix p r)))
-
 (defmethod mat-add ((m affine-transformation)
                     (n affine-transformation) &key in-place)
   (let ((p (make-instance 'clem::affine-transformation))

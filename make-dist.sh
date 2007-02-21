@@ -1,5 +1,5 @@
 PACKAGE=clem
-SYSTEMS=":${PACKAGE} :${PACKAGE}-test :${PACKAGE}-doc"
+SYSTEMS=":${PACKAGE} :${PACKAGE}-test :${PACKAGE}-doc :${PACKAGE}-benchmark"
 
 sbcl --noinform --noprint \
     --eval '(require :asdf)' \

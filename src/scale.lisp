@@ -31,20 +31,55 @@
            n)))))
 
 (progn
+  (def-matrix-scale-2 double-float-matrix complex-matrix)
   (def-matrix-scale-2 double-float-matrix double-float-matrix)
+
+  (def-matrix-scale-2 single-float-matrix complex-matrix)
+  (def-matrix-scale-2 single-float-matrix double-float-matrix)
   (def-matrix-scale-2 single-float-matrix single-float-matrix)
+
+  (def-matrix-scale-2 unsigned-byte-matrix complex-matrix)
+  (def-matrix-scale-2 unsigned-byte-matrix double-float-matrix)
+  (def-matrix-scale-2 unsigned-byte-matrix single-float-matrix)
+  (def-matrix-scale-2 unsigned-byte-matrix integer-matrix)
+  (def-matrix-scale-2 unsigned-byte-matrix unsigned-byte-matrix)
+
+  (def-matrix-scale-2 ub8-matrix complex-matrix)
+  (def-matrix-scale-2 ub8-matrix double-float-matrix)
+  (def-matrix-scale-2 ub8-matrix single-float-matrix)
   (def-matrix-scale-2 ub8-matrix ub8-matrix)
   (def-matrix-scale-2 ub8-matrix ub16-matrix)
   (def-matrix-scale-2 ub8-matrix ub32-matrix)
+
+  (def-matrix-scale-2 ub16-matrix complex-matrix)
+  (def-matrix-scale-2 ub16-matrix double-float-matrix)
+  (def-matrix-scale-2 ub16-matrix single-float-matrix)
   (def-matrix-scale-2 ub16-matrix ub16-matrix)
   (def-matrix-scale-2 ub16-matrix ub32-matrix)
+
+  (def-matrix-scale-2 ub32-matrix complex-matrix)
+  (def-matrix-scale-2 ub32-matrix double-float-matrix)
+  (def-matrix-scale-2 ub32-matrix single-float-matrix)
   (def-matrix-scale-2 ub32-matrix ub32-matrix)
+
+  (def-matrix-scale-2 sb8-matrix complex-matrix)
+  (def-matrix-scale-2 sb8-matrix double-float-matrix)
+  (def-matrix-scale-2 sb8-matrix single-float-matrix)
   (def-matrix-scale-2 sb8-matrix sb8-matrix)
   (def-matrix-scale-2 sb8-matrix sb16-matrix)
   (def-matrix-scale-2 sb8-matrix sb32-matrix)
+
+  (def-matrix-scale-2 sb16-matrix complex-matrix)
+  (def-matrix-scale-2 sb16-matrix double-float-matrix)
+  (def-matrix-scale-2 sb16-matrix single-float-matrix)
   (def-matrix-scale-2 sb16-matrix sb16-matrix)
   (def-matrix-scale-2 sb16-matrix sb32-matrix)
+
+  (def-matrix-scale-2 sb32-matrix complex-matrix)
+  (def-matrix-scale-2 sb32-matrix double-float-matrix)
+  (def-matrix-scale-2 sb32-matrix single-float-matrix)
   (def-matrix-scale-2 sb32-matrix sb32-matrix)
+
   (def-matrix-scale-2 bit-matrix ub8-matrix)
   (def-matrix-scale-2 bit-matrix sb32-matrix)
   (def-matrix-scale-2 fixnum-matrix fixnum-matrix)
@@ -55,35 +90,50 @@
 
 (defgeneric compute-mat-scale-result-class (m q))
 
-(defmethod compute-mat-scale-result-class (m q)
-  (typecase m
-    (double-float-matrix 'double-float-matrix)
-    (single-float-matrix
-     (typecase q
-       (double-float 'double-float-matrix)
-       (t 'single-float-matrix)))
-    (unsigned-byte-matrix
-     (typecase q
-       (double-float 'double-float-matrix)
-       (single-float 'single-float-matrix)
-       (t (cond
-            ((floatp q) 'double-float-matrix)
-            ((minusp q) 'sb32-matrix)
-            (t 'ub32-matrix)))))
-    (integer-matrix
-     (typecase q
-       (double-float 'double-float-matrix)
-       (single-float 'single-float-matrix)
-       (t (cond
-            ((floatp q) 'double-float-matrix)
-            (t 'sb32-matrix)))))
-    (bit-matrix
-     (typecase q
-       (double-float 'double-float-matrix)
-       (single-float 'single-float-matrix)
-       (t (cond
-            ((floatp q) 'double-float-matrix)
-            (t 'sb32-matrix)))))))
+(defmethod compute-mat-scale-result-class ((m double-float-matrix) q)
+  (typecase q
+    (complex 'complex-matrix)
+    (t (class-of m))))
+
+(defmethod compute-mat-scale-result-class ((m single-float-matrix) q)
+  (typecase q
+    (complex 'complex-matrix)
+    (double-float 'double-float-matrix)
+    (t (class-of m))))
+
+(defmethod compute-mat-scale-result-class ((m unsigned-byte-matrix) q)
+  (typecase q
+    (complex 'complex-matrix)
+    (double-float 'double-float-matrix)
+    (single-float 'single-float-matrix)
+    (t (cond
+         ((complexp q) 'complex-matrix)
+         ((floatp q) 'double-float-matrix)
+         ((minusp q) 'integer-matrix)
+         (t (class-of m))))))
+
+(defmethod compute-mat-scale-result-class ((m integer-matrix) q)
+  (typecase q
+    (complex 'complex-matrix)
+    (double-float 'double-float-matrix)
+    (single-float 'single-float-matrix)
+    (t (cond
+         ((complexp q) 'complex-matrix)
+         ((floatp q) 'double-float-matrix)
+         (t 'sb32-matrix)))))
+
+(defmethod compute-mat-scale-result-class ((m bit-matrix) q)
+  (typecase q
+    (complex 'complex-matrix)
+    (double-float 'double-float-matrix)
+    (single-float 'single-float-matrix)
+    (t (cond
+         ((complexp q) 'complex-matrix)
+         ((floatp q) 'double-float-matrix)
+         (t 'sb32-matrix)))))
+
+(defmethod compute-mat-scale-result-class ((m t-matrix) q)
+  (class-of m))
 
 (defmethod mat-scale (m q
                       &key
