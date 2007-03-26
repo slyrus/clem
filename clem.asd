@@ -20,7 +20,10 @@
      (:cl-source-file "early-matrix" :depends-on ("defpackage" "metaclasses"))
      (:cl-source-file "mref" :depends-on ("early-matrix"))
      (:cl-source-file "macros" :depends-on ("defpackage" "metaclasses" "mref"))
-     (:cl-source-file "matrix-classes" :depends-on ("defpackage" "metaclasses" "mref" "macros"))
+     (:cl-source-file "matrix-classes" :depends-on ("defpackage"
+                                                    "metaclasses"
+                                                    "mref"
+                                                    "macros"))
      (:cl-source-file "matrix" :depends-on ("matrix-classes"))
      (:cl-source-file "print" :depends-on ("matrix"))
      (:cl-source-file "typed-matrix" :depends-on ("defpackage" "matrix"))
@@ -32,9 +35,17 @@
      (:cl-source-file "vector" :depends-on ("matrix"))
      (:cl-source-file "matrixops" :depends-on ("typed-matrix-utils"))
      (:cl-source-file "interpolation" :depends-on ("matrix" "defmatrix-types"))
-     (:cl-source-file "transform" :depends-on ("matrix" "defmatrix-types" "interpolation"))
+     (:cl-source-file "transform" :depends-on ("matrix"
+                                               "defmatrix-types"
+                                               "interpolation"))
      (:cl-source-file "extrema" :depends-on ("matrix" "defmatrix-types"))
-     (:cl-source-file "add" :depends-on ("matrix" "defmatrix-types" "scalar" "mloop" "mref" "vector" "typed-matrix-utils"))
+     (:cl-source-file "add" :depends-on ("matrix"
+                                         "defmatrix-types"
+                                         "scalar"
+                                         "mloop"
+                                         "mref" 
+                                         "vector"
+                                         "typed-matrix-utils"))
      (:cl-source-file "subtr" :depends-on ("matrix" "defmatrix-types"))
      (:cl-source-file "scale" :depends-on ("matrix" "defmatrix-types"))
      (:cl-source-file "move" :depends-on ("matrix" "defmatrix-types"))
@@ -45,16 +56,7 @@
      (:cl-source-file "normalize" :depends-on ("matrix" "defmatrix-types"))
      (:cl-source-file "statistics" :depends-on ("matrix" "defmatrix-types"))
      (:cl-source-file "exponential" :depends-on ("matrix" "defmatrix-types"))
-     (:module
-      :level-0
-      :components
-      ()
-      :depends-on ("matrix-classes" "mloop" "defmatrix-types" "typed-matrix-utils" "matrixops" "scalar"))
-     (:module
-      :level-1
-      :components
-      ()
-      :depends-on ("matrix-classes" "mloop" "defmatrix-types" "typed-matrix-utils" "matrixops"))
+     
      (:module
       :typed-ops
       :components
@@ -63,6 +65,7 @@
        (:cl-source-file "defmatrix-mult")
        (:cl-source-file "defmatrix-mult-block")
        (:cl-source-file "defmatrix-transform")
+       (:cl-source-file "defmatrix-scale")
        (:cl-source-file "defmatrix-subset-matrix")
        (:cl-source-file "defmatrix-convolve"))
       :depends-on ("defmatrix-types"
@@ -71,8 +74,7 @@
                    "scalar"
                    "interpolation"
                    "matrixops"
-                   "typed-matrix-utils"
-                   :level-1))))
+                   "typed-matrix-utils"))))
    (:static-file "bootstrap" :pathname #p"bootstrap.lisp")
    (:static-file "COPYRIGHT")
    (:static-file "NEWS")

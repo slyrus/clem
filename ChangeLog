@@ -1,3 +1,156 @@
+2007-02-21  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* benchmark/.cvsignore, benchmark/bench-add.lisp, benchmark/bench-hprod.lisp, benchmark/bench-mult.lisp, benchmark/bench-scale.lisp, benchmark/bench-subtr.lisp, benchmark/benchmarks.lisp, clem-benchmark.asd, make-dist.sh, src/defmatrix-types.lisp, src/scale.lisp, src/transform.lisp, version.lisp-expr:
+	clem 0.3.13
+	 * splitting benchmarks up into multiple files and adding more
+	   benchmarks
+
+2007-02-20  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* benchmark/benchmarks.lisp, benchmark/defpackage.lisp, clem-benchmark.asd, clem.asd, src/add.lisp, src/defpackage.lisp, src/matrix-classes.lisp, src/matrixops.lisp, src/scale.lisp, src/subtr.lisp, src/typed-ops/defmatrix-mult.lisp, src/typed-ops/defmatrix-scale.lisp, version.lisp-expr:
+	clem 0.3.12
+	 * moved benchmarks stuff into its own package/directory/asdf
+	 * moved scale stuff from defmatrix-scale.lisp to scale.lisp and
+	   reworked to simplify. added mat-scale-2 that takes both input and
+	   destination matrices. reworked mat-scale to take :in-place and to
+	   figure out types and call mat-scale-2 appropriately.
+	 * fixed a type bug in mat-mult and added more matrix mult types
+
+2007-02-17  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* test/bench-matrix.cl, test/benchmarks.lisp, version.lisp-expr:
+	clem 0.3.11
+	 * added more benchmarking stuff (beginning of a new approach)
+
+2007-01-24  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/typed-ops/defmatrix-mult-block.lisp, src/typed-ops/defmatrix-mult-debug.cl, src/typed-ops/defmatrix-mult.lisp, src/typed-ops/defmatrix-transform.lisp, version.lisp-expr:
+	clem 0.3.10
+	 * fixing more array declarations
+
+2007-01-23  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/matrixops.lisp, src/mloop.lisp, src/move.lisp, src/mref.lisp, src/statistics.lisp, src/sum.lisp, src/typed-ops/defmatrix-convolve.lisp, version.lisp-expr:
+	clem 0.3.9
+	 * in laplacian-2, scale the result of discrete-convolve in-place
+	 * make some array declarations be * instead of (* *)
+	 * whitespace in move.lisp
+	 * change semantics of matrix-move-range-2d to be more lispy (that is (0 5)
+	   includes 0, but not 5
+	 * change matrix-move to match
+	 * indentation
+
+2007-01-18  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/move.lisp, test/test-clem2.cl, version.lisp-expr: clem 0.3.8
+	 * fix bug in matrix-move
+	 * add some in-place tests
+
+2007-01-13  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/add.lisp, src/subtr.lisp, version.lisp-expr: clem 0.3.7
+	 * fix an error message in mat-add-range
+	 * add subtr.lisp
+
+2007-01-09  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/defpackage.lisp, src/matrix.lisp, src/matrixops.lisp, src/transform.lisp, version.lisp-expr:
+	clem 0.3.6
+	 * removed some oudated exported symbols
+	 * reworked mat-subtr
+	 * fixed gradmag and graddir
+	 * fixed affine-transformation to work with n-d matrices
+	 * fixed mat-subtr of affine-transformations
+
+2007-01-08  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/logical-operations.lisp, src/macros.lisp, src/matrix.lisp, src/mref.lisp, src/typed-ops/defmatrix-abs.lisp, src/typed-ops/defmatrix-add.lisp, src/typed-ops/defmatrix-binary-op.lisp, src/typed-ops/defmatrix-log.lisp, src/typed-ops/defmatrix-minmax.lisp, src/typed-ops/defmatrix-move.lisp, src/typed-ops/defmatrix-mref-debug.cl, src/typed-ops/defmatrix-mref.lisp, src/typed-ops/defmatrix-range-ops.lisp, src/typed-ops/defmatrix-square.lisp, src/typed-ops/defmatrix-subtr.lisp, src/typed-ops/defmatrix-sum.lisp, src/typed-ops/defmatrix-unary-op.lisp, test/test-add.lisp, test/test-normalize.lisp, test/test-not.lisp, test/test-sum.lisp, test/test-typed-mref.lisp, clem.asd, doc/clem.sexp, src/add.lisp, src/defmatrix.lisp, src/extrema.lisp, version.lisp-expr:
+	clem 0.3.5
+	 * continuing the reorganization
+	 * minor documentation update
+	 * fixing add.lisp
+	 * reorganized with-typed-matrix-vals and friends
+	 * min and max now work with n-d matrices
+	 * added license to logical-operations.lisp
+	 * clean up logical-operations.lisp
+	 * add (:allow-in-place t) keyword arg to def-binary-op
+	 * clen up mref
+	 * remove moved files
+	 * add some tests
+
+2007-01-07  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* clem.asd, src/abs.lisp, src/add.lisp, src/arithmetic.lisp, src/defmatrix-types.lisp, src/defpackage.lisp, src/early-matrix.lisp, src/extrema.lisp, src/matrix.lisp, src/move.lisp, src/mref.lisp, src/print.lisp, src/statistics.lisp, src/sum.lisp, src/transform.lisp, src/typed-matrix.lisp, src/vector.lisp, version.lisp-expr:
+	clem 0.3.4
+	 * continuing the reorganization
+	 * added license information to some files
+	 * working on making functions work with n-dimensional matrices
+
+	* src/abs.lisp, src/add.lisp, src/arithmetic.lisp, src/early-matrix.lisp, src/exponential.lisp, src/extrema.lisp, src/log.lisp, src/logical-operations.lisp, src/macros.lisp, src/matrix.lisp, src/move.lisp, src/mref.lisp, src/normalize.lisp, src/statistics.lisp, src/sum.lisp, src/typed-ops/defmatrix-binary-op.lisp, src/typed-ops/defmatrix-minmax.lisp, src/typed-ops/defmatrix-square.lisp, src/typed-ops/defmatrix-sum.lisp, src/typed-ops/defmatrix-unary-op.lisp, test/test-clem.cl, version.lisp-expr, clem.asd:
+	clem 0.3.3
+	 * continuing the reorganization
+	 * rewrite with-typed-mref to work properly
+
+2007-01-06  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* doc/clem.sexp, src/defmatrix.lisp, src/early-matrix.lisp, src/matrix.lisp, src/typed-ops/defmatrix-move.lisp, src/typed-ops/defmatrix-mref.lisp, test/bench-matrix.cl, test/test-clem.cl, version.lisp-expr:
+	clem 0.3.2
+	 * deleted with-typed mref and commented out mref methods
+	 * spacing changes
+	 * add mref, row-major-mref, matrix-total-size, matrix-dimensions and
+	   with-typed-mref macros
+	 * matrix-move-range -> matrix-move-range-2d
+	 * reworked dim, cols and rows to work n-d matrices
+	 * removed mat-add-inline and mat-add!-inline
+	 * added fallback untyped matrix-move for matrix and integer-matrix
+	 * fixed some test stuff
+
+2007-01-03  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* src/early-matrix.lisp, src/matrix.lisp, version.lisp-expr: clem 0.3.1
+	 * adding :dimensions arg
+	 * making rows and columns reader functions work
+
+2006-12-27  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* STYLE, bootstrap.cl, bootstrap.lisp, clem.asd, src/defmatrix.lisp, src/early-matrix.lisp, src/matrix.lisp, src/n-d-matrix.lisp, src/typed-ops/defmatrix-mref.lisp, version.lisp-expr:
+	clem 0.3.0
+	 * getting ready for the big switch to n-dimensional matrices
+
+2006-12-16  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* clem.asd, src/defmatrix-types-debug.cl, src/typed-ops/defmatrix-abs.cl, src/typed-ops/defmatrix-abs.lisp, src/typed-ops/defmatrix-add.cl, src/typed-ops/defmatrix-add.lisp, src/typed-ops/defmatrix-binary-op.cl, src/typed-ops/defmatrix-binary-op.lisp, src/typed-ops/defmatrix-convolve.cl, src/typed-ops/defmatrix-convolve.lisp, src/typed-ops/defmatrix-equal.cl, src/typed-ops/defmatrix-equal.lisp, src/typed-ops/defmatrix-hprod.cl, src/typed-ops/defmatrix-hprod.lisp, src/typed-ops/defmatrix-log.cl, src/typed-ops/defmatrix-log.lisp, src/typed-ops/defmatrix-minmax.cl, src/typed-ops/defmatrix-minmax.lisp, src/typed-ops/defmatrix-move.cl, src/typed-ops/defmatrix-move.lisp, src/typed-ops/defmatrix-mref.cl, src/typed-ops/defmatrix-mref.lisp, src/typed-ops/defmatrix-mult-block.cl, src/typed-ops/defmatrix-mult-block.lisp, src/typed-ops/defmatrix-mult.cl, src/typed-ops/defmatrix-mult.lisp, src/typed-ops/defmatrix-range-ops.cl, src/typed-ops/defmatrix-range-ops.lisp, src/typed-ops/defmatrix-scale.cl, src/typed-ops/defmatrix-scale.lisp, src/typed-ops/defmatrix-square.cl, src/typed-ops/defmatrix-square.lisp, src/typed-ops/defmatrix-subset-matrix.cl, src/typed-ops/defmatrix-subset-matrix.lisp, src/typed-ops/defmatrix-subtr.cl, src/typed-ops/defmatrix-subtr.lisp, src/typed-ops/defmatrix-sum.cl, src/typed-ops/defmatrix-sum.lisp, src/typed-ops/defmatrix-transform.cl, src/typed-ops/defmatrix-transform.lisp, src/typed-ops/defmatrix-unary-op.cl, src/typed-ops/defmatrix-unary-op.lisp, version.lisp-expr:
+	clem 0.2.11
+	 * second stage of the big file rename/consolidation
+	   this time for the typed-ops
+	   + .cl -> .lisp files
+	   + just use standard :cl-source-file asdf type
+
+	* src/print.cl, src/print.lisp, src/row-vector.cl, src/scalar-types.cl, src/scalar.cl, src/scalar.lisp, src/transform.cl, src/transform.lisp, src/typed-matrix-utils.cl, src/typed-matrix-utils.lisp, src/typed-matrix.cl, src/typed-matrix.lisp, src/vector.lisp, Makefile, NEWS, clem.asd, src/base-vector.cl, src/col-vector.cl, src/defmatrix-types.cl, src/defmatrix-types.lisp, src/defmatrix.cl, src/defmatrix.lisp, src/defpackage.cl, src/defpackage.lisp, src/early-matrix.cl, src/early-matrix.lisp, src/generics.cl, src/interpolation.cl, src/interpolation.lisp, src/matrix-classes.cl, src/matrix-classes.lisp, src/matrix.cl, src/matrix.lisp, src/matrixops.cl, src/matrixops.lisp, src/matrixutils.cl, src/metaclasses.cl, src/metaclasses.lisp, src/mloop.cl, src/mloop.lisp, version.lisp-expr:
+	clem 0.2.10
+	 * first stage of the big file rename/consolidation
+	   + .cl -> .lisp files
+	   + just use standard :cl-source-file asdf type
+	   + consolidate vector stuff in one file
+	 * remove cruft
+
+	* clem.asd, src/early-matrix.cl, src/matrix.cl, src/print.cl, version.lisp-expr:
+	clem 0.2.9
+	 * add print file, start to simplify asdf dependencies
+	 * fix matrix-argument-error so that it now works with a :cause initarg
+	 * break out generics into a protocol section at the beginning of
+	   matrix.cl
+	 * add some documentation to the protocol defgenerics
+	 * remove list-if
+	 * remove dim-1
+	 * rework m* logic so that it works more as one would expect, and
+	   documented that behavior!
+
+2006-12-14  Cyrus Harmon  <cyrus@bobobeach.com>
+
+	* ChangeLog, src/matrix-classes.cl, version.lisp-expr: clem 0.2.8
+	 * made real-matrix and complex-matrix be subtypes of number-matrix instead of t-matrix
+
 2006-12-11  Cyrus Harmon  <ch-lisp@bobobeach.com>
 
 	* ChangeLog, version.lisp-expr: clem 0.2.7
