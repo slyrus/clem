@@ -54,7 +54,8 @@
                    (typep y 'matrix))
               (mat-scale y x))
              (t (error 'matrix-argument-error
-                       :cause "at least one argument must be a MATRIX."))))
+                       :format-control "At least one argument (~{~S~^ ~}) must be a MATRIX."
+                       :format-arguments (list matrices)))))
    matrices))
 
 (defmethod m.* (&rest matrices)

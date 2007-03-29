@@ -32,7 +32,7 @@
 		    (type ,accumulator-element-type atemp))
 	   (let ((mr (rows m)) (mc (cols m))
 		 (nr (rows n)) (nc (cols n))
-                 (pr (rows n)) (pc (cols n)))
+                 (pr (rows p)) (pc (cols p)))
 	     (declare (type fixnum mr mc nr nc pr pc))
 	     (if (and (= mc nr) (= mr pr) (= nc pc))
                  (do ((k 0 (the fixnum (1+ k))))
