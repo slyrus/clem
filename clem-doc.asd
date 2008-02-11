@@ -26,12 +26,7 @@
                        :filters (:lisp :smarkup-metadata :ref)
                        :depends-on (:clem-sexp)
                        :input-object :clem-sexp)
-     (:object-latex-file :clem-latex
-                         :pathname #p"clem.tex"
-                         :depends-on (:clem-filtered-sexp)
-                         :input-object :clem-filtered-sexp)
-     (:pdf-file :clem-pdf :pathname #p"clem.pdf"
-                :depends-on (clem-latex))
+
      (:filtered-object :clem-html-filtered-sexp
                        :filters (:html-metadata)
                        :depends-on (:clem-filtered-sexp)
@@ -41,8 +36,9 @@
                        :filters (:html-metadata)
                        :depends-on (:clem-filtered-sexp)
                        :input-object :clem-filtered-sexp)
-     (:object-cl-pdf-file :clem-cl-pdf
-                          :pathname #p"clem-cl.pdf"
+
+     (:object-cl-pdf-file :clem-pdf
+                          :pathname #p"clem.pdf"
                           :depends-on (:clem-pdf-filtered-sexp)
                           :input-object :clem-pdf-filtered-sexp)
 
@@ -57,12 +53,11 @@
                        :filters (:lisp :smarkup-metadata :ref)
                        :depends-on (:clem-performance-sexp)
                        :input-object :clem-performance-sexp)
-     (:object-latex-file :clem-performance-latex
-                         :pathname #p"clem-performance.tex"
-                         :depends-on (:clem-performance-filtered-sexp)
-                         :input-object :clem-performance-filtered-sexp)
-     (:pdf-file :clem-performance-pdf :pathname #p"clem-performance.pdf"
-                :depends-on (clem-performance-latex))
+     (:object-cl-pdf-file :clem-performance-pdf
+                          :pathname #p"clem-performance.pdf"
+                          :depends-on (:clem-performance-filtered-sexp)
+                          :input-object :clem-performance-filtered-sexp)
+     
      (:filtered-object :clem-performance-html-filtered-sexp
                        :filters (:html-metadata)
                        :depends-on (:clem-performance-filtered-sexp)

@@ -160,7 +160,7 @@
 
  (:h3 #q{Extensible arrays?})
 
- (#p #q{Christophe Rhodes has recently introduced a protocol for
+ (:p #q{Christophe Rhodes has recently introduced a protocol for
  extensible sequences to SBCL. Might a protocol for a similar
  extensible array be useful here?})
  
