@@ -85,7 +85,6 @@
           p))))
 
 
-
 (defgeneric %get-subtr-matrix-class (a b))
 (defgeneric mat-subtr-range3 (m n p startr endr startc endc))
 

@@ -1,4 +1,6 @@
 
+(in-package #:cl-user)
+
 (defpackage #:clem-system (:use #:asdf #:cl))
 (in-package #:clem-system)
 

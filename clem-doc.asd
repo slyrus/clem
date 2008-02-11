@@ -36,6 +36,16 @@
                        :filters (:html-metadata)
                        :depends-on (:clem-filtered-sexp)
                        :input-object :clem-filtered-sexp)
+
+     (:filtered-object :clem-pdf-filtered-sexp
+                       :filters (:html-metadata)
+                       :depends-on (:clem-filtered-sexp)
+                       :input-object :clem-filtered-sexp)
+     (:object-cl-pdf-file :clem-cl-pdf
+                          :pathname #p"clem-cl.pdf"
+                          :depends-on (:clem-pdf-filtered-sexp)
+                          :input-object :clem-pdf-filtered-sexp)
+
      (:object-xhtml-file :clem-xhtml
                          :pathname #p"clem.xhtml"
                          :depends-on (:clem-html-filtered-sexp)

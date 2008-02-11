@@ -44,22 +44,26 @@ the object system itself using the Meta-object Protocol"
      (:bibcite "kiczales1991art")
      ".")
 
- (:p "CLEM uses CLOS and the Meta-object protocol (MOP) to define a"
+ (:p "CLEM uses CLOS and the Meta-object protocol (MOP) to define a "
      (:code "standard-matrix-class")
      " that serves as the metaclass for classes that represent
 matrices with elements of specific types. The typed matrices can
 represent matrices containing values of specific types in the
 Common Lisp type system, starting with type "
      (:code "t")
-     " as the most general data type, and becoming more restrictive by using more specific types such"
+     " as the most general data type, and becoming more restrictive by
+using more specific types such as"
      (:code "double-float")
      ", "
      (:code "fixnum")
      ", or "
      (:code "(unsigned-byte 8)")
-     ". By using the most specific type that can represent the values of a given matrix, the lisp system can optimize for better performance and memory usage requirements. For example, a "
+     ". By using the most specific type that can represent the values
+of a given matrix, the lisp system can optimize for better performance
+and memory usage requirements. For example, a "
      (:code "bit-matrix")
-     " will use 1 bit per matrix element, rather than 32-bits on 32-bit systems for a "
+     " will use 1 bit per matrix element, rather than 32-bits on
+32-bit systems for a "
      (:code "t-matrix")
      ".")
 
@@ -109,6 +113,7 @@ Common Lisp type system, starting with type "
      " variables.")
 
  (:h2 "standard-matrix-class")
+
  (:h2 "CLEM Matrix Types")
 
  (:h3 "Number matrices")
