@@ -229,10 +229,6 @@
 
 ;;; Miscellaneous class utilities
     
-#+openmcl
-(defun compute-class-precedence-list (class)
-  (ccl:class-precedence-list class))
-
 (defun subclassp (c1 c2)
   (subtypep (class-name c1) (class-name c2)))
 

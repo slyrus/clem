@@ -11,7 +11,8 @@
 (defpackage #:clem
   (:use #:cl #:asdf
         #+clem-sbcl-mop #:sb-mop
-        #+(and cmu pcl) #:clos-mop)
+        #+(and cmu pcl) #:clos-mop
+        #+ccl #:openmcl-mop)
   (:export
    #:matrix
    #:dim
