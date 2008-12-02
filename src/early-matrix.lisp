@@ -75,7 +75,8 @@ that can be used to externalize matrices."
 		    :element-type (element-type (class-of object)))))
 
 (defmethod shared-initialize :before
-    ((object matrix) slot-names &rest initargs &key dimensions rows cols adjustable initial-element)
+    ((object matrix) slot-names &rest initargs
+     &key dimensions rows cols adjustable initial-element)
   (declare (ignore slot-names initargs dimensions adjustable initial-element)
            (optimize (debug 3)))
   (when (and rows cols)
@@ -83,9 +84,9 @@ that can be used to externalize matrices."
           (list rows cols))))
 
 (defmethod shared-initialize :after
-    ((object matrix) slot-names &rest initargs &key dimensions rows cols adjustable initial-element)
-  (declare (ignore slot-names initargs dimensions adjustable initial-element)
-           (optimize (debug 3)))
+    ((object matrix) slot-names &rest initargs
+     &key dimensions rows cols adjustable initial-element)
+  (declare (ignore slot-names initargs dimensions adjustable initial-element rows cols))
   (apply #'allocate-matrix-vals object
          (append
           (list :dimensions (slot-value object 'dimensions))

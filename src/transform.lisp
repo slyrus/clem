@@ -296,6 +296,7 @@
 
 (defmethod mat-add ((m affine-transformation)
                     (n affine-transformation) &key in-place)
+  (declare (ignore in-place))
   (let ((p (make-instance 'clem::affine-transformation))
         (r (call-next-method)))
     (set-affine-transformation-matrix p r)))
@@ -303,7 +304,7 @@
 (defmethod mat-subtr :around
     ((m affine-transformation)
      n &key in-place (result-type 'clem::affine-transformation))
-  (declare (ignorable matrix-class))
+  (declare (ignore in-place))
   (let ((p (make-instance result-type))
         (r (call-next-method)))
     (set-affine-transformation-matrix p r)))

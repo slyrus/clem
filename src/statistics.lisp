@@ -53,9 +53,7 @@
           (incf (mref n i 0) (mref m i j))))
       n)))
 
-(defmethod sum-square-range ((m matrix) (startr fixnum) (endr fixnum) (startc fixnum) (endc fixnum))
-  (declare (dynamic-extent startr endr startc endc)
-	   (fixnum startr endr startc endc))
+(defmethod sum-square-range ((m matrix) startr endr startc endc)
   (let ((acc 0))
     (map-range m startr endr startc endc
 	       #'(lambda (v i j)
@@ -67,9 +65,7 @@
   (destructuring-bind (mr mc) (dim m)
     (sum-square-range m 0 (- mr 1) 0 (- mc 1))))
 
-(defmethod sum-range ((m matrix) (startr fixnum) (endr fixnum) (startc fixnum) (endc fixnum))
-  (declare (dynamic-extent startr endr startc endc)
-	   (fixnum startr endr startc endc))
+(defmethod sum-range ((m matrix) startr endr startc endc)
   (let ((acc 0))
     (map-range m startr endr startc endc
 	       #'(lambda (v i j)
@@ -134,8 +130,9 @@
     ((frob-sum-range (matrix-type accumulator-type)
        (let ((element-type (element-type (find-class matrix-type))))
 	 `(defmethod sum-range ((m ,matrix-type)
-                                (startr fixnum) (endr fixnum)
-                                (startc fixnum) (endc fixnum))
+                                startr endr
+                                startc endc)
+            (declare (type fixnum startr endr startc endc))
             (%%sum-range m startr endr startc endc
                          ,element-type ,accumulator-type)))))
   (frob-sum-range double-float-matrix double-float)
@@ -156,7 +153,8 @@
 (macrolet
     ((frob-sum-square-range (matrix-type accumulator-type)
        (let ((element-type (element-type (find-class matrix-type))))
-	 `(defmethod sum-square-range ((m ,matrix-type) (startr fixnum) (endr fixnum) (startc fixnum) (endc fixnum))
+	 `(defmethod sum-square-range ((m ,matrix-type) startr endr startc endc)
+            (declare (type fixnum startr endr startc endc))
 	    (let ((acc (coerce 0 ',accumulator-type))
 		  (a (matrix-vals m)))
 	      (declare (type ,accumulator-type acc)

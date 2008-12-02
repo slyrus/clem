@@ -70,8 +70,9 @@
        (array->matrix a :matrix-class ',type))
      
      (defmethod sample-variance-range ((m ,type)
-                                       (startr fixnum) (endr fixnum)
-                                       (startc fixnum) (endc fixnum))
+                                       startr endr
+                                       startc endc)
+       (declare (type fixnum startr endr startc endc))
        (let ((acc (coerce 0 ',accumulator-type)))
 	 (let ((mu (mean-range m startr endr startc endc)))
 	   (let ((musq (* mu mu)))

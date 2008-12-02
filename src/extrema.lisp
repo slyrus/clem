@@ -33,7 +33,7 @@
 
 ;;; slow functions
 
-(defmethod min-range ((m matrix) (startr fixnum) (endr fixnum) (startc fixnum) (endc fixnum))
+(defmethod min-range ((m matrix) startr endr startc endc)
   (declare (dynamic-extent startr endr startc endc)
 	   (fixnum startr endr startc endc))
   (let ((retval (val m startr startc)))
@@ -43,7 +43,8 @@
 		   (setf retval (min retval v))))
     retval))
 
-(defmethod max-range ((m matrix) (startr fixnum) (endr fixnum) (startc fixnum) (endc fixnum))
+(defmethod max-range ((m matrix) startr endr startc endc)
+  (declare (fixnum startr endr startc endc))
   (let ((retval (val m startr startc)))
     (map-range m startr endr startc endc
 	       #'(lambda (v i j)
@@ -69,7 +70,8 @@
   (let ((element-type (element-type (find-class `,type)))
 	(accumulator-element-type (element-type (find-class `,type))))
     `(progn
-       (defmethod min-range ((m ,type) (startr fixnum) (endr fixnum) (startc fixnum) (endc fixnum))
+       (defmethod min-range ((m ,type) startr endr startc endc)
+         (declare (fixnum startr endr startc endc))
          (let ((acc (coerce (aref (matrix-vals m) startr startc) ',accumulator-element-type)))
            (declare (type ,accumulator-element-type acc))
            (with-map-range m ,element-type startr endr startc endc (a i j)
@@ -77,7 +79,8 @@
                (setf acc (aref a i j))))
            acc))
        
-       (defmethod max-range ((m ,type) (startr fixnum) (endr fixnum) (startc fixnum) (endc fixnum))
+       (defmethod max-range ((m ,type) startr endr startc endc)
+         (declare (fixnum startr endr startc endc))
          (let ((acc (coerce (aref (matrix-vals m) startr startc) ',accumulator-element-type)))
            (declare (type ,accumulator-element-type acc))
            (with-map-range m ,element-type startr endr startc endc (a i j)

@@ -12,7 +12,8 @@
   (:use #:cl #:asdf
         #+clem-sbcl-mop #:sb-mop
         #+(and cmu pcl) #:clos-mop
-        #+ccl #:openmcl-mop)
+        #+ccl #:openmcl-mop
+        #+clisp #:clos)
   (:export
    #:matrix
    #:dim

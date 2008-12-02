@@ -57,8 +57,8 @@
        
        (defmethod %mat-mult-with-blocks
 	   ((m ,type-1) (n ,type-2) (p ,accumulator-type)
-	    (mstartr fixnum) (mendr fixnum) (mstartc fixnum) (mendc fixnum)
-	    (nstartr fixnum) (nendr fixnum) (nstartc fixnum) (nendc fixnum))
+	    mstartr mendr mstartc mendc
+	    nstartr nendr nstartc nendc)
 	 (declare (type fixnum mstartr mendr mstartc mendc
 			nstartr nendr nstartc nendc)
 		  (optimize (speed 3) (safety 0)))

@@ -108,8 +108,7 @@
     (dotimes (i (second (dim m)))
       (vec-set-val rv i (val m r i)))))
 
-(defgeneric zero-row-vector (j))
-(defmethod zero-row-vector((j fixnum))
+(defun zero-row-vector (j)
   (zero-matrix 1 j))
 
 (defmethod allocate-matrix-vals ((object col-vector) &key rows cols adjustable initial-element)
@@ -183,6 +182,5 @@
     (dotimes (i (first (dim m)))
       (vec-set-val cv i (val m i r)))))
 
-(defgeneric zero-col-vector (j))
-(defmethod zero-col-vector((j fixnum))
+(defun zero-col-vector (j)
   (zero-matrix j 1))
