@@ -119,7 +119,7 @@
    #:typed-matrix
    #:map-matrix-fit
 
-   #:defmatrixtype
+   #:defmatrixclass
 
    #:sb8-matrix
    #:sb8-scalar
