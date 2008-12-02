@@ -1,10 +1,5 @@
 
-(in-package #:cl-user)
-
-(defpackage #:clem-system (:use #:asdf #:cl))
-(in-package #:clem-system)
-
-(defsystem :clem
+(asdf:defsystem :clem
   :name "clem"
   :author "Cyrus Harmon <ch-lisp@bobobeach.com>"
   :version #.(with-open-file
