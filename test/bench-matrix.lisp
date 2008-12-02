@@ -27,8 +27,7 @@
 	(print (dim ub2))
 	(let ((q (time (mat-subtr xb1 ub2 :matrix-class 'sb16-matrix))))
 	  (print q)
-	  (print (sum q))))
-      )))
+	  (print (sum q)))))))
 
 (defun matrix-bench-2 ()
   (let* ((r 64) (c 64)
@@ -48,66 +47,84 @@
   (let* ((x (random-ub8-matrix 512 512 :max 255))
 	 (y (random-ub8-matrix 5 5 :max 255)))
     (time
-     (let ((conv (discrete-convolve x y :matrix-class 'ub32-matrix :truncate t :norm-v nil)))))
-    ))
+     (let ((conv (discrete-convolve x y
+                                    :matrix-class 'ub32-matrix
+                                    :truncate t
+                                    :norm-v nil)))))))
 
 (defun matrix-bench-5 ()
   (let* ((x (random-double-float-matrix 512 512 :max 1.0d0))
 	 (y (random-double-float-matrix 5 5 :max 1.0d0)))
     (time
-     (let ((conv (discrete-convolve x y :matrix-class 'double-float-matrix :truncate t :norm-v nil)))))
-    ))
+     (let ((conv (discrete-convolve x y
+                                    :matrix-class 'double-float-matrix
+                                    :truncate t
+                                    :norm-v nil)))))))
 
 
 (defun matrix-bench-6 ()
-  (let ((x (random-matrix 512 512 :matrix-class 'double-float-matrix :limit 255d0)))
+  (let ((x (random-matrix 512 512
+                          :matrix-class 'double-float-matrix
+                          :limit 255d0)))
     (print-range x  0 5 0 5)
     (let ((xb1 (time (gaussian-blur x :k 3 :sigma 1))))
       (print-range xb1 0 5 0 5)
       (print (cons (dim x) (dim xb1))))))
 
 (defun matrix-bench-7 ()
-  (let ((x (make-instance 'double-float-matrix :rows 512 :cols 512 :initial-element 2d0))
-        (y (make-instance 'double-float-matrix :rows 512 :cols 512 :initial-element 3d0))
-        (z (make-instance 'double-float-matrix :rows 512 :cols 512 :initial-element 0d0)))
+  (let ((x (make-instance 'double-float-matrix
+                          :rows 512 :cols 512 :initial-element 2d0))
+        (y (make-instance 'double-float-matrix
+                          :rows 512 :cols 512 :initial-element 3d0))
+        (z (make-instance 'double-float-matrix
+                          :rows 512 :cols 512 :initial-element 0d0)))
     (print-range x  0 5 0 5)
     (let ((xb1 (time (gaussian-blur x :k 3 :sigma 1))))
       (print-range xb1 0 5 0 5)
       (print (cons (dim x) (dim xb1))))))
 
 (defun matrix-bench-8 ()
-  (let ((x (make-instance 'double-float-matrix :rows 1024 :cols 1024 :initial-element 2d0))
-        (y (make-instance 'double-float-matrix :rows 1024 :cols 1024 :initial-element 3d0))
-        (z (make-instance 'double-float-matrix :rows 1024 :cols 1024 :initial-element 0d0)))
+  (let ((x (make-instance 'double-float-matrix
+                          :rows 1024 :cols 1024 :initial-element 2d0))
+        (y (make-instance 'double-float-matrix
+                          :rows 1024 :cols 1024 :initial-element 3d0))
+        (z (make-instance 'double-float-matrix
+                          :rows 1024 :cols 1024 :initial-element 0d0)))
     (print-range x 0 5 0 5)
     (let ((xb1 (time (clem::mat-mult3 x y z))))
       (print-range xb1 0 5 0 5)
       (print (cons (dim x) (dim xb1))))))
 
 (defun matrix-bench-9 ()
-  (let ((x (make-instance 'double-float-matrix :rows 8 :cols 16 :initial-element 2d0))
-        (y (make-instance 'double-float-matrix :rows 16 :cols 8 :initial-element 3d0))
-        (z (make-instance 'double-float-matrix :rows 8 :cols 8 :initial-element 0d0)))
+  (let ((x (make-instance 'double-float-matrix
+                          :rows 8 :cols 16 :initial-element 2d0))
+        (y (make-instance 'double-float-matrix
+                          :rows 16 :cols 8 :initial-element 3d0))
+        (z (make-instance 'double-float-matrix
+                          :rows 8 :cols 8 :initial-element 0d0)))
     (print-range x 0 5 0 5)
     (let ((xb1 (time (clem::mat-mult3 x y z))))
       (print-range xb1 0 5 0 5)
       (print (cons (dim x) (dim xb1))))))
 
 (defun matrix-bench-10 ()
-  (let ((x (make-instance 'double-float-matrix :rows 1024 :cols 1024 :initial-element 2d0))
-        (y (make-instance 'double-float-matrix :rows 1024 :cols 1024 :initial-element 3d0))
-        (z (make-instance 'double-float-matrix :rows 1024 :cols 1024 :initial-element 0d0)))
+  (let ((x (make-instance 'double-float-matrix
+                          :rows 1024 :cols 1024 :initial-element 2d0))
+        (y (make-instance 'double-float-matrix
+                          :rows 1024 :cols 1024 :initial-element 3d0))
+        (z (make-instance 'double-float-matrix
+                          :rows 1024 :cols 1024 :initial-element 0d0)))
     (print-range x 0 5 0 5)
     (let ((xb1 (time (clem::mat-mult-3-block x y z))))
       (print-range xb1 0 5 0 5)
       (print (cons (dim x) (dim xb1))))))
 
-
 (defun matrix-bench-13 ()
   (declare (optimize (speed 3)
                      (space 0)
                      (safety 0)))
-  (let ((x (make-instance 'single-float-matrix :rows 1024 :cols 1024 :initial-element 1f0)))
+  (let ((x (make-instance 'single-float-matrix
+                          :rows 1024 :cols 1024 :initial-element 1f0)))
     (declare (type single-float-matrix x))
     (let ((acc 0f0)
           (rows (rows x))
@@ -188,8 +205,6 @@
         (setf acc (+ acc (clem::mref x i j)))))
     (print acc)))
 
-
-
 (defun matrix-bench-23/aref ()
   (declare (optimize (speed 3)
                      (space 0)
@@ -211,26 +226,6 @@
                                                 (aref v i j)))))))
       (print acc))))
 
-(defun matrix-bench-23/mref ()
-  (declare (optimize (speed 3)
-                     (space 0)
-                     (safety 0)))
-  (let ((x (make-instance 'double-float-matrix :rows 2048 :cols 2048 :initial-element 2d0)))
-    (declare (type double-float-matrix x))
-    (let ((acc 0d0)
-          (rows (rows x))
-          (cols (cols x)))
-      (declare (type double-float acc)
-               (type fixnum rows cols))
-      (dotimes (i rows)
-        (declare (type fixnum i))
-        (dotimes (j cols)
-          (declare (type fixnum j))
-          (setf acc (+ acc (the double-float (* (clem::double-float-matrix-mref x i j)
-                                                (clem::double-float-matrix-mref x i j)))))))
-      (print acc))))
-
-
 (defun matrix-bench-24 (x)
   (let ((y (clem:mat-copy-proto x)))
     (declare (type double-float-matrix x))
@@ -240,18 +235,6 @@
         (dotimes (j cols)
           (setf (clem::mref y i j) (clem::mref x i j)))))
     y))
-
-(defun matrix-bench-26 (x)
-  (let ((y (clem:mat-copy-proto x)))
-    (declare (type double-float-matrix x))
-    (let ((rows (rows x))
-          (cols (cols x)))
-      (dotimes (i rows)
-        (dotimes (j cols)
-          (setf (clem::double-float-matrix-mref y i j)
-                (clem::double-float-matrix-mref x i j)))))
-    y))
-
 
 (defun run-bench ()
   ;;  (matrix-bench-3)

@@ -353,53 +353,53 @@
 ;;; mat-scale!
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun test/mat-scale!/double-float (&key (size *test-matrix-size*))
+(defun test/mat-scale-in-place/double-float (&key (size *test-matrix-size*))
   (let ((m (make-instance 'clem:double-float-matrix :cols size :rows size :initial-element 1.0d0)))
-    (let ((p (time (clem::mat-scale! m 2.0d0))))
+    (let ((p (time (clem::mat-scale m 2.0d0 :in-place t))))
       p)))
 
-(defun test/mat-scale!/single-float (&key (size *test-matrix-size*))
+(defun test/mat-scale-in-place/single-float (&key (size *test-matrix-size*))
   (let ((m (make-instance 'clem:single-float-matrix :cols size :rows size :initial-element 1.0s0)))
-    (let ((p (time (clem::mat-scale! m 2.0s0))))
+    (let ((p (time (clem::mat-scale m 2.0s0 :in-place t))))
       p)))
 
-(defun test/mat-scale!/ub8 (&key (size *test-matrix-size*))
+(defun test/mat-scale-in-place/ub8 (&key (size *test-matrix-size*))
   (let ((m (make-instance 'clem:ub8-matrix :cols size :rows size :initial-element 1)))
-    (let ((p (time (clem::mat-scale! m 2))))
+    (let ((p (time (clem::mat-scale m 2 :in-place t))))
       p)))
 
-(defun test/mat-scale!/ub16 (&key (size *test-matrix-size*))
+(defun test/mat-scale-in-place/ub16 (&key (size *test-matrix-size*))
   (let ((m (make-instance 'clem:ub16-matrix :cols size :rows size :initial-element 255)))
-    (let ((p (time (clem::mat-scale! m 255))))
+    (let ((p (time (clem::mat-scale m 255 :in-place t))))
       p)))
 
-(defun test/mat-scale!/ub32 (&key (size *test-matrix-size*))
+(defun test/mat-scale-in-place/ub32 (&key (size *test-matrix-size*))
   (let ((m (make-instance 'clem:ub32-matrix :cols size :rows size :initial-element 256)))
-    (let ((p (time (clem::mat-scale! m 256))))
+    (let ((p (time (clem::mat-scale m 256 :in-place t))))
       p)))
 
 
-(defun test/mat-scale!/sb8 (&key (size *test-matrix-size*))
+(defun test/mat-scale-in-place/sb8 (&key (size *test-matrix-size*))
   (let ((m (make-instance 'clem:sb8-matrix :cols size :rows size :initial-element 1)))
-    (let ((p (time (clem::mat-scale! m 2))))
+    (let ((p (time (clem::mat-scale m 2 :in-place t))))
       p)))
 
-(defun test/mat-scale!/sb16 (&key (size *test-matrix-size*))
+(defun test/mat-scale-in-place/sb16 (&key (size *test-matrix-size*))
   (let ((m (make-instance 'clem:sb16-matrix :cols size :rows size :initial-element 127)))
-    (let ((p (time (clem::mat-scale! m -127))))
+    (let ((p (time (clem::mat-scale m -127 :in-place t))))
       p)))
 
-(defun test/mat-scale!/sb32 (&key (size *test-matrix-size*))
+(defun test/mat-scale-in-place/sb32 (&key (size *test-matrix-size*))
   (let ((m (make-instance 'clem:sb32-matrix :cols size :rows size :initial-element 256)))
-    (let ((p (time (clem::mat-scale! m 256))))
+    (let ((p (time (clem::mat-scale m 256 :in-place t))))
       p)))
 
-(defun test/mat-scale!/bit (&key (size *test-matrix-size*))
+(defun test/mat-scale-in-place/bit (&key (size *test-matrix-size*))
   (let ((m (make-instance 'clem:bit-matrix :cols size :rows size :initial-element 1)))
-    (let ((p (time (clem::mat-scale! m 0))))
+    (let ((p (time (clem::mat-scale m 0 :in-place t))))
       p)))
 
-(defun test/mat-scale!/fixnum (&key (size *test-matrix-size*))
+(defun test/mat-scale-in-place/fixnum (&key (size *test-matrix-size*))
   (let ((m (make-instance 'clem:fixnum-matrix :cols size :rows size :initial-element 256)))
-    (let ((p (time (clem::mat-scale! m 256))))
+    (let ((p (time (clem::mat-scale m 256 :in-place t))))
       p)))

@@ -15,7 +15,7 @@
                  (11 12 13 14 15))))
          (h (clem:array->double-float-matrix
              #2A((1 2 1)(2 4 2) (1 2 1)))))
-    (clem::mat-scale! h (/ (clem:sum h)))
+    (clem::mat-scale h (/ (clem:sum h)) :in-place t)
     (print h)
     (let ((m (clem:print-matrix (clem:discrete-convolve g h :truncate t :norm-v nil))))
       m)))
