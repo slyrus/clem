@@ -1,5 +1,5 @@
 ;;;
-;;; file: defmatrix-conolve.cl
+;;; file: defmatrix-conolve.lisp
 ;;; author: cyrus harmon
 ;;;
 
@@ -132,6 +132,7 @@
   (frob double-float-matrix double-float-matrix double-float double-float-matrix)
   (frob single-float-matrix single-float-matrix single-float single-float-matrix)
   (frob ub8-matrix ub8-matrix (unsigned-byte 8) ub8-matrix)
+  (frob ub8-matrix ub8-matrix (unsigned-byte 8) ub32-matrix)
   (frob ub8-matrix double-float-matrix double-float ub8-matrix)
   (frob ub8-matrix single-float-matrix single-float ub8-matrix))
 
