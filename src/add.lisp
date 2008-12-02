@@ -153,12 +153,21 @@
   (frob bit-matrix single-float-matrix single-float-matrix))
 
 
+
+;;; FIXME! We've broken the fast versions of mat-add and mat-add-range
+;;; because types like double-float aren't required to be classes,
+;;; therefore we can't just use the class dispatching mechanism to
+;;; pick up the right method. Therefore we now, at least for the
+;;; moment, we have the bogus mat-add-range-double-float, e.g.,
+;;; methods.
 (defmacro def-matrix-add-number (type-1 type-2 accumulator-type &key suffix (allow-in-place t))
   (let ((element-type-1 (element-type (find-class `,type-1)))
 	(accumulator-element-type (element-type (find-class `,accumulator-type))))
     `(progn
-       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-add-range" suffix))
-	   ((m ,type-1) (n ,type-2) startr endr startc endc &key in-place)
+       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-add-range-"
+                                                     (symbol-name type-2)
+                                                     suffix))
+	   ((m ,type-1) n startr endr startc endc &key in-place)
          (declare (type ,type-2 n))
 	 (destructuring-bind (mr mc) (dim m)
            (if in-place
@@ -190,8 +199,11 @@
                                (+ (mref m i j) n))))))
                  p))))
        
-       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-add" suffix))
-	   ((m ,type-1) (n ,type-2) &key in-place)
+       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-add"
+                                                     (symbol-name type-2)
+                                                     suffix))
+	   ((m ,type-1) n &key in-place)
+         (declare (type ,type-2 n))
          (if in-place
              ,(if allow-in-place
                   `(with-typed-mref (m ,element-type-1)
