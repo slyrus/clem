@@ -13,7 +13,7 @@
         #+clem-sbcl-mop #:sb-mop
         #+(and cmu pcl) #:clos-mop
         #+ccl #:openmcl-mop
-        #+clisp #:clos)
+        #+(or clisp ecl) #:clos)
   (:export
    #:matrix
    #:dim
