@@ -6,7 +6,8 @@
 
 (in-package :clem)
 
-(defconstant +epsilon+ 0.00001d0)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defconstant +epsilon+ 0.00001d0))
 
 (defmacro def-matrix-transform (type-1 type-2 transform-type)
   (let ((element-type-1 (element-type (find-class `,type-1)))

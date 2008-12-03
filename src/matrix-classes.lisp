@@ -2,12 +2,13 @@
 (in-package :clem)
 
 ;;; taken from KMR's clsql package
-(declaim (inline delistify))
-(defun delistify (list)
-  "Some MOPs, like openmcl 0.14.2, cons attribute values in a list."
-  (if (and (listp list) (null (cdr list)))
-      (car list)
-      list))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (declaim (inline delistify))
+  (defun delistify (list)
+    "Some MOPs, like openmcl 0.14.2, cons attribute values in a list."
+    (if (and (listp list) (null (cdr list)))
+        (car list)
+        list)))
 
 (defmacro defmatrixclass (type direct-superclasses &key 
 			 (element-type)
