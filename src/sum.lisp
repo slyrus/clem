@@ -2,7 +2,7 @@
 (in-package :clem)
 
 ;;; slow fallback methods
-;;; FIXME NEED FAST METHODS!!
+;;; FIXME NEED MORE FAST METHODS!!
 
 (defmethod sum ((m matrix))
   (let ((acc 0))
