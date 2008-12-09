@@ -175,7 +175,8 @@ of this matrix class."))
                    (remove-keyword-arg all-keys :direct-superclasses)))
 	(call-next-method)))
   (finalize-inheritance class)
-  (fill-standard-matrix-class-slots-from-ancestors class all-keys))
+  (fill-standard-matrix-class-slots-from-ancestors class all-keys)
+  class)
 
 (defmethod reinitialize-instance :around
     ((class standard-matrix-class) &rest all-keys &key direct-superclasses &allow-other-keys)
@@ -191,5 +192,6 @@ of this matrix class."))
 		   (remove-keyword-arg all-keys :direct-superclasses)))
 	(call-next-method)))
   (finalize-inheritance class)
-  (fill-standard-matrix-class-slots-from-ancestors class all-keys))
+  (fill-standard-matrix-class-slots-from-ancestors class all-keys)
+  class)
 
