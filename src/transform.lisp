@@ -340,8 +340,9 @@
                                      :x-scale (exp x-scale)
                                      :y-shear y-shear
                                      :x-shear x-shear)))
-
+#-ecl
 (declaim (inline transformation-parameter))
+#-ecl
 (declaim (ftype (function (affine-transformation-7-parameters fixnum) double-float) transforamtion-parameter))
 
 (defun transformation-parameter (xfrm i)
@@ -355,9 +356,12 @@
     (5 (y-shear xfrm))
     (6 (x-shear xfrm))))
 
+#-ecl
 (declaim (ftype (function (double-float clem:affine-transformation fixnum)
                           clem:affine-transformation) (setf transforamtion-parameter)))
+#-ecl
 (declaim (inline (setf transformation-parameter)))
+
 (defun (setf transformation-parameter) (v xfrm i)
   (declare (type double-float v)
            (type fixnum i))
