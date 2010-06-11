@@ -146,7 +146,7 @@ of this matrix class."))
 		     direct-superclasses)))
 
 (defclass typed-mixin ()
-  ((specialzied-array :allocation :class :accessor specialized-array-p :initform nil)))
+  ((specialized-array :allocation :class :accessor specialized-array-p :initform nil)))
 
 ;;; FIXME this needs work
 (defgeneric set-val-fit (m i j v &key truncate))
@@ -173,7 +173,8 @@ of this matrix class."))
                    :direct-superclasses
                    (add-root-class root-class direct-superclasses)
                    (remove-keyword-arg all-keys :direct-superclasses)))
-	(call-next-method)))
+	(call-next-method))
+    #+lispworks (finalize-inheritance root-class))
   (finalize-inheritance class)
   (fill-standard-matrix-class-slots-from-ancestors class all-keys)
   class)
