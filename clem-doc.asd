@@ -10,9 +10,7 @@
 (defsystem :clem-doc
   :name "clem-doc"
   :author "Cyrus Harmon" 
-  :version #.(with-open-file
-                 (vers (merge-pathnames "version.lisp-expr" *load-truename*))
-               (read vers))
+  :version "0.4.8"
   :licence "BSD"
   :depends-on (ch-asdf ch-bib ch-util clem smarkup)
   :components

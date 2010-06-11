@@ -2,7 +2,7 @@
 (asdf:defsystem :clem
   :name "clem"
   :author "Cyrus Harmon <ch-lisp@bobobeach.com>"
-  :version "0.4.7"
+  :version "0.4.8"
   :licence "BSD"
   :components
   ((:module

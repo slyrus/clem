@@ -55,14 +55,14 @@
   t)
 
 (defun run-tests-1 ()
-  (let ((run (ch-util:make-test-run)))
-    (ch-util:run-test #'matrix-test-1 "matrix-test-1" run)
-    (ch-util:run-test #'matrix-test-2 "matrix-test-2" run)
-    (ch-util:run-test #'matrix-test-3 "matrix-test-3" run)
-    (ch-util:run-test #'matrix-test-4 "matrix-test-4" run)
-    (ch-util:run-test #'matrix-test-5 "matrix-test-5" run)
+  (let ((run (make-test-run)))
+    (run-test #'matrix-test-1 "matrix-test-1" run)
+    (run-test #'matrix-test-2 "matrix-test-2" run)
+    (run-test #'matrix-test-3 "matrix-test-3" run)
+    (run-test #'matrix-test-4 "matrix-test-4" run)
+    (run-test #'matrix-test-5 "matrix-test-5" run)
     (format t "~&~A of ~A tests passed"
-            (ch-util:test-run-passed run) (ch-util:test-run-tests run))))
+            (test-run-passed run) (test-run-tests run))))
 
 (defun run-defmatrix-tests ()
   (clem::defmatrixclass ape-matrix ()

@@ -5,10 +5,8 @@
 (defsystem :clem-benchmark
   :name "clem-benchmark"
   :author "Cyrus Harmon <ch-lisp@bobobeach.com>"
-  :version #.(with-open-file
-                 (vers (merge-pathnames "version.lisp-expr" *load-truename*))
-               (read vers))
-  :depends-on (ch-util clem)
+  :version "0.4.8"
+  :depends-on (clem)
   :components
   ((:module :benchmark
 	    :components
