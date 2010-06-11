@@ -406,6 +406,19 @@
              (mat-scale x (/ n) :in-place t)
              x)))))
 
+(defun median (seq)
+  (let ((v (cond ((vectorp seq) (copy-seq seq))
+                 ((listp seq) (coerce seq 'vector)))))
+    (when (and v (plusp (length v)))
+      (sort v #'<)
+      (let ((f (floor (length v) 2)))
+        (cond ((oddp (length v))
+               (elt v f))
+              (t
+               (/ (+ (elt v (1- f))
+                     (elt v f))
+                  2)))))))
+
 (defun matrix-medians (matrices)
   (cond ((null matrices) nil)
         ((= (length matrices) 1) (car matrices))
@@ -420,7 +433,7 @@
                     with l
                     do (push (mref m i j) l)
                     finally (setf (mref x i j)
-                                  (coerce (ch-util::median l)
+                                  (coerce (median l)
                                           'double-float)))))
              x)))))
 

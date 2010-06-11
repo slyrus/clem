@@ -10,7 +10,7 @@
   (let ((element-type-1 (element-type (find-class `,type-1)))
 	(element-type-2 (element-type (find-class `,type-2))))
     `(progn
-       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-equal-range" suffix))
+       (defmethod ,(make-intern (concatenate 'string "mat-equal-range" suffix))
 	   ((m ,type-1) (n ,type-2) startr endr startc endc)
          (let ((equal t))
            (clem::mloop-range (((m ,element-type-1 a)
@@ -19,10 +19,10 @@
              (setf equal (and equal (= (aref a i j) (aref b i j)))))
            equal))
        
-       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-equal" suffix))
+       (defmethod ,(make-intern (concatenate 'string "mat-equal" suffix))
 	   ((m ,type-1) (n ,type-2))
 	 (destructuring-bind (mr mc) (dim m)
-	   (,(ch-util:make-intern (concatenate 'string "mat-equal-range" suffix)) m n 0 (1- mr) 0 (1- mc)))))))
+	   (,(make-intern (concatenate 'string "mat-equal-range" suffix)) m n 0 (1- mr) 0 (1- mc)))))))
 
 (macrolet ((frob (type-1 type-2 &key suffix)
 	     `(progn

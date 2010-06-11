@@ -41,7 +41,7 @@
   (let ((element-type-1 (element-type (find-class `,type-1)))
 	(accumulator-element-type (element-type (find-class `,accumulator-type))))
     `(progn
-       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-abs-range" suffix))
+       (defmethod ,(make-intern (concatenate 'string "mat-abs-range" suffix))
 	   ((m ,type-1) startr endr startc endc)
          (destructuring-bind (mr mc) (dim m)
            (let ((p (make-instance ',accumulator-type :rows mr :cols mc)))
@@ -57,16 +57,16 @@
                            (abs (aref a i j)))))))
              p)))
        
-       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-abs" suffix))
+       (defmethod ,(make-intern (concatenate 'string "mat-abs" suffix))
 	   ((m ,type-1))
 	 (destructuring-bind (mr mc) (dim m)
-	   (,(ch-util:make-intern (concatenate 'string "mat-abs-range" suffix))
+	   (,(make-intern (concatenate 'string "mat-abs-range" suffix))
              m 0 (1- mr) 0 (1- mc)))))))
 
 (defmacro def-matrix-abs! (type-1 &key suffix)
   (let ((element-type-1 (element-type (find-class `,type-1))))
     `(progn
-       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-abs-range!" suffix))
+       (defmethod ,(make-intern (concatenate 'string "mat-abs-range!" suffix))
 	   ((m ,type-1) startr endr startc endc)
          (with-matrix-vals (m ,element-type-1 a)
            (do ((i startr (1+ i)))
@@ -78,10 +78,10 @@
                (setf (aref a i j) (abs (aref a i j))))))
          m)
        
-       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-abs!" suffix))
+       (defmethod ,(make-intern (concatenate 'string "mat-abs!" suffix))
 	   ((m ,type-1))
 	 (destructuring-bind (mr mc) (dim m)
-	   (,(ch-util:make-intern (concatenate 'string "mat-abs-range!" suffix))
+	   (,(make-intern (concatenate 'string "mat-abs-range!" suffix))
              m 0 (1- mr) 0 (1- mc)))))))
 
 (macrolet ((frob (type-1 type-2 &key suffix)

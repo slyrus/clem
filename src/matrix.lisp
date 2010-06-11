@@ -241,9 +241,18 @@
               mpl)
       )))
 
+(flet ((cca (l1 l2)
+	 (dolist (x l1)
+	   (let ((y (member x l2)))
+	     (if y (return y))))))
+  (defun closest-common-ancestor (itm &rest lis)
+    (if (null lis)
+	itm
+	(cca itm (apply #'closest-common-ancestor lis)))))
+
 (defgeneric closest-common-matrix-class (m1 &rest mr)
   (:method ((m1 matrix) &rest mr)
-    (car (apply #'ch-util:closest-common-ancestor
+    (car (apply #'closest-common-ancestor
                 (mapcar #'(lambda (x) (matrix-precedence-list (class-of x)))
                         (cons m1 mr))))))
 
@@ -456,16 +465,16 @@
 (macrolet ((frob (name op)
              `(progn
                 ;;; define the row op
-                (defgeneric ,(ch-util:make-intern (concatenate 'string "scalar-" name "-row"))
+                (defgeneric ,(make-intern (concatenate 'string "scalar-" name "-row"))
                     (a k q))
-                (defmethod ,(ch-util:make-intern (concatenate 'string "scalar-" name "-row"))
+                (defmethod ,(make-intern (concatenate 'string "scalar-" name "-row"))
                     ((a matrix) k q)
                   (map-row a k #'(lambda (x) (apply ,op (list x q))))
                   a)
                 ;;; define the column op
-                (defgeneric ,(ch-util:make-intern (concatenate 'string "scalar-" name "-col"))
+                (defgeneric ,(make-intern (concatenate 'string "scalar-" name "-col"))
                     (a k q))
-                (defmethod ,(ch-util:make-intern (concatenate 'string "scalar-" name "-col"))
+                (defmethod ,(make-intern (concatenate 'string "scalar-" name "-col"))
                     ((a matrix) k q)
                   (map-col a k #'(lambda (x) (apply ,op (list x q))))
                   a))))

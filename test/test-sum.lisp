@@ -3,30 +3,30 @@
 
 (macrolet ((define-test (type)
              `(progn
-                (defun ,(ch-util:make-intern (concatenate 'string "test-sum/" type)) ()
+                (defun ,(clem::make-intern (concatenate 'string "test-sum/" type)) ()
                   (let ((m (array->matrix #2A((1 2 3)(4 5 6)(7 8 9))
-                                          :matrix-class ',(ch-util:make-intern
+                                          :matrix-class ',(clem::make-intern
                                                            (concatenate 'string type "-matrix")))))
                     (let ((n (clem::sum m)))
                       (print n))))
-                (defun ,(ch-util:make-intern (concatenate 'string "test-sum/" type "/3d")) ()
+                (defun ,(clem::make-intern (concatenate 'string "test-sum/" type "/3d")) ()
                   (let ((m (array->matrix #3A(((1 2 3)(4 5 6)(7 8 9))
                                               ((11 12 13)(14 15 16)(17 18 19)))
-                                          :matrix-class ',(ch-util:make-intern
+                                          :matrix-class ',(clem::make-intern
                                                            (concatenate 'string type "-matrix")))))
                     (let ((n (clem::sum m)))
                       (print n))))
 
-                (defun ,(ch-util:make-intern (concatenate 'string "test-sum-square/" type)) ()
+                (defun ,(clem::make-intern (concatenate 'string "test-sum-square/" type)) ()
                   (let ((m (array->matrix #2A((1 2 3)(4 5 6)(7 8 9))
-                                          :matrix-class ',(ch-util:make-intern
+                                          :matrix-class ',(clem::make-intern
                                                            (concatenate 'string type "-matrix")))))
                     (let ((n (clem::sum-square m)))
                       (print n))))
-                (defun ,(ch-util:make-intern (concatenate 'string "test-sum-square/" type "/3d")) ()
+                (defun ,(clem::make-intern (concatenate 'string "test-sum-square/" type "/3d")) ()
                   (let ((m (array->matrix #3A(((1 2 3)(4 5 6)(7 8 9))
                                               ((11 12 13)(14 15 16)(17 18 19)))
-                                          :matrix-class ',(ch-util:make-intern
+                                          :matrix-class ',(clem::make-intern
                                                            (concatenate 'string type "-matrix")))))
                     (let ((n (clem::sum-square m)))
                       (print n)))))))

@@ -12,7 +12,7 @@
   (let ((element-type-1 (element-type (find-class `,type-1)))
 	(accumulator-element-type (element-type (find-class `,accumulator-type))))
     `(progn
-       (defmethod ,(ch-util:make-intern (concatenate 'string "mlog-range" suffix))
+       (defmethod ,(make-intern (concatenate 'string "mlog-range" suffix))
 	   ((m ,type-1) startr endr startc endc &optional base)
          (destructuring-bind (mr mc) (dim m)
            (let ((p (make-instance ',accumulator-type :rows mr :cols mc)))
@@ -28,16 +28,16 @@
                            (apply #'log (mref m i j) (when base (list base))))))))
              p)))
        
-       (defmethod ,(ch-util:make-intern (concatenate 'string "mlog" suffix))
+       (defmethod ,(make-intern (concatenate 'string "mlog" suffix))
 	   ((m ,type-1) &optional base)
 	 (destructuring-bind (mr mc) (dim m)
-	   (apply #',(ch-util:make-intern (concatenate 'string "mlog-range" suffix))
+	   (apply #',(make-intern (concatenate 'string "mlog-range" suffix))
                   m 0 (1- mr) 0 (1- mc) (when base (list base))))))))
 
 (defmacro def-matrix-log! (type-1 &key suffix)
   (let ((element-type-1 (element-type (find-class `,type-1))))
     `(progn
-       (defmethod ,(ch-util:make-intern (concatenate 'string "mlog-range!" suffix))
+       (defmethod ,(make-intern (concatenate 'string "mlog-range!" suffix))
 	   ((m ,type-1) startr endr startc endc &optional base)
          (with-typed-mref (m ,element-type-1)
            (do ((i startr (1+ i)))
@@ -49,10 +49,10 @@
                (setf (mref m i j) (apply #'log (mref m i j) (when base (list base)))))))
          m)
        
-       (defmethod ,(ch-util:make-intern (concatenate 'string "mlog!" suffix))
+       (defmethod ,(make-intern (concatenate 'string "mlog!" suffix))
 	   ((m ,type-1) &optional base)
 	 (destructuring-bind (mr mc) (dim m)
-	   (apply #',(ch-util:make-intern (concatenate 'string "mlog-range!" suffix))
+	   (apply #',(make-intern (concatenate 'string "mlog-range!" suffix))
                   m 0 (1- mr) 0 (1- mc) (when base (list base))))))))
 
 (macrolet ((frob (type-1 type-2 &key suffix)
