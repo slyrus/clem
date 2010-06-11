@@ -2,9 +2,7 @@
 (asdf:defsystem :clem-test
   :name "clem-test"
   :author "Cyrus Harmon <ch-lisp@bobobeach.com>"
-  :version #.(with-open-file
-                 (vers (merge-pathnames "version.lisp-expr" *load-truename*))
-               (read vers))
+  :version "0.4.7"
   :depends-on (ch-util clem)
   :components
   ((:module :test
