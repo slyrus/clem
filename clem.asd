@@ -48,6 +48,7 @@
      (:cl-source-file "move" :depends-on ("matrix" "defmatrix-types"))
      (:cl-source-file "sum" :depends-on ("matrix" "defmatrix-types"))
      (:cl-source-file "arithmetic" :depends-on ("matrix" "defmatrix-types"))
+     (:cl-source-file "log" :depends-on ("matrix" "defmatrix-types"))
      (:cl-source-file "logical-operations" :depends-on ("matrix" "defmatrix-types"))
      (:cl-source-file "abs" :depends-on ("matrix" "defmatrix-types"))
      (:cl-source-file "normalize" :depends-on ("matrix" "defmatrix-types"))
