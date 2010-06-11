@@ -67,7 +67,7 @@
           (accumulator-element-type (element-type (find-class `,accumulator-type))))
       (let ((max (max (maxval class-1) (maxval class-2))))
         `(progn
-           (defmethod ,(ch-util:make-intern (concatenate 'string name "-range" suffix))
+           (defmethod ,(make-intern (concatenate 'string name "-range" suffix))
                ((m ,type-1) (n ,type-2) startr endr startc endc)
              (destructuring-bind (mr mc) (dim m)
                (let ((p (make-instance ',accumulator-type :rows mr :cols mc)))
@@ -84,10 +84,10 @@
                                  (logand ,max (lognor (mref m i j) (mref n i j)))))))))
                  p)))
        
-           (defmethod ,(ch-util:make-intern (concatenate 'string name suffix))
+           (defmethod ,(make-intern (concatenate 'string name suffix))
                ((m ,type-1) (n ,type-2))
              (destructuring-bind (mr mc) (dim m)
-               (,(ch-util:make-intern (concatenate 'string name "-range" suffix)) m n 0 (1- mr) 0 (1- mc)))))))))
+               (,(make-intern (concatenate 'string name "-range" suffix)) m n 0 (1- mr) 0 (1- mc)))))))))
        
 (defmacro defmbitnor! (name type-1 type-2 accumulator-type &key suffix)
   (declare (ignore accumulator-type))
@@ -97,7 +97,7 @@
           (element-type-2 (element-type class-2)))
       (let ((max (max (maxval class-1) (maxval class-2))))
         `(progn
-           (defmethod ,(ch-util:make-intern (concatenate 'string name "!-range" suffix))
+           (defmethod ,(make-intern (concatenate 'string name "!-range" suffix))
                ((m ,type-1) (n ,type-2) startr endr startc endc)
              (with-typed-mref (m ,element-type-1)
                (with-typed-mref (n ,element-type-2)
@@ -111,10 +111,10 @@
                            (logand ,max (lognor (mref m i j) (mref n i j)))))))
                m))
        
-           (defmethod ,(ch-util:make-intern (concatenate 'string name "!" suffix))
+           (defmethod ,(make-intern (concatenate 'string name "!" suffix))
                ((m ,type-1) (n ,type-2))
              (destructuring-bind (mr mc) (dim m)
-               (,(ch-util:make-intern (concatenate 'string name "!-range" suffix)) m n 0 (1- mr) 0 (1- mc))))
+               (,(make-intern (concatenate 'string name "!-range" suffix)) m n 0 (1- mr) 0 (1- mc))))
          
            )))))
 

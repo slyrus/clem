@@ -97,7 +97,7 @@
        (defmethod %get-subtr-matrix-class ((a ,type-1) (b ,type-2))
          ',accumulator-type)
        
-       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-subtr-range3" suffix))
+       (defmethod ,(make-intern (concatenate 'string "mat-subtr-range3" suffix))
 	   ((m ,type-1) (n ,type-2) (p ,accumulator-type) startr endr startc endc)
          (with-matrix-vals (m ,element-type-1 a)
            (with-matrix-vals (n ,element-type-2 b)

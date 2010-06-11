@@ -9,7 +9,7 @@
 
 (defmacro bilinear-interpolate
     (g00 g01 g10 g11 a b)
-  (ch-util::once-only (g00 g01 g10 g11 a b)
+  (once-only (g00 g01 g10 g11 a b)
     `(+ ,g00
         (* ,a (- ,g10 ,g00))
         (* ,b (- ,g01 ,g00))

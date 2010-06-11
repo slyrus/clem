@@ -5,7 +5,7 @@
   (let ((element-type-1 (element-type (find-class `,type-1)))
 	(accumulator-element-type (element-type (find-class `,accumulator-type))))
     `(progn
-       (defmethod ,(ch-util:make-intern (concatenate 'string name "-range" suffix))
+       (defmethod ,(make-intern (concatenate 'string name "-range" suffix))
 	   ((m ,type-1)  startr endr startc endc &key in-place)
 	 (destructuring-bind (mr mc) (dim m)
            (if in-place
@@ -32,7 +32,7 @@
                                (,op (mref m i j)))))))
                  p))))
        
-       (defmethod ,(ch-util:make-intern (concatenate 'string name suffix))
+       (defmethod ,(make-intern (concatenate 'string name suffix))
 	   ((m ,type-1) &key in-place)
          (if in-place
              (with-typed-mref (m ,element-type-1)
@@ -53,7 +53,7 @@
 	(element-type-2 (element-type (find-class `,type-2)))
 	(accumulator-element-type (element-type (find-class `,accumulator-type))))
     `(progn
-       (defmethod ,(ch-util:make-intern (concatenate 'string name "-range" suffix))
+       (defmethod ,(make-intern (concatenate 'string name "-range" suffix))
 	   ((m ,type-1) (n ,type-2) startr endr startc endc &key in-place)
 	 (destructuring-bind (mr mc) (dim m)
 	   (if in-place
@@ -87,7 +87,7 @@
                                  (,op (mref m i j) (mref n i j))))))))
                  p))))
 
-       (defmethod ,(ch-util:make-intern (concatenate 'string name suffix))
+       (defmethod ,(make-intern (concatenate 'string name suffix))
 	   ((m ,type-1) (n ,type-2) &key in-place)
 	 (if in-place
              ,(if allow-in-place

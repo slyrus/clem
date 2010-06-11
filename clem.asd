@@ -2,17 +2,14 @@
 (asdf:defsystem :clem
   :name "clem"
   :author "Cyrus Harmon <ch-lisp@bobobeach.com>"
-  :version #.(with-open-file
-                 (vers (merge-pathnames "version.lisp-expr" *load-truename*))
-               (read vers))
+  :version "0.4.6"
   :licence "BSD"
-  :depends-on (ch-util)
   :components
-  ((:static-file "version" :pathname #p"version.lisp-expr")
-   (:module
+  ((:module
     :src
     :components
     ((:cl-source-file "defpackage")
+     (:cl-source-file "utilities" :depends-on ("defpackage"))
      (:cl-source-file "metaclasses" :depends-on ("defpackage"))
      (:cl-source-file "early-matrix" :depends-on ("defpackage" "metaclasses"))
      (:cl-source-file "mref" :depends-on ("early-matrix"))
@@ -21,7 +18,7 @@
                                                     "metaclasses"
                                                     "mref"
                                                     "macros"))
-     (:cl-source-file "matrix" :depends-on ("matrix-classes"))
+     (:cl-source-file "matrix" :depends-on ("matrix-classes" "utilities"))
      (:cl-source-file "print" :depends-on ("matrix"))
      (:cl-source-file "typed-matrix" :depends-on ("defpackage" "matrix"))
      (:cl-source-file "mloop" :depends-on ("defpackage" "matrix"))

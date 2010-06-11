@@ -19,7 +19,7 @@
     `(progn
 
        #+sbcl
-       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-mult3" suffix))
+       (defmethod ,(make-intern (concatenate 'string "mat-mult3" suffix))
 	   ((m ,type-1) (n ,type-2) (p ,accumulator-type))
 	 (declare (optimize (speed 3) (safety 0)))
 	 (let ((a (displace-to-1d-array m))
@@ -57,7 +57,7 @@
 	 p)
 
        #-sbcl
-       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-mult3" suffix))
+       (defmethod ,(make-intern (concatenate 'string "mat-mult3" suffix))
 	   ((m ,type-1) (n ,type-1) (p ,type-1))
 	 (declare (optimize (speed 3) (safety 0)))
 	 (let ((a (clem::matrix-vals m))
@@ -90,7 +90,7 @@
                         :format-arguments (list mr mc nr nc pr pc)))))
 	 p)
        
-       (defmethod ,(ch-util:make-intern (concatenate 'string "mat-mult" suffix))
+       (defmethod ,(make-intern (concatenate 'string "mat-mult" suffix))
 	   ((m ,type-1) (n ,type-2))
 	 (declare (optimize (speed 3) (safety 0)))
 	 (let ((mr (rows m))

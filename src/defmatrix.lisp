@@ -63,9 +63,9 @@
        (with-typed-matrix-vals (m ,element-type a)
 	 (setf (aref a row col) v)))
 
-     (defgeneric ,(ch-util:make-intern
+     (defgeneric ,(make-intern
                    (concatenate 'string "array->" (symbol-name type))) (a))
-     (defmethod ,(ch-util:make-intern
+     (defmethod ,(make-intern
                   (concatenate 'string "array->" (symbol-name type))) ((a array))
        (array->matrix a :matrix-class ',type))
      
@@ -114,10 +114,10 @@
        m)
      
      (defgeneric
-         ,(ch-util:make-intern (concatenate 'string "random-" (symbol-name type)))
+         ,(make-intern (concatenate 'string "random-" (symbol-name type)))
          (rows cols &key max))
      (defmethod
-         ,(ch-util:make-intern (concatenate 'string "random-" (symbol-name type)))
+         ,(make-intern (concatenate 'string "random-" (symbol-name type)))
          (rows cols &key (max nil))
        (let ((a (make-instance ',type :rows rows :cols cols))
              (maxvalue (if max 
