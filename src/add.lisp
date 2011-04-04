@@ -37,6 +37,11 @@
       (error "not yet supported")
       (mat-scalar-op a b #'+)))
 
+(defmethod mat-add ((a matrix) (b number) &key in-place)
+  (if in-place
+      (error "not yet supported")
+      (mat-scalar-op a b #'+)))
+
 ;;; faster version
 (defmacro def-matrix-add-range (type-1 type-2 accumulator-type &key suffix)
   (let ((element-type-1 (element-type (find-class `,type-1)))
