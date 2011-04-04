@@ -1,7 +1,6 @@
 ((:P
   #.(progn
       (in-package :clem)
-      #.(smarkup::enable-quote-reader-macro)
       (smarkup::setup-headings)
       nil)
   (:smarkup-metadata
@@ -11,7 +10,9 @@
     "CLEM Matrix Performance")
    (:author "Cyrus L. Harmon")
    (:bibtex-database
-    "(\"asdf:/ch-bib/lisp\" \"asdf:/ch-bib/bio\" \"asdf:/ch-bib/stat\" \"asdf:/ch-bib/vision\")")
+    (#.(asdf:component-pathname 
+        (reduce #'asdf:find-component
+                '("clem-doc" "doc" "clem-bib")))))
    (:bibtex-style "Science"))
   (:html-metadata (:htmlcss "simple.css")))
  
@@ -251,7 +252,7 @@
  
  (:lisp
   #q{
-  (defun bench/add-matrix/aref (a1 a2 a3)
+    (defun bench/add-matrix/aref (a1 a2 a3)
     (destructuring-bind (rows cols)
         (array-dimensions a1)
       (dotimes (i rows)
@@ -265,7 +266,15 @@
  
  
  (:lisp
-  #q{(ch-util:time-to-string (bench/add-matrix/aref b1 b2 b3))})
+  #q{(defmacro time-to-string (&body body)
+    (let ((strstr (gensym))
+          (time-string (make-array '(0) :element-type 'character
+                                   :fill-pointer 0 :adjustable t)))
+      `(with-output-to-string (,strstr ,time-string)
+         (let ((*trace-output* ,strstr))
+         (time ,@body))
+         ,time-string)))
+  (clem::time-to-string (bench/add-matrix/aref b1 b2 b3))})
 
  (:h2 #q{1-Dimensional Lisp Arrays})
 
@@ -276,5 +285,5 @@
  Array})
  
 
- #+nil(:BIBLIOGRAPHY))
+ (:bibliography))
 

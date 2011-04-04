@@ -1,9 +1,15 @@
 
 (require 'asdf)
 
-(asdf:operate 'asdf:load-op 'clem)
-(asdf:operate 'asdf:load-op 'clem-doc)
-(asdf:operate 'asdf:load-op 'tinaa)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+ (asdf:operate 'asdf:load-op 'clem)
+ (asdf:operate 'asdf:load-op 'clem-doc)
+ (asdf:operate 'asdf:load-op 'tinaa))
+
+(cl:defpackage :clem-tinaa
+  (:use :cl))
+
+(cl:in-package :clem-tinaa)
 
 (defun clem-doc-system::make-tinaa-docs ()
   (asdf:operate 'asdf:load-op 'tinaa)
