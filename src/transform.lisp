@@ -126,11 +126,10 @@
                              &key u v x y
                              (interpolation :nearest-neighbor interpolation-supplied-p)
                              (background nil background-supplied-p))
-  "applies the affine transform xfrm to the contents of matrix m
-   and places the contents in n. The default supported
-   classes. The default supported classes of interpolation
-   are :quadratic, :bilinear and :nearest-neighbor. If no
-   interpolation is supplied, the default is :nearest-neighbor."
+  "applies the affine transform xfrm to the contents of matrix m and
+   places the contents in n. The default supported classes of
+   interpolation are :quadratic, :bilinear and :nearest-neighbor. If
+   no interpolation is supplied, the default is :nearest-neighbor."
   (let ((xfrm-shift (mat-copy xfrm)))
     (unless u
       (setf u (cons 0 (cols m))))
