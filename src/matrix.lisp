@@ -539,8 +539,8 @@
            c))
         (t nil)))))
 
-(defgeneric subset-matrix-cols (a x y &key (matrix-type))
-  (:method ((a matrix) x y &key (matrix-type))
+(defgeneric subset-matrix-cols (a x y &key matrix-type)
+  (:method ((a matrix) x y &key matrix-type)
     (let ((da (dim a)))
       (cond
         ((< x y)
