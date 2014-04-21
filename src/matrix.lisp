@@ -412,21 +412,24 @@
 	 (let ((c (mat-copy a)))
 	   (dotimes (i m c)
 	     (dotimes (j n)
-	       (set-val c i j (funcall op (val a i j) (val b i j)))))))))
+	       (set-val c i j (funcall op (val a i j) (val b i j)))))
+           c))))
 
 (defmethod mat-scalar-op ((a number) (b matrix) op)
   (destructuring-bind (m n) (dim b)
     (let ((c (mat-copy b)))
       (dotimes (i m c)
         (dotimes (j n)
-          (set-val c i j (funcall op a (val b i j))))))))
+          (set-val c i j (funcall op a (val b i j)))))
+      c)))
 
 (defmethod mat-scalar-op ((a matrix) (b number) op)
   (destructuring-bind (m n) (dim a)
     (let ((c (mat-copy a)))
       (dotimes (i m c)
         (dotimes (j n)
-          (set-val c i j (funcall op (val a i j) b)))))))
+          (set-val c i j (funcall op (val a i j) b))))
+      c)))
 	
 (defgeneric mat-subtr (a b &key in-place result-type))
 
