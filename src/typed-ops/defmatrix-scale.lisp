@@ -12,7 +12,7 @@
        (defmethod mat-scale-fit-range
 	   ((m ,type-1) q startr endr startc endc)
          (let ((qconv (coerce q ',element-type-1)))
-           (declare (type ,element-type-1 qconv))
+           (declare (type ,(upgraded-array-element-type element-type-1) qconv))
            (destructuring-bind (mr mc) (dim m)
              (let ((p (make-instance ',accumulator-type :rows mr :cols mc)))
                (with-matrix-vals (m ,element-type-1 a)
@@ -38,7 +38,7 @@
 	   ((m ,type-1) q startr endr startc endc)
          (if (subtypep (type-of q) ',element-type-1)
              (let ((qconv (coerce q ',element-type-1)))
-               (declare (type ,element-type-1 qconv))
+               (declare (type ,(upgraded-array-element-type element-type-1) qconv))
                (with-matrix-vals (m ,element-type-1 a)
                  (do ((i startr (1+ i)))
                      ((> i endr))
