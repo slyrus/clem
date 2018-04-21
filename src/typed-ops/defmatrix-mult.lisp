@@ -35,20 +35,15 @@
                  (pr (rows p)) (pc (cols p)))
 	     (declare (type fixnum mr mc nr nc pr pc))
 	     (if (and (= mc nr) (= mr pr) (= nc pc))
-                 (do ((k 0 (the fixnum (1+ k))))
-                     ((>= k mc))
-                   (declare (type fixnum k))
-                   (do* ((i 0 (the fixnum (1+ i)))
-                         (aind k (+ aind mc)))
-                        ((>= i mr))
-                     (declare (type fixnum i aind))
-                     (setf atemp (aref a aind))
-                     (do ((j 0 (the fixnum (1+ j)))
-                          (bind (* k nc) (the fixnum (1+ bind)))
-                          (cind (* i nc) (the fixnum (1+ cind))))
-                         ((>= j nc))
-                       (declare (type fixnum j bind cind))
-                       (incf (aref c cind) (the ,accumulator-element-type (* atemp (aref b bind)))))))
+                 (loop for k fixnum from 0 below mc
+                    do (loop for i from 0 below mr
+                          for aind = k then (+ aind mc)
+                          do (setf atemp (aref a aind))
+                            (loop for j fixnum from 0 below nc
+                               for bind = (* k nc) then (1+ bind)
+                               for cind = (* i nc) then (1+ cind)
+                               do (incf (aref c cind)
+                                        (the ,accumulator-element-type (* atemp (aref b bind)))))))
                  (error 'matrix-argument-error
                         :format-control
                         "Incompatible matrix dimensions in mat-mult3 (~S x ~S) * (~S x ~S) => (~S x ~S)."

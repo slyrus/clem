@@ -170,23 +170,19 @@
 	(accumulator-element-type (element-type (find-class `,accumulator-type))))
     `(progn
        (defmethod ,(make-intern (concatenate 'string "mat-add-range-"
-                                                     (symbol-name type-2)
-                                                     suffix))
+                                             (symbol-name type-2)
+                                             suffix))
 	   ((m ,type-1) n startr endr startc endc &key in-place)
          (declare (type ,type-2 n))
 	 (destructuring-bind (mr mc) (dim m)
            (if in-place
                ,(if allow-in-place
                     `(with-typed-mref (m ,element-type-1)
-                      (do ((i startr (1+ i)))
-                          ((> i endr))
-                        (declare (dynamic-extent i) (type fixnum i))
-                        (do ((j startc (1+ j)))
-                            ((> j endc))
-                          (declare (dynamic-extent j) (type fixnum j))
-                          (setf (mref m i j)
-                                (+ (mref m i j) n))))
-                      m)
+                       (loop for i fixnum from startr to endr
+                          do (loop for j fixnum from startc to endc
+                                do (setf (mref m i j)
+                                         (+ (mref m i j) n))))
+                       m)
                     `(error 'matrix-argument-error
                             :format-control
                             "in-place operation not allowed (~S of ~S and ~S)"
@@ -194,19 +190,15 @@
                (let ((p (make-instance ',accumulator-type :rows mr :cols mc)))
                  (with-typed-mref (m ,element-type-1)
                    (with-typed-mref (p ,accumulator-element-type)
-                     (do ((i startr (1+ i)))
-                         ((> i endr))
-                       (declare (dynamic-extent i) (type fixnum i))
-                       (do ((j startc (1+ j)))
-                           ((> j endc))
-                         (declare (dynamic-extent j) (type fixnum j))
-                         (setf (mref p i j)
-                               (+ (mref m i j) n))))))
+                     (loop for i fixnum from startr to endr
+                        do (loop for j fixnum from startc to endc
+                              do (setf (mref p i j)
+                                       (+ (mref m i j) n))))))
                  p))))
        
        (defmethod ,(make-intern (concatenate 'string "mat-add"
-                                                     (symbol-name type-2)
-                                                     suffix))
+                                             (symbol-name type-2)
+                                             suffix))
 	   ((m ,type-1) n &key in-place)
          (declare (type ,type-2 n))
          (if in-place
@@ -259,26 +251,18 @@
              (if in-place
                  (progn
                    (with-typed-mref (m ,element-type-1)
-                     (do ((i startr (1+ i)))
-                         ((> i endr))
-                       (declare (dynamic-extent i) (type fixnum i))
-                       (do ((j startc (1+ j)))
-                           ((> j endc))
-                         (declare (dynamic-extent j) (type fixnum j))
-                         (setf (mref m i j)
-                               (+ (mref m i j) val)))))
+                     (loop for i fixnum from startr to endr
+                        do (loop for j fixnum from startc to endc
+                              do (setf (mref m i j)
+                                       (+ (mref m i j) val)))))
                    m)
                  (let ((p (make-instance ',accumulator-type :rows mr :cols mc)))
                    (with-typed-mref (m ,element-type-1)
                      (with-typed-mref (p ,accumulator-element-type)
-                       (do ((i startr (1+ i)))
-                           ((> i endr))
-                         (declare (dynamic-extent i) (type fixnum i))
-                         (do ((j startc (1+ j)))
-                             ((> j endc))
-                           (declare (dynamic-extent j) (type fixnum j))
-                           (setf (mref p i j)
-                                 (+ (mref m i j) val))))))
+                       (loop for i fixnum from startr to endr
+                          do (loop for j fixnum from startc to endc
+                                do (setf (mref p i j)
+                                         (+ (mref m i j) val))))))
                    p)))))
          
        (defmethod ,(make-intern (concatenate 'string "mat-add" suffix))

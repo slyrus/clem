@@ -38,12 +38,9 @@
        ,@(loop for type in types and var in vars
             collect
               `(declare (type (simple-array ,type *) ,var)))
-       (do ((,i ,startr (1+ ,i)))
-           ((> ,i ,endr))
-         (declare (type fixnum ,i))
-         (do ((,j ,startc (1+ ,j)))
-             ((> ,j ,endc))
-           (declare (type fixnum ,j))
-           ,@body)))))
+       (loop for ,i fixnum from ,startr to ,endr
+          do (loop for ,j fixnum from ,startc to ,endc
+                do (progn
+                     ,@body))))))
 
 

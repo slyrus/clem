@@ -84,18 +84,14 @@
                         startr2 endr2 startc2 endc2))
          (with-typed-matrix-vals (m ,element-type-1 a)
            (with-typed-matrix-vals (n ,element-type-2 b)
-             (do ((i startr1 (1+ i))
-                  (k startr2 (1+ k)))
-                 ((or (>= i endr1) (>= k endr2)))
-               (declare (dynamic-extent i k) (type fixnum i k))
-               (do ((j startc1 (1+ j))
-                    (l startc2 (1+ l)))
-                   ((or (>= j endc1) (>= l endc2)))
-                 (declare (dynamic-extent j l) (type fixnum j l))
-                 (setf (aref b k l)
-                       (maybe-truncate
-                        (aref a i j)
-                        ,element-type-1 ,element-type-2))))))
+             (loop for i fixnum from startr1 below endr1
+                for k fixnum from startr2 below endr2
+                do (loop for j fixnum from startc1 below endc1
+                      for l fixnum from startc2 below endc2
+                      do  (setf (aref b k l)
+                                (maybe-truncate
+                                 (aref a i j)
+                                 ,element-type-1 ,element-type-2))))))
          n)
 
        (defmethod matrix-move-range-2d-constrain ((m ,type-1) (n ,type-2) 
@@ -103,18 +99,15 @@
                                                   startr2 endr2 startc2 endc2)
          (with-matrix-vals (m ,element-type-1 a)
            (with-matrix-vals (n ,element-type-2 b)
-             (do ((i startr1 (1+ i))
-                  (k startr2 (1+ k)))
-                 ((or (>= i endr1) (>= k endr2)))
-               (declare (dynamic-extent i k) (type fixnum i k))
-               (do ((j startc1 (1+ j))
-                    (l startc2 (1+ l)))
-                   ((or (>= j endc1) (>= l endc2)))
-                 (declare (dynamic-extent j l) (type fixnum j l))
-                 (setf (aref b k l) ,(if (eql element-type-1 element-type-2)
-                                         `(constrain ,min (aref a i j) ,max)
-                                         `(maybe-truncate (constrain ,min (aref a i j) ,max)
-                                                          ,element-type-1 ,element-type-2)))))))
+             (loop for i fixnum from startr1 below endr1
+                for k fixnum from startr2 below endr2
+                do (loop for j fixnum from startc1 below endc1
+                      for l fixnum from startc2 below endc2
+                      do (setf (aref b k l)
+                               ,(if (eql element-type-1 element-type-2)
+                                    `(constrain ,min (aref a i j) ,max)
+                                    `(maybe-truncate (constrain ,min (aref a i j) ,max)
+                                                     ,element-type-1 ,element-type-2)))))))
          n)
 
        (defmethod matrix-move ((m ,type-1) (n ,type-2) &key constrain)

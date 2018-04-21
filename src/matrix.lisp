@@ -775,13 +775,9 @@
             fn)
     (declare (dynamic-extent startr endr startc endc)
              (fixnum startr endr startc endc))
-    (do ((i startr (1+ i)))
-        ((> i endr))
-      (declare (dynamic-extent i) (type fixnum i))
-      (do ((j startc (1+ j)))
-          ((> j endc))
-        (declare (dynamic-extent j) (type fixnum j))
-        (funcall fn (val a i j) i j)))))
+    (loop for i fixnum from startr to endr
+       do (loop for j fixnum from startc to endc
+             do (funcall fn (val a i j) i j)))))
 
 (defgeneric map-set-range (a startr endr startc endc fn)
   (:method ((a matrix)
@@ -792,13 +788,9 @@
             fn)
     (declare (dynamic-extent startr endr startc endc)
              (fixnum startr endr startc endc))
-    (do ((i startr (1+ i)))
-        ((> i endr))
-      (declare (dynamic-extent i) (fixnum i))
-      (do ((j startc (1+ j)))
-          ((> j endc))
-        (declare (dynamic-extent j) (fixnum j))
-        (set-val a i j (funcall fn (val a i j) i j))))))
+    (loop for i fixnum from startr to endr
+       do (loop for j fixnum from startc to endc
+             do (set-val a i j (funcall fn (val a i j) i j))))))
 
 (defgeneric random-matrix (rows cols &key matrix-class limit)
   (:documentation "Create a matrix of type <matrix-class> having

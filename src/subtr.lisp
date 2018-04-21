@@ -102,14 +102,10 @@
          (with-matrix-vals (m ,element-type-1 a)
            (with-matrix-vals (n ,element-type-2 b)
              (with-matrix-vals (p ,accumulator-element-type c)
-               (do ((i startr (1+ i)))
-                   ((> i endr))
-                 (declare (dynamic-extent i) (type fixnum i))
-                 (do ((j startc (1+ j)))
-                     ((> j endc))
-                   (declare (dynamic-extent j) (type fixnum j))
-                   (setf (aref c i j)
-                         (- (aref a i j) (aref b i j))))))))
+               (loop for i fixnum from startr to endr
+                  do (loop for j fixnum from startc to endc
+                        do (setf (aref c i j)
+                                 (- (aref a i j) (aref b i j))))))))
          p))))
 
 (macrolet ((frob (type-1 type-2 type-3 &key suffix)

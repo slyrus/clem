@@ -13,14 +13,10 @@
 	     (with-matrix-vals (m ,element-type-1 a)
 	       (with-matrix-vals (n ,element-type-2 b)
 		 (with-matrix-vals (p ,accumulator-element-type c)
-		   (do ((i startr (1+ i)))
-		       ((> i endr))
-		     (declare (dynamic-extent i) (type fixnum i))
-		     (do ((j startc (1+ j)))
-			 ((> j endc))
-		       (declare (dynamic-extent j) (type fixnum j))
-		       (setf (aref c i j)
-			     (* (aref a i j) (aref b i j))))))))
+                   (loop for i fixnum from startr to endr
+                      do (loop for j fixnum from startc to endc
+                            do (setf (aref c i j)
+			             (* (aref a i j) (aref b i j))))))))
 	     p)))
        
        (defmethod ,(make-intern (concatenate 'string "mat-hprod" suffix))
@@ -37,14 +33,10 @@
 	   ((m ,type-1) (n ,type-2) startr endr startc endc)
 	 (with-matrix-vals (m ,element-type-1 a)
 	   (with-matrix-vals (n ,element-type-2 b)
-	     (do ((i startr (1+ i)))
-		 ((> i endr))
-	       (declare (dynamic-extent i) (type fixnum i))
-	       (do ((j startc (1+ j)))
-		   ((> j endc))
-		 (declare (dynamic-extent j) (type fixnum j))
-		 (setf (aref a i j)
-		       (* (aref a i j) (aref b i j))))))
+	     (loop for i fixnum from startr to endr
+                      do (loop for j fixnum from startc to endc
+                            do (setf (aref a i j)
+		                     (* (aref a i j) (aref b i j))))))
 	   m))
 
        (defmethod ,(make-intern (concatenate 'string "mat-hprod!" suffix))

@@ -12,13 +12,9 @@
 	   ((m ,input-class) (n ,result-class) q startr endr startc endc)
          (with-typed-mref (m ,input-class-element-type)
            (with-typed-mref (n ,result-class-element-type)
-             (do ((i startr (1+ i)))
-                 ((> i endr))
-               (declare (dynamic-extent i) (type fixnum i))
-               (do ((j startc (1+ j)))
-                   ((> j endc))
-                 (declare (dynamic-extent j) (type fixnum j))
-                 (setf (mref n i j) (* (mref m i j) q))))))
+             (loop for i fixnum from startr to endr
+                do (loop for j fixnum from startc to endc
+                      do (setf (mref n i j) (* (mref m i j) q))))))
          n)
        
        (defmethod mat-scale-2

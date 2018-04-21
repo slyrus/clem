@@ -12,23 +12,15 @@
 
 (defmacro with-map-range (m element-type startr endr startc endc (a i j) &body body)
   `(with-matrix-vals (,m ,element-type ,a)
-     (do ((,i ,startr (1+ ,i)))
-	 ((> ,i ,endr))
-       (declare (dynamic-extent ,i) (type fixnum ,i))
-       (do ((,j ,startc (1+ ,j)))
-	   ((> ,j ,endc))
-	 (declare (dynamic-extent ,j) (type fixnum ,j))
-	 ,@body))))
+     (loop for ,i fixnum from ,startr to ,endr
+        do (loop for ,j fixnum from ,startc to ,endc
+              do (progn ,@body)))))
 
 (defmacro with-typed-map-range (m element-type startr endr startc endc (a i j) &body body)
   `(with-typed-matrix-vals (,m ,element-type ,a)
-     (do ((,i ,startr (1+ ,i)))
-	 ((> ,i ,endr))
-       (declare (dynamic-extent ,i) (type fixnum ,i))
-       (do ((,j ,startc (1+ ,j)))
-	   ((> ,j ,endc))
-	 (declare (dynamic-extent ,j) (type fixnum ,j))
-	 ,@body))))
+     (loop for ,i fixnum from ,startr to ,endr
+        do (loop for ,j fixnum from ,startc to ,endc
+              do (progn ,@body)))))
 
 (defmacro with-matrix-range-do (matrix-class m n p
                                 startr endr startc endc (a b c i j) &body body)
@@ -39,13 +31,9 @@
       `(with-matrix-vals (,m ,element-type ,a)
 	 (with-matrix-vals (,n ,element-type ,b)
 	   (with-matrix-vals (,p ,element-type ,c)
-	     (do ((,i ,startr (1+ ,i)))
-		 ((> ,i ,endr))
-	       (declare #-sbcl (dynamic-extent ,i) (type fixnum ,i))
-	       (do ((,j ,startc (1+ ,j)))
-		   ((> ,j ,endc))
-		 (declare #-sbcl (dynamic-extent ,j) (type fixnum ,j))
-		 ,@body))))))))
+             (loop for ,i fixnum from ,startr to ,endr
+                do (loop for ,j fixnum from ,startc to ,endc
+                      do (progn ,@body)))))))))
 
 
 (defmacro defmatrixfuncs (type &key 

@@ -16,13 +16,9 @@
            (destructuring-bind (mr mc) (dim m)
              (let ((p (make-instance ',accumulator-type :rows mr :cols mc)))
                (with-matrix-vals (m ,element-type-1 a)
-                 (do ((i startr (1+ i)))
-                     ((> i endr))
-                   (declare (dynamic-extent i) (type fixnum i))
-                   (do ((j startc (1+ j)))
-                       ((> j endc))
-                     (declare (dynamic-extent j) (type fixnum j))
-                     (set-val-fit p i j (* (aref a i j) qconv)))))
+                 (loop for i fixnum from startr to endr
+                    do (loop for j fixnum from startc to endc
+                          do (set-val-fit p i j (* (aref a i j) qconv)))))
                p))))
        
        (defmethod mat-scale-fit
@@ -40,21 +36,13 @@
              (let ((qconv (coerce q ',element-type-1)))
                (declare (type ,(upgraded-array-element-type element-type-1) qconv))
                (with-matrix-vals (m ,element-type-1 a)
-                 (do ((i startr (1+ i)))
-                     ((> i endr))
-                   (declare (dynamic-extent i) (type fixnum i))
-                   (do ((j startc (1+ j)))
-                       ((> j endc))
-                     (declare (dynamic-extent j) (type fixnum j))
-                     (set-val-fit m i j (* (aref a i j) qconv))))))
+                 (loop for i fixnum from startr to endr
+                    do (loop for j fixnum from startc to endc
+                          do (set-val-fit m i j (* (aref a i j) qconv))))))
              (with-matrix-vals (m ,element-type-1 a)
-               (do ((i startr (1+ i)))
-                   ((> i endr))
-                 (declare (dynamic-extent i) (type fixnum i))
-                 (do ((j startc (1+ j)))
-                     ((> j endc))
-                   (declare (dynamic-extent j) (type fixnum j))
-                   (set-val-fit m i j (* (aref a i j) q))))))
+               (loop for i fixnum from startr to endr
+                  do (loop for j fixnum from startc to endc
+                          do (set-val-fit m i j (* (aref a i j) q))))))
          m)
        
        (defmethod mat-scale-fit!

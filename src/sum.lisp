@@ -57,13 +57,9 @@
          (a (matrix-vals ,m)))
      (declare (type ,accumulator-type acc)
               (type (simple-array ,element-type *) a))
-     (do ((i ,startr (1+ i)))
-         ((> i ,endr))
-       (declare (dynamic-extent i) (type fixnum i))
-       (do ((j ,startc (1+ j)))
-           ((> j ,endc))
-         (declare (dynamic-extent j) (type fixnum j))
-         (setf acc (+ acc (aref a i j)))))
+     (loop for i fixnum from ,startr to ,endr
+        do (loop for j fixnum from ,startc to ,endc
+              do (setf acc (+ acc (aref a i j)))))
      acc))
 
 (macrolet ((frob-sum (matrix-type accumulator-type)
@@ -134,13 +130,9 @@
 		  (a (matrix-vals m)))
 	      (declare (type ,accumulator-type acc)
 		       (type (simple-array ,element-type *) a))
-	      (do ((i startr (1+ i)))
-		  ((> i endr))
-		(declare (dynamic-extent i) (type fixnum i))
-		(do ((j startc (1+ j)))
-		    ((> j endc))
-		  (declare (dynamic-extent j) (type fixnum j))
-		  (incf acc (* (aref a i j) (aref a i j)))))
+              (loop for i fixnum from startr to endr
+	         do (loop for j fixnum from startc to endc
+                       do (incf acc (* (aref a i j) (aref a i j)))))
 	      acc)))))
 
   (frob-sum-square-range double-float-matrix double-float)
