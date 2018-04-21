@@ -1,5 +1,5 @@
 
-(in-package :matrix)
+(in-package :clem)
 
 (let ((m (array->matrix #2A((1 2 3)(4 1 6)(7 1 9)))))
   (print-matrix (invert-matrix m)))
