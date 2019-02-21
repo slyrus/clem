@@ -168,7 +168,14 @@
 	     (setf (aref b i2 j2)
 		   ,(if (eql element-type-1 element-type-2)
 			`(aref a i1 j1)
-			`(coerce (aref a i1 j1) ',element-type-2)))))))))
+			(cond ((and (not (subtypep element-type-1 'integer))
+                                    (subtypep element-type-2 'integer))
+                               `(coerce (truncate (aref a i1 j1)) ',element-type-2))
+                              ((and (subtypep element-type-1 'complex)
+                                    (subtypep element-type-2 'real))
+                               `(coerce (realpart (aref a i1 j1)) ',element-type-2))
+                              (t
+                               `(coerce (aref a i1 j1) ',element-type-2)))))))))))
 
 (defmacro maybe-coerce (val type-1 type-2)
   (if (eql type-1 type-2)
@@ -176,9 +183,13 @@
       `(coerce ,val ',type-2)))
 
 (defmacro maybe-truncate (val type-1 type-2)
-  (if (and (subtypep type-2 'integer)
-	   (and (subtypep type-1 'real)
-                (not (subtypep type-1 'integer))))
-      `(nth-value 0 (truncate ,val))
-      `(maybe-coerce ,val ,type-1 ,type-2)))
+  (cond ((and (subtypep type-2 'integer)
+	       (and (subtypep type-1 'real)
+                    (not (subtypep type-1 'integer))))
+         `(nth-value 0 (truncate ,val)))
+        ((and (subtypep type-1 'complex)
+              (subtypep type-2 'real))
+         `(coerce (realpart ,val) ',type-2))
+        (t
+         `(maybe-coerce ,val ,type-1 ,type-2))))
 

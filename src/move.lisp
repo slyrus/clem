@@ -123,8 +123,8 @@
 
 (macrolet ((frob (type-1 type-2)
              `(progn
-                (def-move-element ,type-1 ,type-2)
-                (def-matrix-move ,type-1 ,type-2))))
+               (def-move-element ,type-1 ,type-2)
+               (def-matrix-move ,type-1 ,type-2))))
   
   (frob double-float-matrix double-float-matrix)
   (frob double-float-matrix single-float-matrix)
@@ -207,8 +207,8 @@
 
 (macrolet ((frob (type-1 type-2)
              `(progn
-                (def-move-element ,type-1 ,type-2)
-                (def-matrix-move ,type-1 ,type-2))))
+               (def-move-element ,type-1 ,type-2)
+               (def-matrix-move ,type-1 ,type-2))))
 
   (frob complex-matrix real-matrix)
   (frob complex-matrix complex-matrix)
