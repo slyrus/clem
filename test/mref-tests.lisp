@@ -24,13 +24,13 @@
                                 (do* ((dims dims (cdr dims))
                                       (indices n-indices (cdr indices))
                                       (last-dim nil (car dims))
-                                      (form (sb-ext::truly-the sb-kernel::index (car indices))
+                                      (form (sb-ext:truly-the sb-int:index (car indices))
                                             `(sb-ext:truly-the
-                                              sb-kernel::index
-                                              (+ (sb-ext:truly-the sb-kernel::index
-                                                                   (* (sb-ext:truly-the sb-kernel::index ,form)
-                                                                      (sb-ext:truly-the sb-kernel::index ,last-dim)))
-                                                 ,(sb-ext::truly-the sb-kernel::index (car indices))))))
+                                              sb-int:index
+                                              (+ (sb-ext:truly-the sb-int:index
+                                                                   (* (sb-ext:truly-the sb-int:index ,form)
+                                                                      (sb-ext:truly-the sb-int:index ,last-dim)))
+                                                 ,(sb-ext:truly-the sb-int:index (car indices))))))
                                      ((null (cdr dims)) form)))))
                      (declare (ignorable ,(car dims)))
                      ,',@body)))))
@@ -41,83 +41,83 @@
   
   (sb-c:deftransform mref2 ((m &rest indices))
     (cond
-      ((sb-c::csubtypep (sb-c::lvar-type m) (sb-kernel::find-classoid 'double-float-matrix))
+      ((sb-kernel:csubtypep (sb-c::lvar-type m) (sb-kernel:find-classoid 'double-float-matrix))
        (with-row-major-index (m indices index)
          (row-major-aref
           (the (simple-array double-float (* *))
             (standard-instance-access m 0))
-          (sb-ext:truly-the sb-kernel::index index))))
-      ((sb-c::csubtypep (sb-c::lvar-type m) (sb-kernel::find-classoid 'double-float-matrix))
+          (sb-ext:truly-the sb-int:index index))))
+      ((sb-kernel:csubtypep (sb-c::lvar-type m) (sb-kernel:find-classoid 'double-float-matrix))
        (with-row-major-index (m indices index)
          (row-major-aref
           (the (simple-array single-float (* *))
             (standard-instance-access m 0))
-          (sb-ext:truly-the sb-kernel::index index))))
-      ((sb-c::csubtypep (sb-c::lvar-type m) (sb-c::find-classoid 'ub8-matrix))
+          (sb-ext:truly-the sb-int:index index))))
+      ((sb-kernel:csubtypep (sb-c::lvar-type m) (sb-kernel:find-classoid 'ub8-matrix))
        (with-row-major-index (m indices index)
-         (sb-kernel::hairy-data-vector-ref
+         (sb-kernel:hairy-data-vector-ref
           (sb-ext:truly-the (simple-array (unsigned-byte 8) (* *))
                             (standard-instance-access m 0))
-          (sb-ext:truly-the sb-kernel::index index))))
-      ((sb-c::csubtypep (sb-c::lvar-type m) (sb-c::find-classoid 'ub16-matrix))
+          (sb-ext:truly-the sb-int:index index))))
+      ((sb-kernel:csubtypep (sb-c::lvar-type m) (sb-kernel:find-classoid 'ub16-matrix))
        (with-row-major-index (m indices index)
-         (sb-kernel::hairy-data-vector-ref
+         (sb-kernel:hairy-data-vector-ref
           (sb-ext:truly-the (simple-array (unsigned-byte 16) (* *))
                             (standard-instance-access m 0))
-          (sb-ext:truly-the sb-kernel::index index))))
-      ((sb-c::csubtypep (sb-c::lvar-type m) (sb-c::find-classoid 'ub32-matrix))
+          (sb-ext:truly-the sb-int:index index))))
+      ((sb-kernel:csubtypep (sb-c::lvar-type m) (sb-kernel:find-classoid 'ub32-matrix))
        (with-row-major-index (m indices index)
-         (sb-kernel::hairy-data-vector-ref
+         (sb-kernel:hairy-data-vector-ref
           (sb-ext:truly-the (simple-array (unsigned-byte 32) (* *))
                             (standard-instance-access m 0))
-          (sb-ext:truly-the sb-kernel::index index))))
-      ((sb-c::csubtypep (sb-c::lvar-type m) (sb-c::find-classoid 'sb8-matrix))
+          (sb-ext:truly-the sb-int:index index))))
+      ((sb-kernel:csubtypep (sb-c::lvar-type m) (sb-kernel:find-classoid 'sb8-matrix))
        (with-row-major-index (m indices index)
-         (sb-kernel::hairy-data-vector-ref
+         (sb-kernel:hairy-data-vector-ref
           (sb-ext:truly-the (simple-array (signed-byte 8) (* *))
                             (standard-instance-access m 0))
-          (sb-ext:truly-the sb-kernel::index index))))
-      ((sb-c::csubtypep (sb-c::lvar-type m) (sb-c::find-classoid 'sb16-matrix))
+          (sb-ext:truly-the sb-int:index index))))
+      ((sb-kernel:csubtypep (sb-c::lvar-type m) (sb-kernel:find-classoid 'sb16-matrix))
        (with-row-major-index (m indices index)
-         (sb-kernel::hairy-data-vector-ref
+         (sb-kernel:hairy-data-vector-ref
           (sb-ext:truly-the (simple-array (signed-byte 16) (* *))
                             (standard-instance-access m 0))
-          (sb-ext:truly-the sb-kernel::index index))))
-      ((sb-c::csubtypep (sb-c::lvar-type m) (sb-c::find-classoid 'sb32-matrix))
+          (sb-ext:truly-the sb-int:index index))))
+      ((sb-kernel:csubtypep (sb-c::lvar-type m) (sb-kernel:find-classoid 'sb32-matrix))
        (with-row-major-index (m indices index)
-         (sb-kernel::hairy-data-vector-ref
+         (sb-kernel:hairy-data-vector-ref
           (sb-ext:truly-the (simple-array (signed-byte 32) (* *))
                             (standard-instance-access m 0))
-          (sb-ext:truly-the sb-kernel::index index))))
-      ((sb-c::csubtypep (sb-c::lvar-type m) (sb-c::find-classoid 'bit-matrix))
+          (sb-ext:truly-the sb-int:index index))))
+      ((sb-kernel:csubtypep (sb-c::lvar-type m) (sb-kernel:find-classoid 'bit-matrix))
        (with-row-major-index (m indices index)
-         (sb-kernel::hairy-data-vector-ref
+         (sb-kernel:hairy-data-vector-ref
           (sb-ext:truly-the (simple-array (unsigned-byte 1) (* *))
                             (standard-instance-access m 0))
-          (sb-ext:truly-the sb-kernel::index index))))
-      ((sb-c::csubtypep (sb-c::lvar-type m) (sb-c::find-classoid 'real-matrix))
+          (sb-ext:truly-the sb-int:index index))))
+      ((sb-kernel:csubtypep (sb-c::lvar-type m) (sb-kernel:find-classoid 'real-matrix))
        (with-row-major-index (m indices index)
-         (sb-kernel::hairy-data-vector-ref
+         (sb-kernel:hairy-data-vector-ref
           (sb-ext:truly-the (simple-array real (* *))
                             (standard-instance-access m 0))
-          (sb-ext:truly-the sb-kernel::index index))))
-      ((sb-c::csubtypep (sb-c::lvar-type m) (sb-c::find-classoid 'complex-matrix))
+          (sb-ext:truly-the sb-int:index index))))
+      ((sb-kernel:csubtypep (sb-c::lvar-type m) (sb-kernel:find-classoid 'complex-matrix))
        (with-row-major-index (m indices index)
-         (sb-kernel::hairy-data-vector-ref
+         (sb-kernel:hairy-data-vector-ref
           (sb-ext:truly-the (simple-array complex (* *))
                             (standard-instance-access m 0))
-          (sb-ext:truly-the sb-kernel::index index))))
-      ((sb-c::csubtypep (sb-c::lvar-type m) (sb-c::find-classoid 'number-matrix))
+          (sb-ext:truly-the sb-int:index index))))
+      ((sb-kernel:csubtypep (sb-c::lvar-type m) (sb-kernel:find-classoid 'number-matrix))
        (with-row-major-index (m indices index)
-         (sb-kernel::hairy-data-vector-ref
+         (sb-kernel:hairy-data-vector-ref
           (sb-ext:truly-the (simple-array number (* *))
                             (standard-instance-access m 0))
-          (sb-ext:truly-the sb-kernel::index index))))
+          (sb-ext:truly-the sb-int:index index))))
       (t
        (with-row-major-index (m indices index)
-         (sb-kernel::hairy-data-vector-ref
+         (sb-kernel:hairy-data-vector-ref
           (standard-instance-access m 0)
-          (sb-ext:truly-the sb-kernel::index index))))))  
+          (sb-ext:truly-the sb-int:index index))))))  
   
   (handler-bind ((simple-error #'continue))
     (sb-c:defknown (setf mref2) (number matrix fixnum fixnum) number
@@ -125,29 +125,29 @@
   
   (sb-c:deftransform (setf mref2) ((val m row col))
     (cond
-      ((sb-c::csubtypep (sb-c::lvar-type m) (sb-c::find-classoid 'double-float-matrix))
+      ((sb-kernel:csubtypep (sb-c::lvar-type m) (sb-kernel:find-classoid 'double-float-matrix))
        `(setf (aref (the (simple-array double-float (* *)) (standard-instance-access m 0)) row col) val))
-      ((sb-c::csubtypep (sb-c::lvar-type m) (sb-c::find-classoid 'single-float-matrix))
+      ((sb-kernel:csubtypep (sb-c::lvar-type m) (sb-kernel:find-classoid 'single-float-matrix))
        `(setf (aref (the (simple-array single-float (* *)) (standard-instance-access m 0)) row col) val))
-      ((sb-c::csubtypep (sb-c::lvar-type m) (sb-c::find-classoid 'ub8-matrix))
+      ((sb-kernel:csubtypep (sb-c::lvar-type m) (sb-kernel:find-classoid 'ub8-matrix))
        `(setf (aref (the (simple-array (unsigned-byte 8) (* *)) (standard-instance-access m 0)) row col) val))
-      ((sb-c::csubtypep (sb-c::lvar-type m) (sb-c::find-classoid 'ub16-matrix))
+      ((sb-kernel:csubtypep (sb-c::lvar-type m) (sb-kernel:find-classoid 'ub16-matrix))
        `(setf (aref (the (simple-array (unsigned-byte 16) (* *)) (standard-instance-access m 0)) row col) val))
-      ((sb-c::csubtypep (sb-c::lvar-type m) (sb-c::find-classoid 'ub32-matrix))
+      ((sb-kernel:csubtypep (sb-c::lvar-type m) (sb-kernel:find-classoid 'ub32-matrix))
        `(setf (aref (the (simple-array (unsigned-byte 32) (* *)) (standard-instance-access m 0)) row col) val))
-      ((sb-c::csubtypep (sb-c::lvar-type m) (sb-c::find-classoid 'sb8-matrix))
+      ((sb-kernel:csubtypep (sb-c::lvar-type m) (sb-kernel:find-classoid 'sb8-matrix))
        `(setf (aref (the (simple-array (signed-byte 8) (* *)) (standard-instance-access m 0)) row col) val))
-      ((sb-c::csubtypep (sb-c::lvar-type m) (sb-c::find-classoid 'sb16-matrix))
+      ((sb-kernel:csubtypep (sb-c::lvar-type m) (sb-kernel:find-classoid 'sb16-matrix))
        `(setf (aref (the (simple-array (signed-byte 16) (* *)) (standard-instance-access m 0)) row col) val))
-      ((sb-c::csubtypep (sb-c::lvar-type m) (sb-c::find-classoid 'sb32-matrix))
+      ((sb-kernel:csubtypep (sb-c::lvar-type m) (sb-kernel:find-classoid 'sb32-matrix))
        `(setf (aref (the (simple-array (signed-byte 32) (* *)) (standard-instance-access m 0)) row col) val))
-      ((sb-c::csubtypep (sb-c::lvar-type m) (sb-c::find-classoid 'bit-matrix))
+      ((sb-kernel:csubtypep (sb-c::lvar-type m) (sb-kernel:find-classoid 'bit-matrix))
        `(setf (aref (the (simple-array (unsigned-byte 1) (* *)) (standard-instance-access m 0)) row col) val))
-      ((sb-c::csubtypep (sb-c::lvar-type m) (sb-c::find-classoid 'real-matrix))
+      ((sb-kernel:csubtypep (sb-c::lvar-type m) (sb-kernel:find-classoid 'real-matrix))
        `(setf (aref (the (simple-array real (* *)) (standard-instance-access m 0)) row col) val))
-      ((sb-c::csubtypep (sb-c::lvar-type m) (sb-c::find-classoid 'complex-matrix))
+      ((sb-kernel:csubtypep (sb-c::lvar-type m) (sb-kernel:find-classoid 'complex-matrix))
        `(setf (aref (the (simple-array complex (* *)) (standard-instance-access m 0)) row col) val))
-      ((sb-c::csubtypep (sb-c::lvar-type m) (sb-c::find-classoid 'number-matrix))
+      ((sb-kernel:csubtypep (sb-c::lvar-type m) (sb-kernel:find-classoid 'number-matrix))
        `(setf (aref (the (simple-array number (* *)) (standard-instance-access m 0)) row col) val))
       (t
        `(setf (aref (standard-instance-access m 0) row col) val)))))
@@ -161,7 +161,7 @@
   (apply #'aref array subscripts))
 
 (handler-bind ((simple-error #'continue))
-  (sb-c:defknown maref (matrix array &rest sb-c::index) number
+  (sb-c:defknown maref (matrix array &rest sb-int:index) number
                  (sb-c:flushable sb-c:movable)))
 
 (macrolet (;; This is a handy macro for computing the row-major index
@@ -193,15 +193,15 @@
                                 (do* ((dims dims (cdr dims))
                                       (indices n-indices (cdr indices))
                                       (last-dim nil (car dims))
-                                      (form `(sb-kernel::%check-bound ,',array
-                                                                      ,(car dims)
-                                                                      ,(car indices))
-                                            `(sb-kernel::truly-the
-                                              sb-kernel::index
-                                              (+ (sb-kernel::truly-the sb-kernel::index
-                                                                       (* ,form
-                                                                          ,last-dim))
-                                                 (sb-kernel::%check-bound
+                                      (form `(sb-kernel:%check-bound ,',array
+                                                                     ,(car dims)
+                                                                     ,(car indices))
+                                            `(sb-ext:truly-the
+                                              sb-int:index
+                                              (+ (sb-ext:truly-the sb-int:index
+                                                                   (* ,form
+                                                                      ,last-dim))
+                                                 (sb-kernel:%check-bound
                                                   ,',array
                                                   ,(car dims)
                                                   ,(car indices))))))
@@ -209,12 +209,12 @@
                      ,',@body)))))
 
   (sb-c:deftransform maref ((matrix array &rest indices) (t t &rest t))
-    (print (sb-kernel::array-type-element-type (sb-c::lvar-type array)))
+    (print (sb-kernel:array-type-element-type (sb-c::lvar-type array)))
     (print (sb-c::lvar-type matrix))
     (with-row-major-index (matrix array indices index)
-      (sb-kernel::hairy-data-vector-ref
+      (sb-kernel:hairy-data-vector-ref
        array
-       (sb-ext:truly-the sb-kernel::index index)))))
+       (sb-ext:truly-the sb-int:index index)))))
 
 
 
