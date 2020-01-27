@@ -39,15 +39,15 @@
                                 (do* ((dims dims (cdr dims))
                                       (indices n-indices (cdr indices))
                                       (last-dim nil (car dims))
-                                      (form `(sb-kernel::%check-bound ,',array
+                                      (form `(sb-kernel:%check-bound ,',array
                                                                       ,(car dims)
                                                                       ,(car indices))
-                                            `(sb-kernel::truly-the
-                                              sb-kernel::index
-                                              (+ (sb-kernel::truly-the sb-kernel::index
+                                            `(sb-ext:truly-the
+                                              sb-int:index
+                                              (+ (sb-ext:truly-the sb-int:index
                                                                        (* ,form
                                                                           ,last-dim))
-                                                 (sb-kernel::%check-bound
+                                                 (sb-kernel:%check-bound
                                                   ,',array
                                                   ,(car dims)
                                                   ,(car indices))))))
@@ -57,9 +57,9 @@
   (sb-c:deftransform mref4 ((matrix mr &rest indices))
     (with-row-major-index
         (matrix (%matrix-rep-array mr) indices index)
-      (sb-kernel::hairy-data-vector-ref
+      (sb-kernel:hairy-data-vector-ref
        (%matrix-rep-array mr)
-       (sb-ext:truly-the sb-kernel::index index)))))
+       (sb-ext:truly-the sb-int:index index)))))
 
 (defmacro with-typed-matrix-vals-2 ((m) &body body)
   `(let ((mr (make-%matrix-rep
