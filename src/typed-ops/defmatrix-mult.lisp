@@ -8,7 +8,7 @@
   
 #+sbcl
 (defun displace-to-1d-array (matrix)
-  (sb-c::%array-data-vector (clem::matrix-vals matrix)))
+  (sb-kernel:%array-data (clem::matrix-vals matrix)))
 
 (defgeneric mat-mult3 (m n p))
 
